@@ -8,7 +8,7 @@ Debido a esta problemática, surge la necesidad de contar con una plataforma dig
 
 El diseño de los wireframes (boceto de la app) se puede visualizar en este [link](https://www.figma.com/board/xgRFETKbBlsr2c3IsxCPRl/Untitled?node-id=0-1&p=f&t=Yqs2a0tw9K4CPghg-0)
 
-El resto de los requerimientos pueden encontrarse en la [carpeta](https://github.com/Mariel0327-hub/GlutenFree-Market/tree/main/Documentation) /Documentation# GlutenFree-Market
+El resto de los requerimientos pueden encontrarse en la [carpeta](https://github.com/Mariel0327-hub/GlutenFree-Market/tree/main/Documentation) */Documentation# GlutenFree-Market*
 
 - Tecnologías:
     
