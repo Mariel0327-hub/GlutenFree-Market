@@ -1,3 +1,5 @@
+# Gluten Free Market
+
 Este proyecto se encarga de resolver el problema de la falta de una plataforma de comercio electrónico que permita a los usuarios comprar productos sin gluten. Las personas con enfermedad celíaca o intolerancia al gluten enfrentan dificultades para encontrar productos confiables y certificados sin gluten en un solo lugar. En muchas ocasiones deben revisar múltiples tiendas o supermercados para encontrar alimentos adecuados, lo que vuelve el proceso de compra lento y poco práctico.
 
 Además, no todas las tiendas online clasifican claramente los productos según su composición o certificación, lo que puede generar confusión y riesgo para quienes deben seguir una dieta estricta libre de gluten.
