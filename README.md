@@ -16,7 +16,7 @@ El resto de los requerimientos pueden encontrarse en la [carpeta](https://github
     - Bootstrap
     - PostreSQL
     - Node
-    - Express, 
+    - Express
 
 - Integrantes:
     - Keidis Suarez

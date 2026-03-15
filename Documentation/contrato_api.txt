@@ -1,0 +1,511 @@
+// ============================================================
+// AUTH
+// ============================================================
+
+POST /register
+request: {
+    payload: {
+        name:     String,
+        email:    String,
+        password: String,
+    }
+}
+response: {
+    message: String,
+    token:   String,
+    user: {
+        id:    String,
+        name:  String,
+        email: String,
+    }
+}
+
+// ------------------------------------------------------------
+
+POST /login
+request: {
+    payload: {
+        email:    String,
+        password: String,
+    }
+}
+response: {
+    message: String,
+    token:   String,
+    user: {
+        id:    String,
+        name:  String,
+        email: String,
+    }
+}
+
+// ------------------------------------------------------------
+
+GET /profile
+request: {
+    headers: {
+        Authorization: Bearer <token>,
+    }
+}
+response: {
+    id:    String,
+    name:  String,
+    email: String,
+}
+
+
+// ============================================================
+// PRODUCTS
+// ============================================================
+
+GET /products
+request: {}
+response: {
+    products: [
+        {
+            id:          String,
+            title:       String,
+            description: String,
+            price:       Number,
+            image_url:   String,
+            stock:       Number,
+            is_active:   Boolean,
+            created_at:  Date,
+            updated_at:  Date,
+        }
+    ]
+}
+
+// ------------------------------------------------------------
+
+GET /products/:id
+request: {
+    params: {
+        id: String,
+    }
+}
+response: {
+    id:          String,
+    title:       String,
+    description: String,
+    price:       Number,
+    image_url:   String,
+    stock:       Number,
+    is_active:   Boolean,
+    created_at:  Date,
+    updated_at:  Date,
+}
+
+// ------------------------------------------------------------
+
+POST /products
+request: {
+    headers: {
+        Authorization: Bearer <token>,
+    },
+    payload: {
+        title:       String,
+        description: String,
+        price:       Number,
+        image_url:   String,
+        stock:       Number,
+    }
+}
+response: {
+    message: String,
+    product: {
+        id:          String,
+        title:       String,
+        description: String,
+        price:       Number,
+        image_url:   String,
+        is_active:   Boolean,
+        created_at:  Date,
+        updated_at:  Date,
+    }
+}
+
+// ------------------------------------------------------------
+
+PUT /products/:id
+request: {
+    headers: {
+        Authorization: Bearer <token>,
+    },
+    params: {
+        id: String,
+    },
+    payload: {
+        title:       String,
+        description: String,
+        price:       Number,
+        image_url:   String,
+        stock:       Number,
+    }
+}
+response: {
+    message: String,
+    product: {
+        id:          String,
+        title:       String,
+        description: String,
+        price:       Number,
+        image_url:   String,
+        stock:       Number,
+        is_active:   Boolean,
+        created_at:  Date,
+        updated_at:  Date,
+    }
+}
+
+// ------------------------------------------------------------
+/*
+Como serán necesarios productos no existentes para históricos
+se usará un soft-delete por vía propiedad is_active
+
+Este delete se deja a modo documentativo, 
+para idealmente no ser usado.
+
+*/
+DELETE /products/:id
+request: {
+    headers: {
+        Authorization: Bearer <token>,
+    },
+    params: {
+        id: String,
+    }
+}
+response: {
+    message: String,
+}
+
+
+// ============================================================
+// CART
+// ============================================================
+
+GET /cart
+request: {
+    headers: {
+        Authorization: Bearer <token>,
+    }
+}
+response: {
+    items: [
+        {
+            productId:    String,
+            productTitle: String,
+            quantity:     Number,
+        }
+    ],
+    subtotal: Number,
+}
+
+// ------------------------------------------------------------
+
+POST /cart
+request: {
+    headers: {
+        Authorization: Bearer <token>,
+    },
+    payload: {
+        cart: [
+            {
+                productId: String,
+                quantity:  Number,
+            }
+        ]
+    }
+}
+response: {
+    message: String,
+    cart: [
+        {
+            userId:       String,
+            productId:    String,
+            productTitle: String,
+            quantity:     Number,
+        }
+    ],
+    subtotal: Number,
+}
+
+// ------------------------------------------------------------
+
+PUT /cart/:id
+request: {
+    headers: {
+        Authorization: Bearer <token>,
+    },
+    params: {
+        id: String,
+    },
+    payload: {
+        productId: String,
+        quantity:  Number,
+    }
+}
+response: {
+    message: String,
+    cart: {
+        userId:       String,
+        productId:    String,
+        productTitle: String,
+        quantity:     Number,
+    }
+}
+
+// ------------------------------------------------------------
+
+DELETE /cart/:id
+request: {
+    headers: {
+        Authorization: Bearer <token>,
+    },
+    params: {
+        id: String,
+    }
+}
+response: {
+    message: String,
+}
+
+
+// ============================================================
+// ORDERS
+// ============================================================
+
+GET /orders
+request: {
+    headers: {
+        Authorization: Bearer <token>,
+    }
+}
+response: {
+    orders: [
+        {
+            id:         String,
+            total:      Number,
+            is_paid:     Boolean,
+            created_at: Date,
+        }
+    ]
+}
+
+// ------------------------------------------------------------
+
+POST /orders
+request: {
+    headers: {
+        Authorization: Bearer <token>,
+    }
+}
+response: {
+    message: String,
+    order: {
+        id:         String,
+        userId:     String,
+        total:      Number,
+        is_paid:     Boolean,
+        created_at: Date,
+    }
+}
+
+// ------------------------------------------------------------
+
+PUT /orders/:id
+request: {
+    headers: {
+        Authorization: Bearer <token>,
+    }
+
+    payload:{
+        is_paid: Boolean
+    }
+}
+response: {
+    message: String,
+    order: {
+        id:         String,
+        userId:     String,
+        total:      Number,
+        is_paid:     Boolean,
+        created_at: Date,
+    }
+}
+
+
+// ============================================================
+// REVIEWS
+// ============================================================
+/* La dejo por ahora a modo documentativo, si bien no tiene sentido en la medida que se puede acceder a reviews por producto*/
+GET /reviews
+
+request{
+        headers: {
+        Authorization: Bearer <token>,
+    }
+}
+
+response{
+        reviews: [
+        {
+            id:          String,
+            title:       String,
+            description: String,
+            created_at:  Date,
+        }
+    ]
+
+}
+
+// ------------------------------------------------------------
+/* "about_product" defines if the review is product releated or not*/
+GET / users/:id/reviews
+
+request:{
+
+        headers: {
+        Authorization: Bearer <token>,
+    }
+
+    params:{
+        id: String
+    }
+    
+    query:{
+	about_product: boolean
+	}
+
+response:{
+
+reviews:[
+        {
+        id:          String,
+        product_id:  String | null,
+        post_body:   String,
+        rating:      Number,
+        created_at:  Date,
+    }
+]
+
+}
+
+
+/*filter by product (any user)*/
+GET products/:id/reviews/
+
+
+    params:{
+        id: String
+    }
+}
+
+response:{
+
+reviews:[
+        {
+        id:          String,
+        product_id:  String,
+        post_body:   String,
+        rating:      Number,
+        created_at:  Date,
+    }
+]
+
+}
+// ------------------------------------------------------------
+GET /reviews/:id
+
+request:{
+
+        headers: {
+        Authorization: Bearer <token>,
+    }
+
+    params:{
+        id: String
+    }
+}
+
+response:{
+
+review :
+        {
+        id:          String,
+        product_id:  String | null,
+        post_body:   String,
+        rating:      Number,
+        created_at:  Date,
+    }
+
+}
+// ------------------------------------------------------------
+POST /reviews
+
+request: {
+    headers: {
+        Authorization: Bearer <token>,
+    },
+    payload: {
+        product_id:  String |null,
+        post_body:   String,
+        rating:      Number
+    }
+}
+response: {
+    message: String,
+    review: {
+        id:          String,
+        product_id:  String | null,
+        post_body:   String,
+        rating:      Number,
+        created_at:  Date,
+        updated_at:  Date
+    }
+}
+
+// ------------------------------------------------------------
+PUT /reviews/:id
+
+request: {
+    headers: {
+        Authorization: Bearer <token>,
+    }
+
+    params: {
+        id: String
+    }
+
+    payload: {
+        post_body:   String,
+        rating:      Number
+    }
+}
+response: {
+    message: String,
+    review: {
+        id:          String,
+        product_id:  String | null,
+        post_body:   String,
+        rating:      Number
+        created_at:  Date,
+        updated_at:  Date
+    }
+}
+// ------------------------------------------------------------
+DELETE /reviews/:id
+
+request: {
+    headers: {
+        Authorization: Bearer <token>,
+    }
+
+    params: {
+        id: String
+    }
+}
+response: {
+    message: String,
+}
