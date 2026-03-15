@@ -191,7 +191,7 @@ Los productos se organizan en categorías como:
 
 # 10. API REST
 
-La aplicación utiliza una API REST para gestionar los recursos del sistema. :contentReference[oaicite:2]{index=2}
+La aplicación utiliza una API REST para gestionar los recursos del sistema.
 
 ## Auth
 
@@ -203,7 +203,10 @@ GET /profile
 
 GET /products  
 GET /products/:id  
-GET /user/products  
+
+GET /user/products  (es posible que sea al reves?  
+GET /products/user/:id )
+
 POST /products  
 PUT /products/:id  
 DELETE /products/:id  
@@ -219,7 +222,19 @@ DELETE /cart/:id
 
 GET /orders  
 POST /orders  
+PUT /orders/:id (cambio de estado [pagado, no pagado])
 
+## Reviews
+
+GET /reviews 
+
+GET /user/:id/reviews 
+GET product/:id/reviews 
+GET reviews/:id
+
+POST /reviews  
+PUT /reviews/:id
+DELETE /reviews/:id
 ---
 
 # 11. Tecnologías utilizadas

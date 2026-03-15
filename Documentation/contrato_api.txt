@@ -77,6 +77,26 @@ response: {
 }
 
 // ------------------------------------------------------------
+!!!!!! revisar
+GET /products/user/:id
+request: {
+    params: {
+        id: String,
+    }
+}
+response: {
+    id:          String,
+    title:       String,
+    description: String,
+    price:       Number,
+    image_url:   String,
+    stock:       Number,
+    is_active:   Boolean,
+    created_at:  Date,
+    updated_at:  Date,
+}
+
+// ------------------------------------------------------------
 
 GET /products/:id
 request: {
