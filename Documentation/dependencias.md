@@ -18,6 +18,8 @@
 
 - pg: Conexión a PostgreSQL.
 
+- pg-format: Formatado y parametrización de consultas.
+
 - jsonwebtoken: Seguridad para las rutas privadas.
 
 - cors: Permisos de conexión.
@@ -29,3 +31,5 @@
 - jest: Motor de pruebas.
 
 - supertest: Peticiones simuladas a los endpoints.
+
+- nodemon: Reinicio automático del servidor en desarrollo.
