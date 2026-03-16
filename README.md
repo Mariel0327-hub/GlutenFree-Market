@@ -18,7 +18,8 @@ El resto de los requerimientos pueden encontrarse en la [carpeta](https://github
     - Node
     - Express
 
-- Integrantes:
+- Equipo:
+
     - Keidis Suarez
     - Mariel Montoya
     - Pablo Díaz
