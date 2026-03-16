@@ -125,56 +125,112 @@ Desde allí puede navegar a:
 
 El sistema utiliza una base de datos relacional en PostgreSQL con las siguientes tablas.
 
-## users
+## customer
 
-- id
+Almacena los datos de los clientes registrados en la plataforma.
+
+- customer_id (PK)
 - name
 - email
 - password
+- shipping_address
+- billing_address
 - created_at
+- updated_at
 
-## products
+## product
 
-- id
+Almacena el catálogo de productos disponibles.
+
+- product_id (PK)
 - title
 - description
 - price
-- category
 - image_url
 - stock
-- user_id
+- sku
+- category_id (FK → category)
+- is_active
 - created_at
+- updated_at
 
-## cart_items
+## category
 
-Tabla que almacena los productos agregados al carrito.
+Tabla de parámetros para las categorías de productos.
 
-- id
-- user_id
-- product_id
-- quantity_per_item
+- category_id (PK)
+- description
 
-## orders
+## cart_item
 
-Tabla que almacena los pedidos realizados por los usuarios.
+Tabla que almacena los productos agregados al carrito de compra activo.
+El precio unitario no se almacena — se obtiene via JOIN con product al momento de la consulta.
 
-- id
-- user_id
-- total
-- status
-- created_at
-
-## order_items
-
-Tabla que almacena el detalle de cada producto incluido en un pedido.
-
-- id
-- order_id
-- product_id
+- cart_id (PK)
+- customer_id (FK → customer)
+- product_id (FK → product)
 - quantity
+- created_at
+- updated_at
+
+## order
+
+Tabla que almacena los pedidos realizados por los clientes.
+
+- order_id (PK)
+- customer_id (FK → customer)
+- total
+- is_paid
+- is_shipped
+- date
+- created_at
+- updated_at
+
+## order_item
+
+Tabla que almacena el detalle de cada producto incluido en un pedido. Funciona como snapshot del precio al momento de la compra.
+
+- order_item_id (PK)
+- order_id (FK → order)
+- product_id (FK → product)
 - unit_price
+- quantity
+- created_at
+- updated_at
+
+## stock_mov
+
+Tabla auxiliar que registra las variaciones de stock (entradas y salidas).
+El primer movimiento de cada producto es una entrada al momento de poblar la base de datos.
+
+- mov_id (PK)
+- order_item_id (FK → order_item)
+- product_id (FK → product)
+- type_mov (`entrada` | `salida`)
+- quantity
+- created_at
+- updated_at
+
+## review
+
+Almacena las reseñas de clientes. Solo pueden reseñar *sobre un producto* lxs clientes que hayan realizado una orden de compra.
+
+- review_id (PK)
+- customer_id (FK → customer)
+- product_id (FK → product, nullable)
+- about_product
+- review_body
+- rating
+- created_at
+- updated_at
 
 ---
+
+> **Notas:**
+> - `is_active` en product implementa soft-delete — los productos inactivos se preservan para mantener el histórico de order_item.
+> - `is_paid` e `is_shipped` son booleanos simplificados. Para versiones posteriores se consideran tablas de parámetros con estados intermedios (payment_state, shipping_state).
+> - Admin: para el alcance del MVP habrá un solo usuario admin controlado vía variable de entorno `ADMIN_CUSTOMER_ID`. Se considera agregar columna de rol en customer en versiones futuras.
+
 
 # 9. Categorías de productos
 
