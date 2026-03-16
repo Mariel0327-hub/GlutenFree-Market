@@ -188,8 +188,7 @@ Tabla que almacena los pedidos realizados por los clientes.
 
 ## order_item
 
-Tabla que almacena el detalle de cada producto incluido en un pedido.
-Funciona como snapshot del precio al momento de la compra.
+Tabla que almacena el detalle de cada producto incluido en un pedido. Funciona como snapshot del precio al momento de la compra.
 
 - order_item_id (PK)
 - order_id (FK → order)
@@ -214,7 +213,7 @@ El primer movimiento de cada producto es una entrada al momento de poblar la bas
 
 ## review
 
-Almacena las reseñas de clientes. Solo pueden reseñar *sobre productos* lxs clientes que hayan realizado una orden de compra.
+Almacena las reseñas de clientes. Solo pueden reseñar *sobre un producto* lxs clientes que hayan realizado una orden de compra.
 
 - review_id (PK)
 - customer_id (FK → customer)
@@ -231,6 +230,7 @@ Almacena las reseñas de clientes. Solo pueden reseñar *sobre productos* lxs cl
 > - `is_active` en product implementa soft-delete — los productos inactivos se preservan para mantener el histórico de order_item.
 > - `is_paid` e `is_shipped` son booleanos simplificados. Para versiones posteriores se consideran tablas de parámetros con estados intermedios (payment_state, shipping_state).
 > - Admin: para el alcance del MVP habrá un solo usuario admin controlado vía variable de entorno `ADMIN_CUSTOMER_ID`. Se considera agregar columna de rol en customer en versiones futuras.
+
 
 # 9. Categorías de productos
 
