@@ -195,47 +195,48 @@ La aplicación utiliza una API REST para gestionar los recursos del sistema.
 
 ## Auth
 
-POST /register  
-POST /login  
-GET /profile  
+POST /register
+POST /login
+GET /profile
 
 ## Products
 
-GET /products  
-GET /products/:id  
+GET /products
+GET /products/:id
 
-GET /user/products  (es posible que sea al reves?  
-GET /products/user/:id )
-
-POST /products  
-PUT /products/:id  
+POST /products        
+PUT /products/:id     
 DELETE /products/:id  
+
+## Categories
+
+GET /categories
 
 ## Cart
 
-GET /cart  
-POST /cart  
-PUT /cart/:id  
-DELETE /cart/:id  
+GET /cart
+GET /cart/:id
+POST /cart
+PUT /cart/:id
+DELETE /cart/:id
 
 ## Orders
 
-GET /orders  
-POST /orders  
-PUT /orders/:id (cambio de estado [pagado, no pagado])
+GET /orders
+GET /orders/:id
+POST /orders         
+PUT /orders/:id       
 
 ## Reviews
 
-GET /reviews 
+GET /reviews
+GET /reviews/:id
+GET /users/:id/reviews
+GET /products/:id/reviews
 
-GET /user/:id/reviews 
-GET product/:id/reviews 
-GET reviews/:id
-
-POST /reviews  
+POST /reviews
 PUT /reviews/:id
 DELETE /reviews/:id
----
 
 # 11. Tecnologías utilizadas
 
@@ -255,8 +256,7 @@ DELETE /reviews/:id
 - JWT
 - bcrypt
 - CORS
-
-Dependencias definidas en el proyecto. :contentReference[oaicite:3]{index=3}
+- Nodemon
 
 ## Testing
 
