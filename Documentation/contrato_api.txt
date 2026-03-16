@@ -1,3 +1,17 @@
+//Información Previa:
+//Para el alcance de este MVP habrá solo un admin
+//controlado vía variable de entorno: ADMIN_CUSTOMER_ID.
+//No obstante, se considera implementar una columna de rol
+//en la base de datos en el futuro.
+//endpoints afectados:         
+        
+        POST   /products
+        PUT    /products/:id
+        DELETE /products/:id
+        PUT    /orders/:id 
+
+
+
 // ============================================================
 // AUTH
 // ============================================================
@@ -14,7 +28,7 @@ response: {
     message: String,
     token:   String,
     user: {
-        id:    String,
+        customer_id:    String,
         name:  String,
         email: String,
     }
@@ -33,7 +47,7 @@ response: {
     message: String,
     token:   String,
     user: {
-        id:    String,
+        customer_id:    String,
         name:  String,
         email: String,
     }
@@ -48,7 +62,7 @@ request: {
     }
 }
 response: {
-    id:    String,
+    customer_id:    String,
     name:  String,
     email: String,
 }
@@ -66,7 +80,7 @@ request: {
 response: {
     products: [
         {
-            id:          String,
+            product_id:  String,
             title:       String,
             description: String,
             price:       Number,
@@ -90,7 +104,7 @@ request: {
     }
 }
 response: {
-    id:          String,
+    product_id:  String,
     title:       String,
     description: String,
     price:       Number,
@@ -124,7 +138,7 @@ request: {
 response: {
     message: String,
     product: {
-        id:          String,
+        product_id:  String,
         title:       String,
         description: String,
         price:       Number,
@@ -160,7 +174,7 @@ request: {
 response: {
     message: String,
     product: {
-        id:          String,
+        product_id:  String,
         title:       String,
         description: String,
         price:       Number,
@@ -205,7 +219,8 @@ GET /categories
     response:{
         categories: [
             {
-                id: String, description: String
+                category_id: String, 
+                description: String
             }
         ]
     }
@@ -223,11 +238,11 @@ request: {
 response: {
     items: [
         {
-            id:           String
+            cart_id:           String
             product_id:    String,
             product_title: String,
             quantity:     Number,
-            unit_price:   Number,
+            unit_price:   Number, //from product as JOIN
             //expires_at: Date
         }
     ],
@@ -248,11 +263,11 @@ request: {
 }
 response: {
         item:{
-            id:           String,
+            cart_id:           String,
             product_id:    String,
             product_title: String,
             quantity:     Number,
-            unit_price:   Number,
+            unit_price:   Number,  //from product as JOIN
             //expires_at: Date,
         },
     subtotal: Number,
@@ -278,7 +293,8 @@ response: {
     message: String,
     cart: [
         {
-            user_id:       String,
+            cart_id:  String,
+            customer_id:       String,
             product_id:    String,
             product_title: String,
             quantity:     Number,
@@ -306,7 +322,8 @@ request: {
 response: {
     message: String,
     cart: {
-        user_id:       String,
+        cart_id:       String,
+        customer_id:       String,
         product_id:    String,
         product_title: String,
         quantity:     Number,
@@ -342,7 +359,7 @@ request: {
 response: {
     orders: [
         {
-            id:         String,
+            order_id:         String,
             total:      Number,
             is_paid:     Boolean,
             is_shipped:  Boolean,
@@ -366,10 +383,10 @@ request: {
 response: {
     order:
         {
-            id:         String,
+            order_id:         String,
             items: [
                 {
-                    id: String,
+                    order_item_id: String,
                     product_id: String,
                     product_title: String,
                     product_image_url: String,
@@ -395,8 +412,8 @@ request: {
 response: {
     message: String,
     order: {
-        id:         String,
-        user_id:     String,
+        order_id:         String,
+        customer_id:     String,
         total:      Number,
         is_paid:     Boolean,
         is_shipped:  Boolean,
@@ -420,8 +437,8 @@ request: {
 response: {
     message: String,
     order: {
-        id:         String,
-        user_id:     String,
+        order_id:         String,
+        customer_id:     String,
         total:      Number,
         is_paid:     Boolean,
         is_shipped:  Boolean,
@@ -445,7 +462,7 @@ request{
 response{
         reviews: [
         {
-            id:            String,
+            review_id:            String,
             about_product: Boolean,
             review_body:   String,
             rating:        Number,
@@ -469,9 +486,9 @@ response:{
 
 review :
         {
-        id:          String,
+        review_id:            String,
         product_id:  String | null,
-        user_id:       String,
+        customer_id:       String,
         about_product: Boolean,
         review_body:   String,
         rating:      Number,
@@ -498,7 +515,9 @@ request:{
 response:{
 
 reviews:[
-        {   id:            String,
+        {   
+           review_id:      String,
+           customer_id:    String
             about_product: Boolean,
             review_body:   String,
             rating:        Number,
@@ -524,9 +543,9 @@ response:{
 
 reviews:[
         {
-        id:          String,
+        review_id:            String,
         product_id:  String,
-        user_id:      String,
+        customer_id:      String,
         about_product: Boolean,
         review_body:   String,
         rating:      Number,
@@ -553,9 +572,9 @@ request: {
 response: {
     message: String,
     review: {
-        id:          String,
+        review_id:          String,
         product_id:  String | null,
-        user_id:     String
+        customer_id:     String
         about_product: Boolean,
         review_body:   String,
         rating:      Number,
@@ -584,9 +603,9 @@ request: {
 response: {
     message: String,
     review: {
-        id:          String,
+        review_id:          String,
         product_id:  String | null,
-        user_id:     String,
+        customer_id:     String,
         about_product: Boolean,
         review_body:   String,
         rating:      Number
