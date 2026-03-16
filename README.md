@@ -6,7 +6,7 @@ Además, no todas las tiendas online clasifican claramente los productos según 
 
 Debido a esta problemática, surge la necesidad de contar con una plataforma digital especializada que permita centralizar la búsqueda y compra de productos sin gluten de forma simple, clara y segura.
 
-El diseño de los wireframes (boceto de la app) se puede visualizar en este [link](https://www.figma.com/board/xgRFETKbBlsr2c3IsxCPRl/Untitled?node-id=0-1&p=f&t=Yqs2a0tw9K4CPghg-0)
+El diseño de los wireframes (boceto de la app) se puede visualizar en este [link](https://www.figma.com/design/5hlLMPZv32saEmfBn36cud/Sweetdeli---40--screens-Website-Wireframe-Kit--Mobile---Desktop---Free---Community-?node-id=1202-2&t=3IxxRjyfs5Zb1Oj8-1)
 
 El resto de los requerimientos pueden encontrarse en la [carpeta](https://github.com/Mariel0327-hub/GlutenFree-Market/tree/main/Documentation) */Documentation# GlutenFree-Market*
 
