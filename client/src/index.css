@@ -1,0 +1,63 @@
+:root {
+  /* Paleta de Colores GlutenFree */
+  --color-bgButton: #4c3d33; /* Café miel (Botones) */
+  --color-titulos: #4b3f2f; /* Café oscuro (Títulos) */
+  --color-bgFooter: #faf8f0; /* Crema suave (Fondo Hero/footer) */
+  --color-white: #ffffff;
+  --color-text-muted: #6c757d;
+
+  /* Bordes y Sombras (Para mantener la coherencia) */
+  --radius-lg: 20px;
+  --radius-md: 12px;
+  --shadow-soft: 0 4px 15px rgba(0, 0, 0, 0.05);
+
+  --shadow-elegant: 0 10px 30px rgba(108, 91, 75, 0.08);
+  --shadow-hover: 0 15px 45px rgba(108, 91, 75, 0.15);
+
+  --font-titles: "Montserrat", sans-serif;
+  --font-body: "Quicksand", sans-serif;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body,
+html {
+  width: 100%;
+  overflow-x: hidden;
+  padding-top: 0 !important;
+  scroll-behavior: smooth;
+}
+
+.btn {
+  background-color: var(--color-bgButton);
+  color: white;
+  border: none;
+  font-size: 0.9rem;
+  transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+  border-radius: 8px; /* Un poco más redondeados se ven más modernos */
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Sombra inicial sutil */
+  border: none;
+  font-weight: 500;
+  padding: 8px 20px;
+}
+
+.btn:active {
+  transform: translateY(0); /* Vuelve a su lugar */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.btn:hover {
+  background-color: var(--color-white);
+  box-shadow: var(--shadow-hover);
+  border: 1px solid var(--color-bgButton);
+  color: var(--color-bgButton);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px); /* Sube ligeramente */
+  filter: brightness(1.1);
+}
