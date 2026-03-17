@@ -1,0 +1,18 @@
+.shadow-elegant {
+  /* Una sombra más aireada y moderna */
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04) !important;
+  transition: all 0.3s ease-in-out;
+}
+
+.shadow-elegant:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 40px rgba(108, 91, 75, 0.12) !important;
+}
+
+.title-underline {
+  width: 60px;
+  height: 3px;
+  background-color: var(--color-bgButton); /* El café de tu marca */
+  margin-top: 10px;
+  border-radius: 2px;
+}

@@ -1,0 +1,62 @@
+
+.hero-container {
+  background-image: url(../imgs/heroBg.jpg);
+  background-size: cover;
+  background-position: center;
+  min-height: 70vh;
+  width: 100vw;
+  display: flex;
+  align-items: center;
+  margin-left: calc(-50vw + 50%);
+  margin-right: calc(-50vw + 50%);
+  margin-top: 0;
+  padding-top: 0;
+  
+}
+
+.hero-title {
+  font-family: var( --font-titles);
+  font-weight: 800;
+  font-size: 3.5rem; 
+  line-height: 1.2;
+  color:var(--color-titulos);
+  margin-bottom: 20px;
+  
+  opacity: 0;
+  animation: fadeSlideIn 1s ease-out forwards;
+}
+
+/* Subtítulo o Descripción (P) */
+.hero-description {
+  font-family: 'Open Sans', sans-serif; /* O tu 'body-font' */
+  font-weight: 400;
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: #5d4037; /* Marrón un poco más claro */
+  margin-bottom: 30px;
+  max-width: 600px; /* Evita que el texto sea muy largo y canse la vista */
+  
+  /* Retraso para que aparezca después del título */
+  opacity: 0;
+  animation: fadeSlideIn 1s ease-out 0.5s forwards;
+}
+
+/* --- Animaciones Keyframes --- */
+
+/* Efecto de entrada: Subir suavemente mientras aparece (Fade + Slide) */
+@keyframes fadeSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* --- Ajuste Responsivo --- */
+@media (max-width: 768px) {
+  .hero-title { font-size: 2.5rem; }
+  .hero-description { font-size: 1rem; }
+}

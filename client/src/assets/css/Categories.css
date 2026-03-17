@@ -1,0 +1,80 @@
+
+.category-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center; /* Centra los iconos si la fila no se llena */
+  gap: 2rem; /* Espacio uniforme entre categorías */
+  padding: 1rem 0;
+}
+
+.category-col {
+  flex: 0 1 calc(20% - 2rem); /* Intenta poner 5 por fila en pantallas grandes */
+  min-width: 120px; /* Evita que se encojan demasiado */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.category-img-container {
+  width: 140px;
+  height: 140px;
+  background-color: #ffffff;
+  border-radius: 50%;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden; 
+  cursor: pointer;
+  /* Sombra más marcada: 0.2 de opacidad y 20px de desenfoque */
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2); 
+  
+  /* Importante para que el zoom de la imagen no se salga del círculo */
+  position: relative; 
+  z-index: 1;
+
+  transition: all 0.4s ease;
+}
+
+.category-item:hover .category-img-container {
+  transform: translateY(-8px);
+  /* Sombra de "elevación" más fuerte */
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+}
+
+.category-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  display: block;
+}
+.category-item:hover .category-img {
+  transform: scale(1.15);
+}
+
+.category-img-container:hover {
+  transform: scale(1.05);
+}
+.category-item:hover .category-img-container {
+  transform: translateY(-8px) scale(1.02);
+}
+
+.category-item:hover .category-img {
+  transform: scale(1.12); }
+
+  .category-item:focus {
+  outline: none;
+}
+.category-item:focus .category-img-container {
+  box-shadow: 0 0 0 3px #7c5c4c;
+}
+
+/* Responsivo */
+@media (max-width: 992px) {
+  .category-col { flex: 0 0 33.33%; max-width: 33.33%; }
+}
+@media (max-width: 576px) {
+  .category-col { flex: 0 0 50%; max-width: 50%; }
+  .category-img-container { width: 90px; height: 90px; }
+}

@@ -1,0 +1,53 @@
+.product-detail-container {
+  padding-top: 120px; /* Suficiente para bajar el contenido del Navbar */
+  padding-bottom: 50px;
+  background-color: #fdfbf9;
+  min-height: 100vh; /* Asegura que cubra toda la pantalla */
+}
+
+.product-image-container {
+  transition: transform 0.3s ease;
+  padding: 20px; /* Un padding normal para que la imagen respire */
+  background-color: white;
+  border-radius: 20px;
+}
+.product-image-container:hover {
+  transform: scale(1.02);
+}
+
+.quantity-selector {
+  border: 1px solid #e0e0e0;
+  border-radius: 50px;
+  padding: 5px;
+  background-color: #f8f9fa;
+}
+
+.btn-qty {
+  background: white;
+  border: none;
+  border-radius: 50%;
+  width: 35px;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  color: #7c5c4c;
+  transition: all 0.2s;
+}
+
+.btn-qty:hover {
+  background: #7c5c4c;
+  color: white;
+}
+
+.btn-order-now {
+  background-color: #5d4037 !important;
+  border: none !important;
+  box-shadow: 0 4px 15px rgba(93, 64, 55, 0.3);
+}
+
+.btn-order-now:hover {
+  background-color: #3e2723 !important;
+  transform: translateY(-2px);
+}
