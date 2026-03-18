@@ -19,8 +19,8 @@ export default function Footer() {
       style={{ backgroundColor: "var(--color-bgFooter)" }}
     >
       <Container className=" border border-dark p-5 ">
-        <Row className="colum-footer">
-          <Col lg={3} md={6} id="contacto" className="border ">
+        <Row className="row-cols-1 row-cols-md-3">
+          <Col id="contacto" className="border ">
             <h4 className="titles-font fw-bold mb-4">GlutenFree</h4>
             <h5 className="fw-bold mb-4 footer-title">Contáctanos</h5>
             <ul className="list-unstyled footer-list">
@@ -49,7 +49,7 @@ export default function Footer() {
           </Col>
 
           {/* Columna Productos */}
-          <Col lg={2} md={6} className="border">
+          <Col className="border">
             <h5 className="fw-bold mb-4 footer-title">Productos</h5>
             <ul className="list-unstyled footer-list">
               <li>
@@ -68,7 +68,7 @@ export default function Footer() {
           </Col>
 
           {/* Columna Nosotros (Reseña) */}
-          <Col lg={7} md={12} className="footer-column-nosotros border " id="nosotros">
+          <Col className="footer-column-nosotros border " id="nosotros">
             <h5 className="footer-title fw-bold text-start">Nuestra Misión</h5>
             <p className="text-muted">
               En <strong>GlutenFree Market</strong>, creemos que una dieta sin

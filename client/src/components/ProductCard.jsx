@@ -55,7 +55,7 @@ const ProductCard = ({ product }) => {
         <div className="d-flex justify-content-between align-items-center mt-3 px-1">
           <Button
             className="btn-add rounded-pill px-4"
-            onClick={() => addToCart(product, 1)}
+            onClick={() => addToCart(product, 1, false)}
           >
             Añadir
           </Button>

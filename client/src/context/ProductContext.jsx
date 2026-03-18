@@ -25,7 +25,10 @@ const ProductProvider = ({ children }) => {
     fetchData();
   }, []);
 
-  const addToCart = (product, quantity = 1) => {
+  const addToCart = (product, quantity = 1, showToast = true) => {
+    /* Transforme el estado de setShowToast en un prop ligado a un booleano.
+    Si el showToast es true, se despliega el toast, si es falso, no se despliega
+    Así se puede configurar para aperecer en unas cosas y no otras (donde no --> adToCart(product, quantity, false) ) */ 
     setCart((prevCart) => {
       // 1. Buscamos si el producto ya está en el carrito
       const existingProductIndex = prevCart.findIndex(
@@ -39,14 +42,15 @@ const ProductProvider = ({ children }) => {
           ...newCart[existingProductIndex],
           quantity: newCart[existingProductIndex].quantity + quantity,
         };
+
         return newCart;
       } else {
         // 3. Si es nuevo, lo agregamos con la cantidad inicial
         return [...prevCart, { ...product, quantity }];
       }
     });
+    if (showToast) setShowToast(showToast);
     setLastAdded(product);
-    setShowToast(true);
   };
 
   // Función para eliminar

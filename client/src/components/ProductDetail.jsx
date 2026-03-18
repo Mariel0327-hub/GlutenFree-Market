@@ -101,7 +101,7 @@ const ProductDetail = () => {
               <Button
                 variant="dark"
                 className="btn-order-now px-5"
-                onClick={() => addToCart(product, cantidad)}
+                onClick={() => addToCart(product, cantidad, true)}
               >
                 Añadir al carrito
               </Button>

@@ -2,18 +2,16 @@
   background-color: #fdfaf8; /* Un fondo crema muy suave para diferenciarlo del body */
   border-top: 1px solid #eee;
   color: #5d4037;
+  border: 1px solid #333;
+  display:flex;
+  flex-grow: 1;
 }
 
 .container-footer{
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  width: 100%;
-  border: 1 px solid #000;
-  gap: 10px;
-}
-.colum-footer{
-  width: 100%;
+  background-color: red;
 }
 
 .footer-title {
