@@ -1,123 +1,173 @@
-import React, { useState } from "react";
-import { Row, Col, Card, Form, Button } from "react-bootstrap";
-import { FaStar, FaUserCircle, FaPaperPlane } from "react-icons/fa";
+import React, { useContext, useState } from "react";
+import { ReviewContext } from "../context/ReviewContext";
+import { UserContext } from "../context/UserContext";
+import { FaStar } from "react-icons/fa";
+import Swal from "sweetalert2";
 
-export default function TestimonialsSection() {
-  // por el momentoi estoy usando esto luego traere los comentarios de la base de datos
-  const [reviews, setReviews] = useState([
-    {
-      id: 1,
-      user: "@Rodrigo_fab_v",
-      comment: "¡Increíble sabor! Muy recomendado.",
-      stars: 5,
-    },
-    {
-      id: 2,
-      user: "@Maria_G",
-      comment: "Me encantó la textura, volveré a comprar.",
-      stars: 4,
-    },
-  ]);
+export default function TestimonialsSection({ productId, canReview }) {
+  const { user } = useContext(UserContext);
+  const { reviews, addReview } = useContext(ReviewContext);
 
-  const [newComment, setNewComment] = useState("");
-  const [rating, setRating] = useState(5);
+  const [rating, setRating] = useState(0);
+  const [hover, setHover] = useState(0);
+  const [comment, setComment] = useState("");
+
+  const productReviews = reviews.filter(
+    (r) => String(r.product_id) === String(productId),
+  );
+  const userAlreadyReviewed = productReviews.some(
+    (r) => r.author === user?.name,
+  );
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!newComment.trim()) return;
+    if (rating === 0 || comment.trim() === "") {
+      alert("Por favor, selecciona una puntuación y escribe un comentario.");
+      return;
+    }
 
-    const review = {
-      id: Date.now(),
-      user: "@Usuario_Actual", // Aquí usarás el nombre del usuario logueado
-      comment: newComment,
-      stars: rating,
-    };
+    addReview({
+      product_id: productId,
+      author: user.name,
+      rating: rating,
+      comment: comment,
+      date: new Date().toLocaleDateString(),
+    });
 
-    setReviews([review, ...reviews]);
-    setNewComment("");
+    setComment("");
+    setRating(0);
+    Swal.fire({
+      icon: "success",
+      title: "¡Reseña publicada!",
+      text: "Gracias por compartir tu experiencia con nosotros.",
+      timer: 2000,
+      showConfirmButton: false,
+    });
   };
 
   return (
-    <div className="border-top">
-      <h3 className="titles-font mb-4" style={{ color: "#3e2723" }}>
-        Reseñas de Clientes
+    <div className="mt-5 pt-5 border-top">
+      <h3 className="titles-font fw-bold mb-4">
+        Experiencias de nuestros clientes
       </h3>
 
-      <Row>
-        {/* Lista de Testimonios */}
-        <Col lg={7}>
-          <div
-            className="reviews-list pe-lg-4"
-            style={{ maxHeight: "400px", overflowY: "auto" }}
-          >
-            {reviews.map((r) => (
-              <Card key={r.id} className="mb-3 border-0 shadow-sm rounded-4">
-                <Card.Body className="d-flex gap-3">
-                  <FaUserCircle size={40} className="text-muted" />
-                  <div>
-                    <h6 className="fw-bold mb-1">{r.user}</h6>
-                    <div className="text-warning small mb-2">
-                      {[...Array(r.stars)].map((_, i) => (
-                        <FaStar key={i} />
+      {/* --- BLOQUE DE FORMULARIO O MENSAJES --- */}
+      <div className="review-permission-box mb-5">
+        {!user ? (
+          <div className="p-4 bg-light rounded-4 text-center border">
+            <p className="mb-0 text-muted small">
+              Inicia sesión para compartir tu opinión.
+            </p>
+          </div>
+        ) : userAlreadyReviewed ? (
+          <div className="p-4 bg-success-subtle rounded-4 text-center border border-success-primary shadow-sm">
+            <p className="mb-0 text-success fw-bold">
+              ¡Gracias por tu reseña! Ya hemos registrado tu opinión sobre este
+              producto.
+            </p>
+            <small className="text-muted">
+              Pronto podrás editarla desde tu perfil.
+            </small>
+          </div>
+        ) : canReview ? (
+          <div className="p-4 bg-white shadow-sm rounded-4 border border-success-subtle">
+            <h5 className="fw-bold mb-3 text-success">
+              ¡Tu opinión nos importa!
+            </h5>
+            <div className="mb-3">
+              {[...Array(5)].map((_, index) => {
+                const val = index + 1;
+                return (
+                  <FaStar
+                    key={index}
+                    size={25}
+                    className="me-1"
+                    style={{ cursor: "pointer", transition: "color 200ms" }}
+                    color={val <= (hover || rating) ? "#ffc107" : "#e4e5e9"}
+                    onClick={() => setRating(val)}
+                    onMouseEnter={() => setHover(val)}
+                    onMouseLeave={() => setHover(0)}
+                  />
+                );
+              })}
+            </div>
+            <form onSubmit={handleSubmit}>
+              <textarea
+                className="form-control mb-3"
+                placeholder="¿Qué te parecieron las Gummies?"
+                rows="3"
+                value={comment}
+                onChange={(e) => setComment(e.target.value)}
+              />
+              <button
+                type="submit"
+                className="btn btn-dark rounded-pill px-4 fw-bold"
+              >
+                Publicar reseña
+              </button>
+            </form>
+          </div>
+        ) : (
+          <div className="p-4 bg-warning-subtle rounded-4 text-center border border-warning-subtle">
+            <p className="mb-0 text-dark small">
+              Solo compradores verificados pueden comentar.
+            </p>
+          </div>
+        )}
+      </div>
+
+      {/* --- LISTADO DE RESEÑAS CON ESTRELLAS Y DISEÑO --- */}
+      <div className="mt-4">
+        <h5 className="fw-bold mb-4">
+          Reseñas de este producto ({productReviews.length})
+        </h5>
+        <div className="row g-3">
+          {productReviews.length > 0 ? (
+            productReviews.map((rev) => (
+              <div key={rev.review_id} className="col-md-6">
+                <div className="card h-100 border-0 shadow-sm rounded-4 p-3 bg-white">
+                  <div className="card-body p-2">
+                    <div className="d-flex justify-content-between align-items-center mb-2">
+                      <span className="fw-bold text-dark small">
+                        {rev.author}
+                      </span>
+                      <span
+                        className="text-muted"
+                        style={{ fontSize: "0.75rem" }}
+                      >
+                        {rev.date}
+                      </span>
+                    </div>
+                    <div className="mb-2">
+                      {[...Array(5)].map((_, i) => (
+                        <FaStar
+                          key={i}
+                          size={14}
+                          color={i < rev.rating ? "#ffc107" : "#e4e5e9"}
+                          className="me-1"
+                        />
                       ))}
                     </div>
-                    <p className="text-muted small mb-0">{r.comment}</p>
+                    <p className="card-text text-secondary small italic mb-0">
+                      "{rev.comment}"
+                    </p>
+                    <div className="mt-2">
+                      <span
+                        className="badge bg-light text-success fw-normal border"
+                        style={{ fontSize: "0.65rem" }}
+                      >
+                        Comprador Verificado ✅
+                      </span>
+                    </div>
                   </div>
-                </Card.Body>
-              </Card>
-            ))}
-          </div>
-        </Col>
-
-        {/* Formulario de "Agrega un testimonio" */}
-        <Col lg={5}>
-          <Card
-            className="border-0 rounded-4 p-3"
-            style={{ backgroundColor: "#f0f4f8" }}
-          >
-            <Card.Body>
-              <h5 className="fw-bold mb-3">Cuéntanos tu experiencia</h5>
-              <Form onSubmit={handleSubmit}>
-                <Form.Group className="mb-3">
-                  <Form.Label className="small fw-bold">
-                    Calificación
-                  </Form.Label>
-                  <Form.Select
-                    size="sm"
-                    value={rating}
-                    onChange={(e) => setRating(Number(e.target.value))}
-                    className="rounded-pill"
-                  >
-                    <option value="5">5 Estrellas - Excelente</option>
-                    <option value="4">4 Estrellas - Muy Bueno</option>
-                    <option value="3">3 Estrellas - Bueno</option>
-                    <option value="2">2 Estrellas - Regular</option>
-                    <option value="1">1 Estrella - Malo</option>
-                  </Form.Select>
-                </Form.Group>
-
-                <Form.Group className="mb-3">
-                  <Form.Control
-                    as="textarea"
-                    rows={3}
-                    placeholder="Escribe tu comentario aquí..."
-                    className="rounded-3 border-0"
-                    value={newComment}
-                    onChange={(e) => setNewComment(e.target.value)}
-                  />
-                </Form.Group>
-
-                <Button
-                  type="submit"
-                  className="w-100 rounded-pill btn-order-now border-0 py-2 d-flex align-items-center justify-content-center gap-2"
-                >
-                  <FaPaperPlane size={14} /> Enviar Reseña
-                </Button>
-              </Form>
-            </Card.Body>
-          </Card>
-        </Col>
-      </Row>
+                </div>
+              </div>
+            ))
+          ) : (
+            <p className=" fst-italic">Aún no hay reseñas. ¡Sé el primero!</p>
+          )}
+        </div>
+      </div>
     </div>
   );
 }

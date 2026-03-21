@@ -1,6 +1,5 @@
 import Hero from "../components/Hero";
 import React from "react";
-import "../assets/css/Home.css";
 import ProductCard from "../components/ProductCard";
 import { ProductContext } from "../context/ProductContext";
 import Categories from "../components/Categories.jsx";
@@ -8,14 +7,14 @@ import Testimonials from "../components/Testimonials.jsx";
 import ImgGallery from "../components/ImageGallery.jsx";
 import Newsletter from "../components/Newsletter.jsx";
 
-const Home = () => {
+export default function Home  () {
   const { products } = React.useContext(ProductContext);
 
   return (
     <div className=" home-container">
       <Hero />
       <section className="container my-5">
-        <h2 className="fw-bold mb-4 text-center" style={{ color: "#4B3F2F" }}>
+        <h2 className="fw-bold mb-4 text-center">
           Productos de Temporada
         </h2>
 
@@ -39,4 +38,3 @@ const Home = () => {
     </div>
   );
 };
-export default Home;

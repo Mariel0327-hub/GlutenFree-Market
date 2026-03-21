@@ -16,7 +16,7 @@ export const productsData = [
     image_url:
       "https://images.unsplash.com/photo-1582050041567-9cfdd330d545?q=80&w=1000&auto=format&fit=crop",
     description: "Gomitas frutales libres de gluten y sellos.",
-    stock: 25,
+    stock: 3,
     category: "Pastas",
   },
   {
@@ -36,7 +36,7 @@ export const productsData = [
     image_url:
       "https://images.unsplash.com/photo-1582050041567-9cfdd330d545?q=80&w=1000&auto=format&fit=crop",
     description: "Gomitas frutales libres de gluten y sellos.",
-    stock: 25,
+    stock: 4,
     category: "Harinas",
   },
   {
@@ -56,7 +56,7 @@ export const productsData = [
     image_url:
       "https://images.unsplash.com/photo-1582050041567-9cfdd330d545?q=80&w=1000&auto=format&fit=crop",
     description: "Gomitas frutales libres de gluten y sellos.",
-    stock: 25,
+    stock:1,
     category: "Café",
   },
   {

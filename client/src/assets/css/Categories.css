@@ -26,7 +26,6 @@
   justify-content: center;
   overflow: hidden; 
   cursor: pointer;
-  /* Sombra más marcada: 0.2 de opacidad y 20px de desenfoque */
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2); 
   
   /* Importante para que el zoom de la imagen no se salga del círculo */
@@ -38,7 +37,6 @@
 
 .category-item:hover .category-img-container {
   transform: translateY(-8px);
-  /* Sombra de "elevación" más fuerte */
   box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
 }
 

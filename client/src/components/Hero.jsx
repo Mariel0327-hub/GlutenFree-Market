@@ -1,7 +1,20 @@
 import React from "react";
 import "../assets/css/Hero.css";
+import { Link } from "react-router-dom";
+import { useContext } from "react";
+import { ProductContext } from "../context/ProductContext";
 
 export default function Hero() {
+  const { setFilters } = useContext(ProductContext);
+
+  const handleViewAll = () => {
+    // Al hacer clic en "Ver Productos", reseteamos los filtros a "all"
+    setFilters((prev) => ({
+      ...prev,
+      category: "all",
+      searchTerm: "",
+    }));
+  };
   return (
     <div className="hero-container shadow-smd-flex align-items-center">
       <div className="container-fluid px-5">
@@ -19,11 +32,13 @@ export default function Hero() {
               certificados. Calidad garantizada para celíacos y amantes de la
               vida saludable.
             </p>
-            <div className="d-flex gap-3">
-              <button className="btn  btn-lg rounded-pill px-5">
-                Ver Productos
-              </button>
-            </div>
+            <Link
+              to="/productos"
+              className="btn btn-warning btn-lg rounded-pill px-5 text-decoration-none fw-bold shadow-sm"
+              onClick={handleViewAll}
+            >
+              Ver Productos
+            </Link>
           </div>
         </div>
       </div>

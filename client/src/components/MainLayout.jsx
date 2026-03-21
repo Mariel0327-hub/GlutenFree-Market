@@ -3,9 +3,10 @@ import { ToastContainer, Toast } from "react-bootstrap";
 import { useContext } from "react";
 import { ProductContext } from "../context/ProductContext";
 import "../assets/css/MainLayout.css";
+import { CartContext } from "../context/CartContext";
 
 export default function MainLayout() {
-  const { showToast, setShowToast, lastAdded } = useContext(ProductContext);
+  const { showToast, setShowToast, lastAdded } = useContext(CartContext);
 
   return (
     <ToastContainer position="bottom-end" className="p-3" style={{ zIndex: 9999 }}>

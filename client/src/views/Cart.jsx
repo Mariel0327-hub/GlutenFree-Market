@@ -6,17 +6,25 @@ import { Link } from "react-router-dom";
 import { Row, Col } from "react-bootstrap";
 import { FaTrashAlt } from "react-icons/fa";
 import "../assets/css/Cart.css";
+import { useNavigate } from "react-router-dom";
+import { UserContext } from "../context/UserContext";
+import { CartContext } from "../context/CartContext";
 
 export default function Cart() {
-  const { cart, removeFromCart, cartTotal, addToCart } =
-    useContext(ProductContext);
+  const { cart, handleDecrease, addToCart, cartTotal } = useContext(CartContext);
 
-  // Función auxiliar para restar (si es 1 y resta, podríamos eliminarlo o dejarlo en 1)
-  const handleDecrease = (item) => {
-    if (item.quantity > 1) {
-      addToCart(item, -1); // Si tu addToCart soporta números negativos
+  const { token } = useContext(UserContext);
+  const navigate = useNavigate();
+
+  const handleCheckoutClick = () => {
+    if (token) {
+      navigate("/checkout");
+    } else {
+      // Lo mandamos al login, pero avisamos que queremos volver a checkout
+      navigate("/login?redirect=checkout");
     }
   };
+
   return (
     <>
       <div className="banner-divider-card"></div>
@@ -74,7 +82,7 @@ export default function Cart() {
                         <Button
                           variant="link"
                           size="sm"
-                          className="text-dark p-0"
+                          className=" p-0 btn-cart-qty bg-light"
                           onClick={() => handleDecrease(item)}
                         >
                           <FaMinus size={10} />
@@ -85,8 +93,8 @@ export default function Cart() {
                         <Button
                           variant="link"
                           size="sm"
-                          className="text-dark p-0"
-                          onClick={() => addToCart(item, 1)}
+                          className=" p-0 btn-cart-qty bg-light"
+                          onClick={() => addToCart(item, 1, false)}
                         >
                           <FaPlus size={10} />
                         </Button>
@@ -99,13 +107,6 @@ export default function Cart() {
                     <h6 className="fw-bold mb-0" style={{ color: "#7c5c4c" }}>
                       ${(item.price * item.quantity).toLocaleString("es-CL")}
                     </h6>
-                    <Button
-                      variant="link"
-                      className="text-danger p-0 mt-0 text-decoration-none"
-                      onClick={() => removeFromCart(item.product_id)}
-                    >
-                      <small style={{ fontSize: "0.7rem" }}>QUITAR</small>
-                    </Button>
                   </div>
                 </div>
               ))}
@@ -137,9 +138,10 @@ export default function Cart() {
                 </div>
                 <Button
                   variant="dark"
-                  className="w-100 py-3 rounded-pill fw-bold shadow-sm"
+                  className="w-100 rounded-pill"
+                  onClick={handleCheckoutClick}
                 >
-                  FINALIZAR COMPRA
+                  Continuar al Pago
                 </Button>
                 <p className="text-center text-muted mt-3 small">
                   🔒 Compra segura y protegida

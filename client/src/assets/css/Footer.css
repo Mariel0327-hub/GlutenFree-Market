@@ -2,7 +2,6 @@
   background-color: #fdfaf8; /* Un fondo crema muy suave para diferenciarlo del body */
   border-top: 1px solid #eee;
   color: #5d4037;
-  border: 1px solid #333;
   display:flex;
   flex-grow: 1;
 }

@@ -1,8 +1,32 @@
 import React from "react";
 import { Container, Row, Col, Form, Button, InputGroup } from "react-bootstrap";
 import "../assets/css/Newsletter.css";
+import { useState } from "react";
+import Swal from "sweetalert2";
 
 export default function Newsletter() {
+  const [email, setEmail] = useState("");
+
+  const handleSubscribe = (e) => {
+    e.preventDefault();
+
+    if (email.trim() === "") {
+      alert("Por favor, ingresa tu correo electrónico.");
+      return;
+    }
+
+    // Lógica de simulación para el Hito 2
+    // alert(`¡Gracias! El correo ${email} ha sido suscrito correctamente.`);
+
+    Swal.fire({
+      title: "¡Suscrito!",
+      text: "Recibirás nuestras novedades muy pronto.",
+      icon: "success",
+      confirmButtonColor: "#5c4033",
+    });
+
+    setEmail(""); // Limpiamos el input
+  };
   return (
     <section className="newsletter-section py-5 my-5">
       <Container>
@@ -22,16 +46,19 @@ export default function Newsletter() {
               actualizaciones de stock.
             </p>
 
-            <Form>
+            <Form onSubmit={handleSubscribe} className="mx-auto">
               <InputGroup className="mb-3 shadow-sm rounded-pill overflow-hidden border">
                 <Form.Control
                   placeholder="Tu correo electrónico"
                   aria-label="Email"
                   className="border-0 px-4 py-3"
                   type="email"
+                  onChange={(e) => setEmail(e.target.value)}
+                  value={email}
                   required
                 />
                 <Button
+                  type="submit"
                   variant="light"
                   className="px-4 fw-bold border-0 rounded-0 rounded-end newsletter-btn"
                 >
