@@ -7,10 +7,13 @@ import "../assets/css/ProductDetail.css";
 import TestimonialsSection from "./TestimonialsSection";
 import { UserContext } from "../context/UserContext";
 import { OrderContext } from "../context/OrderContext";
+import { CartContext } from "../context/CartContext";
+
 
 const ProductDetail = () => {
   const { id } = useParams();
-  const { products, addToCart } = useContext(ProductContext);
+  const { products} = useContext(ProductContext);
+  const { addToCart } = useContext(CartContext);
   const [cantidad, setCantidad] = useState(1);
   const { user } = useContext(UserContext);
   const { userHasPurchasedProduct } = useContext(OrderContext);

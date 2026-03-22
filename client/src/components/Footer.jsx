@@ -53,10 +53,41 @@ export default function Footer() {
               Lunes a viernes de 09:30 a 17:00 hrs
             </p>
             <div className="d-flex gap-3 mt-3">
-              <FaFacebook size={24} className="text-secondary" />
-              <FaLinkedin size={24} className="text-secondary" />
-              <FaTwitter size={24} className="text-secondary" />
-              <FaInstagram size={24} className="text-secondary" />
+              <a
+                href="https://www.facebook.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="social-icon"
+              >
+                <FaFacebook size={24} />
+              </a>
+
+              <a
+                href="https://www.linkedin.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="social-icon"
+              >
+                <FaLinkedin size={24} />
+              </a>
+
+              <a
+                href="https://www.twitter.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="social-icon"
+              >
+                <FaTwitter size={24} />
+              </a>
+
+              <a
+                href="https://www.instagram.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="social-icon"
+              >
+                <FaInstagram size={24} />
+              </a>
             </div>
           </Col>
 

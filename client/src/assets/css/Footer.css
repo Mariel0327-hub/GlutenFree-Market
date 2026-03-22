@@ -48,13 +48,13 @@
 }
 
 .footer-column-nosotros {
-  max-width: 350px; /* Evita que el texto se estire demasiado */
-  text-align: justify; /* Hace que los bordes del texto se vean limpios */
-  line-height: 1.5; /* Mejora la legibilidad */
-  font-size: 0.9rem; /* Un pelo más pequeño ayuda a que no se vea tan pesado */
+  max-width: 350px; 
+  text-align: justify;
+  line-height: 1.5;
+  font-size: 0.9rem; 
 }
 
 .footer-column-nosotros h5 {
-  text-align: left; /* El título siempre alineado a la izquierda */
+  text-align: left;
   margin-bottom: 1.5rem;
 }
