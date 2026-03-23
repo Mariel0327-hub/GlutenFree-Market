@@ -11,6 +11,9 @@ import iconGranos from "../assets/imgs/granos.png";
 import iconCereales from "../assets/imgs/cereal.png";
 import "../assets/css/Categories.css";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { useContext } from "react";
+import { ProductContext } from "../context/ProductContext";
 
 const categoryIcons = {
   1: iconPan,
@@ -26,6 +29,20 @@ const categoryIcons = {
 };
 
 const Categories = () => {
+  const { setFilters } = useContext(ProductContext); //lista actualizada
+  const navigate = useNavigate();
+
+  const handleCategoryClick = (categorySlug) => {
+    // 2. Actualizamos el estado global ANTES de navegar
+    setFilters((prev) => ({
+      ...prev,
+      category: categorySlug, // Ej: "harinas"
+      searchTerm: "", // Limpiamos búsquedas previas por UX
+    }));
+
+    // 3. Navegamos a la vista de productos
+    navigate("/productos");
+  };
   return (
     <section className="container my-5 text-center">
       <h2 className="mb-5 fw-bold titles-font">Categorías Populares</h2>
@@ -33,11 +50,10 @@ const Categories = () => {
       <div className="row g-4 justify-content-center category-grid">
         {categories.map((cat) => (
           <div key={cat.category_id} className="category-col">
-            {/* 1. Envolvemos todo en un Link */}
-            {/* Usamos el nombre de la categoría en minúsculas como slug */}
             <Link
               to={`/productos/${cat.description.toLowerCase()}`}
               className="text-decoration-none text-dark"
+              onClick={() => handleCategoryClick(cat.description.toLowerCase())}
             >
               <div className="category-item">
                 <div className="category-img-container shadow-sm">

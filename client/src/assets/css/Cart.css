@@ -1,11 +1,10 @@
-/* Contenedor principal de la tarjeta más bajo */
+
 .cart-item-card-slim {
   min-height: 90px;
   max-height: 110px;
   transition: all 0.3s ease;
 }
 
-/* Forzamos a la imagen a ser un cuadrado perfecto pequeño */
 .cart-img-container-slim {
   width: 75px;
   height: 75px;
@@ -17,10 +16,9 @@
 .cart-img-container-slim img {
   width: 100%;
   height: 100%;
-  object-fit: cover; /* Esto evita que el pan o los dulces se estiren */
+  object-fit: cover;
 }
 
-/* Selector de cantidad más estético */
 .qty-badge-slim {
   height: 28px;
   font-size: 0.85rem;
@@ -31,10 +29,54 @@
   line-height: 1;
 }
 
-/* Hover suave para que se sienta interactivo */
-/* Si usas la clase del contenedor de Bootstrap arriba */
 .container .cart-item-card-slim:hover {
   background-color: #fdfaf8;
   border-color: #d7ccc8;
   transform: translateX(4px);
+}
+
+/* Estilo base del badge */
+.cart-badge-custom {
+  background-color: #7c5c4c;
+  color: white;
+  font-size: 0.65rem;
+  padding: 0.25em 0.5em;
+  min-width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid white;
+  transition: all 0.3s ease;
+}
+
+/* Animación cuando cambia el totalItems */
+.cart-badge-pop {
+  animation: badge-bounce 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes badge-bounce {
+  0% { transform: translate(50%, -50%) scale(1); }
+  50% { transform: translate(50%, -50%) scale(1.4); }
+  100% { transform: translate(50%, -50%) scale(1); }
+}
+
+.nav-icon-link {
+  color: #3e2723;
+  transition: color 0.3s ease;
+}
+
+.nav-icon-link:hover {
+  color: #7c5c4c;
+}
+
+.btn-cart-qty{
+  transition: color 0.3s ease;
+  border: none;
+  color: #787777;
+}
+
+.btn-cart-qty:hover {
+  color: #7c5c4c;
+  border: none;
 }

@@ -6,10 +6,37 @@ export const ProductContext = createContext();
 
 const ProductProvider = ({ children }) => {
   const [products, setProducts] = useState(productsData);
-  const [cart, setCart] = useState([]);
-  const [showToast, setShowToast] = useState(false);
   const [lastAdded, setLastAdded] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const [favorites, setFavorites] = useState([]);
+
+  const [filters, setFilters] = useState({
+    category: "All",
+    searchTerm: "",
+    sortBy: "default",
+  });
+  // 1. Función para quitar tildes y dejar en minúsculas
+  const normalize = (text) =>
+    text
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "");
+
+  // Lógica de filtrado dinámico
+  const filteredProducts = products
+    .filter((p) => {
+      // Normalizamos ambos para comparar "panaderia" con "panaderia"
+      const categoryProduct = normalize(p.category || "");
+      const categoryFilter = normalize(filters.category);
+
+      return categoryFilter === "all" || categoryProduct === categoryFilter;
+    })
+    .filter((p) => normalize(p.title).includes(normalize(filters.searchTerm)))
+    .sort((a, b) => {
+      if (filters.sortBy === "low") return a.price - b.price;
+      if (filters.sortBy === "high") return b.price - a.price;
+      return 0;
+    });
 
   useEffect(() => {
     const fetchData = async () => {
@@ -25,55 +52,36 @@ const ProductProvider = ({ children }) => {
     fetchData();
   }, []);
 
-  const addToCart = (product, quantity = 1) => {
-    setCart((prevCart) => {
-      // 1. Buscamos si el producto ya está en el carrito
-      const existingProductIndex = prevCart.findIndex(
-        (item) => item.product_id === product.product_id,
-      );
-
-      if (existingProductIndex >= 0) {
-        // 2. Si ya existe, creamos una copia del carrito y actualizamos la cantidad
-        const newCart = [...prevCart];
-        newCart[existingProductIndex] = {
-          ...newCart[existingProductIndex],
-          quantity: newCart[existingProductIndex].quantity + quantity,
-        };
-        return newCart;
-      } else {
-        // 3. Si es nuevo, lo agregamos con la cantidad inicial
-        return [...prevCart, { ...product, quantity }];
-      }
-    });
-    setLastAdded(product);
-    setShowToast(true);
-  };
-
-  // Función para eliminar
-  const removeFromCart = (productId) => {
-    setCart((prevCart) =>
-      prevCart.filter((item) => item.product_id !== productId),
+  // Función para agregar/quitar favoritos
+  const toggleFavorite = (product) => {
+    // 1. Usamos product_id para ser consistentes con tu objeto
+    const isFavorite = favorites.some(
+      (fav) => fav.product_id === product.product_id,
     );
+
+    if (isFavorite) {
+      // 2. Filtramos por product_id
+      setFavorites(
+        favorites.filter((fav) => fav.product_id !== product.product_id),
+      );
+    } else {
+      // 3. Agregamos el producto completo al array
+      setFavorites([...favorites, product]);
+    }
   };
-  // Función para añadir al carrito
-  const cartTotal = cart.reduce(
-    (acc, item) => acc + item.price * item.quantity,
-    0,
-  );
 
   return (
     <ProductContext.Provider
       value={{
         products,
-        cart,
-        addToCart,
-        removeFromCart,
-        cartTotal,
-        showToast,
-        setShowToast,
         lastAdded,
         searchTerm,
         setSearchTerm,
+        favorites,
+        toggleFavorite,
+        filteredProducts,
+        setFilters,
+        filters,
       }}
     >
       {children}

@@ -1,5 +1,8 @@
 import React from "react";
 import { Container, Row, Col } from "react-bootstrap";
+import { Link } from "react-router-dom";
+import { useContext } from "react";
+import { ProductContext } from "../context/ProductContext";
 import "../assets/css/Footer.css";
 import {
   FaFacebook,
@@ -12,15 +15,24 @@ import {
 } from "react-icons/fa";
 
 export default function Footer() {
+  const { setFilters } = useContext(ProductContext);
+
+  const handleFooterCategoryClick = (category) => {
+    setFilters((prev) => ({
+      ...prev,
+      category: category.toLowerCase(), // Normalizamos para evitar el error de tildes
+      searchTerm: "",
+    }));
+  };
   return (
     <footer
       id="footer-section"
       className="py-5 footer-custom pt-5 pb-3 container-footer"
       style={{ backgroundColor: "var(--color-bgFooter)" }}
     >
-      <Container className=" border border-dark p-5 ">
-        <Row className="colum-footer">
-          <Col lg={3} md={6} id="contacto" className="border ">
+      <Container className=" p-5 ">
+        <Row className="row-cols-1 row-cols-md-3">
+          <Col id="contacto">
             <h4 className="titles-font fw-bold mb-4">GlutenFree</h4>
             <h5 className="fw-bold mb-4 footer-title">Contáctanos</h5>
             <ul className="list-unstyled footer-list">
@@ -41,35 +53,92 @@ export default function Footer() {
               Lunes a viernes de 09:30 a 17:00 hrs
             </p>
             <div className="d-flex gap-3 mt-3">
-              <FaFacebook size={24} className="text-secondary" />
-              <FaLinkedin size={24} className="text-secondary" />
-              <FaTwitter size={24} className="text-secondary" />
-              <FaInstagram size={24} className="text-secondary" />
+              <a
+                href="https://www.facebook.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="social-icon"
+              >
+                <FaFacebook size={24} />
+              </a>
+
+              <a
+                href="https://www.linkedin.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="social-icon"
+              >
+                <FaLinkedin size={24} />
+              </a>
+
+              <a
+                href="https://www.twitter.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="social-icon"
+              >
+                <FaTwitter size={24} />
+              </a>
+
+              <a
+                href="https://www.instagram.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="social-icon"
+              >
+                <FaInstagram size={24} />
+              </a>
             </div>
           </Col>
 
           {/* Columna Productos */}
-          <Col lg={2} md={6} className="border">
+          <Col>
             <h5 className="fw-bold mb-4 footer-title">Productos</h5>
             <ul className="list-unstyled footer-list">
               <li>
-                <a href="#!">Panadería</a>
+                <Link
+                  to="/productos/panaderia"
+                  className="text-decoration-none footer-link"
+                  onClick={() => handleFooterCategoryClick("panaderia")}
+                >
+                  Panadería
+                </Link>
               </li>
               <li>
-                <a href="#!">Pastas</a>
+                <Link
+                  to="/productos/pastas"
+                  className="text-decoration-none footer-link"
+                  onClick={() => handleFooterCategoryClick("pastas")}
+                >
+                  Pastas
+                </Link>
               </li>
               <li>
-                <a href="#!">Snacks</a>
+                <Link
+                  to="/productos/snacks"
+                  className="text-decoration-none footer-link"
+                  onClick={() => handleFooterCategoryClick("snacks")}
+                >
+                  Snacks
+                </Link>
               </li>
               <li>
-                <a href="#!">Repostería</a>
+                <Link
+                  to="/productos/reposteria"
+                  className="text-decoration-none footer-link"
+                  onClick={() => handleFooterCategoryClick("reposteria")}
+                >
+                  Repostería
+                </Link>
               </li>
             </ul>
           </Col>
 
           {/* Columna Nosotros (Reseña) */}
-          <Col lg={7} md={12} className="footer-column-nosotros border " id="nosotros">
-            <h5 className="footer-title fw-bold text-start">Nuestra Misión</h5>
+          <Col className="footer-column-nosotros " id="nosotros">
+            <h5 className="footer-title fw-bold text-start">
+              Acerca de nosotros
+            </h5>
             <p className="text-muted">
               En <strong>GlutenFree Market</strong>, creemos que una dieta sin
               gluten no debe ser sinónimo de límites. Nacimos para simplificar

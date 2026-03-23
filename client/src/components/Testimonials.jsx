@@ -1,10 +1,13 @@
 import React from "react";
 import { Container, Row, Col, Card } from "react-bootstrap";
+import { Link } from "react-router-dom";
 import { FaStar, FaQuoteLeft } from "react-icons/fa";
-import { testimonials } from "../data/testimonials";
 import "../assets/css/Testimonials.css";
+import { ReviewContext } from "../context/ReviewContext";
+import { useContext } from "react";
 
 export default function Testimonials() {
+  const { reviews } = useContext(ReviewContext);
   return (
     <section className="testimonials-wrapper py-5">
       <Container>
@@ -15,9 +18,8 @@ export default function Testimonials() {
         </div>
 
         <Row className="g-4">
-          {testimonials.map((t) => (
+          {reviews.slice(0, 3).map((t) => (
             <Col key={t.review_id} xs={12} md={4}>
-              {" "}
               <Card className="h-100 border-0 shadow-elegant rounded-4">
                 <Card.Body className="p-4 d-flex flex-column">
                   <FaQuoteLeft
@@ -48,7 +50,7 @@ export default function Testimonials() {
                         {/* En el futuro será t.customer_name si hacemos un JOIN */}
                       </Card.Title>
                       <div className="text-warning small">
-                        {[...Array(t.rating)].map((_, i) => (
+                        {[...Array(Number(t.rating) || 0)].map((_, i) => (
                           <FaStar key={i} />
                         ))}
                       </div>
@@ -59,6 +61,15 @@ export default function Testimonials() {
             </Col>
           ))}
         </Row>
+        {/* 🆕 BOTÓN PARA VER TODO */}
+        <div className="text-center mt-5">
+          <Link
+            to="/todos-los-testimonios"
+            className="btn btn-outline-dark px-5 rounded-pill fw-bold shadow-sm"
+          >
+            Ver todas las reseñas
+          </Link>
+        </div>
       </Container>
     </section>
   );

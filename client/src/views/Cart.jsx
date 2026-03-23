@@ -1,22 +1,29 @@
 import React, { useContext } from "react";
 import { Container, Table, Button } from "react-bootstrap";
-import { FaTimes, FaPlus, FaMinus } from "react-icons/fa";
-import { ProductContext } from "../context/ProductContext";
+import {FaPlus, FaMinus } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { Row, Col } from "react-bootstrap";
-import { FaTrashAlt } from "react-icons/fa";
 import "../assets/css/Cart.css";
+import { useNavigate } from "react-router-dom";
+import { UserContext } from "../context/UserContext";
+import { CartContext } from "../context/CartContext";
 
 export default function Cart() {
-  const { cart, removeFromCart, cartTotal, addToCart } =
-    useContext(ProductContext);
+  const { cart, handleDecrease, addToCart, cartTotal, shippingCost, FREE_SHIPPING_THRESHOLD } =
+    useContext(CartContext);
 
-  // Función auxiliar para restar (si es 1 y resta, podríamos eliminarlo o dejarlo en 1)
-  const handleDecrease = (item) => {
-    if (item.quantity > 1) {
-      addToCart(item, -1); // Si tu addToCart soporta números negativos
+  const { token } = useContext(UserContext);
+  const navigate = useNavigate();
+
+  const handleCheckoutClick = () => {
+    if (token) {
+      navigate("/checkout");
+    } else {
+      // Lo mandamos al login, pero avisamos que queremos volver a checkout
+      navigate("/login?redirect=checkout");
     }
   };
+
   return (
     <>
       <div className="banner-divider-card"></div>
@@ -74,7 +81,7 @@ export default function Cart() {
                         <Button
                           variant="link"
                           size="sm"
-                          className="text-dark p-0"
+                          className=" p-0 btn-cart-qty bg-light"
                           onClick={() => handleDecrease(item)}
                         >
                           <FaMinus size={10} />
@@ -85,8 +92,8 @@ export default function Cart() {
                         <Button
                           variant="link"
                           size="sm"
-                          className="text-dark p-0"
-                          onClick={() => addToCart(item, 1)}
+                          className=" p-0 btn-cart-qty bg-light"
+                          onClick={() => addToCart(item, 1, false)}
                         >
                           <FaPlus size={10} />
                         </Button>
@@ -99,13 +106,6 @@ export default function Cart() {
                     <h6 className="fw-bold mb-0" style={{ color: "#7c5c4c" }}>
                       ${(item.price * item.quantity).toLocaleString("es-CL")}
                     </h6>
-                    <Button
-                      variant="link"
-                      className="text-danger p-0 mt-0 text-decoration-none"
-                      onClick={() => removeFromCart(item.product_id)}
-                    >
-                      <small style={{ fontSize: "0.7rem" }}>QUITAR</small>
-                    </Button>
                   </div>
                 </div>
               ))}
@@ -113,33 +113,66 @@ export default function Cart() {
 
             {/* Resumen de la compra */}
             <Col lg={4}>
-              <div
-                className="summary-card p-4 bg-white shadow-sm rounded-4 border sticky-top"
-                style={{ top: "100px" }}
-              >
-                <h4 className="fw-bold mb-4 border-bottom pb-2">Resumen</h4>
-                <div className="d-flex justify-content-between mb-3">
-                  <span>
-                    Productos ({cart.reduce((a, b) => a + b.quantity, 0)})
-                  </span>
-                  <span>${cartTotal.toLocaleString("es-CL")}</span>
-                </div>
-                <div className="d-flex justify-content-between mb-4">
-                  <span>Envío</span>
-                  <span className="text-success fw-bold">¡Gratis!</span>
-                </div>
-                <hr />
-                <div className="d-flex justify-content-between align-items-center mb-4 mt-2">
-                  <span className="fs-5 fw-bold">Total a pagar</span>
-                  <span className="fs-4 fw-bold" style={{ color: "#7c5c4c" }}>
+              <div className="cart-summary p-4 border rounded-4 bg-light">
+                <h4 className="titles-font mb-4">Resumen de Compra</h4>
+
+                <div className="d-flex justify-content-between mb-2">
+                  <span>Subtotal:</span>
+                  <span className="fw-bold">
                     ${cartTotal.toLocaleString("es-CL")}
                   </span>
                 </div>
+
+                <div className="d-flex justify-content-between mb-2">
+                  <span>Envío:</span>
+                  {cartTotal >= FREE_SHIPPING_THRESHOLD ? (
+                    <span className="text-success fw-bold">¡GRATIS!</span>
+                  ) : (
+                    <span className="fw-bold">
+                      ${shippingCost.toLocaleString("es-CL")}
+                    </span>
+                  )}
+                </div>
+
+                {/* 🚀 Tip de UX: Barra de progreso para envío gratis */}
+                {cartTotal < FREE_SHIPPING_THRESHOLD && (
+                  <div className="mt-3">
+                    <small className="text-muted d-block mb-1">
+                      ¡Estás a solo{" "}
+                      <strong>
+                        $
+                        {(FREE_SHIPPING_THRESHOLD - cartTotal).toLocaleString(
+                          "es-CL",
+                        )}
+                      </strong>{" "}
+                      del envío gratis!
+                    </small>
+                    <div className="progress" style={{ height: "8px" }}>
+                      <div
+                        className="progress-bar bg-success"
+                        style={{
+                          width: `${(cartTotal / FREE_SHIPPING_THRESHOLD) * 100}%`,
+                        }}
+                      ></div>
+                    </div>
+                  </div>
+                )}
+
+                <hr />
+
+                <div className="d-flex justify-content-between fs-4 fw-bold">
+                  <span>Total:</span>
+                  <span style={{ color: "#3e2723" }}>
+                    ${(cartTotal+ shippingCost).toLocaleString("es-CL")}
+                  </span>
+                </div>
+
                 <Button
                   variant="dark"
-                  className="w-100 py-3 rounded-pill fw-bold shadow-sm"
+                  className="w-100 rounded-pill"
+                  onClick={handleCheckoutClick}
                 >
-                  FINALIZAR COMPRA
+                  Continuar al Pago
                 </Button>
                 <p className="text-center text-muted mt-3 small">
                   🔒 Compra segura y protegida

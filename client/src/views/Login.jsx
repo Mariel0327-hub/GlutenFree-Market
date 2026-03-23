@@ -1,94 +1,146 @@
-import React, { useState } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { Form, Button, Container, Row, Col } from "react-bootstrap";
 import { FcGoogle } from "react-icons/fc";
 import { FaApple, FaFacebook } from "react-icons/fa";
+import { UserContext } from "../context/UserContext";
+import { useNavigate, Link } from "react-router-dom";
+import Swal from "sweetalert2";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const { user, setToken, setUser } = useContext(UserContext);
 
-  const handleSubmit = (e) => {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (user) {
+      navigate("/perfil");
+    }
+  }, [user, navigate]);
+
+  const handleLogin = (e) => {
     e.preventDefault();
-    console.log("Iniciando sesión con:", email, password);
+    
+    if (email === "test@test.com" && password === "Test123456") {
+      const loggedUser = {
+        email: "test@test.com",
+        name: "Usuario Demo",
+        orders: [
+          {
+            order_id: "ORD-001",
+            date: "2026-03-20",
+            total: 25000,
+            status: "Entregado",
+            items: [
+              {
+                product_id: 1,
+                title: "Pan Integral",
+                price: 5000,
+                quantity: 1,
+              },
+              { product_id: 2, title: "Muffin Gf", price: 3500, quantity: 2 },
+            ],
+          },
+          {
+            order_id: "ORD-002",
+            date: "2026-03-22",
+            total: 12500,
+            status: "Por retirar",
+            items: [
+              {
+                product_id: 3,
+                title: "Baguette Masa Madre",
+                price: 12500,
+                quantity: 1,
+              },
+            ],
+          },
+          {
+            order_id: "ORD-003",
+            date: "2026-03-22",
+            total: 18000,
+            status: "En proceso",
+            items: [
+              {
+                product_id: 4,
+                title: "Rollitos de Canela",
+                price: 4500,
+                quantity: 4,
+              },
+            ],
+          },
+        ],
+      };
+      // 1. Guardamos en el Estado Global
+      setUser(loggedUser);
+      setToken("token-demo-xyz-123");
+
+      // 2. Guardamos en LocalStorage para que no se borre al recargar
+      localStorage.setItem("user", JSON.stringify(loggedUser));
+      localStorage.setItem("token", "token-demo-xyz-123");
+
+      const params = new URLSearchParams(window.location.search);
+      const redirect = params.get("redirect") || "/perfil";
+      navigate(redirect);
+    }
   };
 
   return (
-    <Container className="my-5 pt-5">
+    <Container className="my-5 pt-4">
       <Row className="justify-content-center">
-        <Col md={6} lg={5} className="text-center">
-          <h2 className="fw-bold mb-3 titles-font" style={{ color: "#3e2723" }}>
-            Bienvenidos a GlutenFree
+        <Col
+          md={6}
+          lg={5}
+          className="text-center shadow-lg p-5 rounded-4 bg-white"
+        >
+          <h2 className="fw-bold mb-3" style={{ color: "#3e2723" }}>
+            Iniciar Sesión
           </h2>
-          <p className="text-muted mb-5 body-font">
-            Disfruta de los mejores productos sin gluten de nuestra comunidad.
-          </p>
+          <p className="text-muted mb-4">¡Qué bueno verte de nuevo!</p>
 
-          <Form onSubmit={handleSubmit} className="text-start">
-            <Form.Group className="mb-4" controlId="formBasicEmail">
-              <Form.Label className="fw-bold small">E-mail</Form.Label>
+          <Form onSubmit={handleLogin} className="text-start">
+            <Form.Group className="mb-3">
+              <Form.Label className="small fw-bold">E-mail</Form.Label>
               <Form.Control
                 type="email"
-                placeholder="Escribe tu e-mail"
-                className="rounded-3 py-2 border-light-subtle shadow-sm"
+                placeholder="correo@ejemplo.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                required
               />
             </Form.Group>
 
-            <Form.Group className="mb-2" controlId="formBasicPassword">
-              <Form.Label className="fw-bold small">Contraseña</Form.Label>
+            <Form.Group className="mb-4">
+              <Form.Label className="small fw-bold">Contraseña</Form.Label>
               <Form.Control
                 type="password"
-                placeholder="Escribe tu contraseña"
-                className="rounded-3 py-2 border-light-subtle shadow-sm"
+                placeholder="Tu contraseña"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                required
               />
             </Form.Group>
 
-            <div className="text-end mb-4">
-              <a href="#!" className="text-muted small text-decoration-none">
-                ¿Olvidaste mi contraseña?
-              </a>
-            </div>
-
             <Button
-              variant="primary"
               type="submit"
-              className="w-100 py-2 mb-4 rounded-pill shadow-sm btn-login"
+              variant="primary"
+              className="w-100 rounded-pill py-2 mb-3"
+              style={{ backgroundColor: "#7c5c4c", border: "none" }}
             >
-              Iniciar sesión
+              Entrar
             </Button>
           </Form>
 
-          <div className="position-relative my-4">
-            <hr />
-            <span className="position-absolute top-50 start-50 translate-middle bg-white px-3 text-muted small">
-              Hacerlo a través de otras cuentas
-            </span>
-          </div>
-
-          <div className="d-flex justify-content-center gap-3 mb-5">
-            <button className="social-btn">
-              <FcGoogle size={24} />
-            </button>
-            <button className="social-btn">
-              <FaApple size={24} />
-            </button>
-            <button className="social-btn">
-              <FaFacebook size={24} color="#1877F2" />
-            </button>
-          </div>
-
-          <p className="text-muted">
+          <p className="small text-muted mt-3">
             ¿No tienes cuenta?{" "}
-            <a
-              href="/registro"
-              className="fw-bold text-decoration-none"
+            <Link
+              to="/register"
+              className="text-decoration-none fw-bold"
               style={{ color: "#7c5c4c" }}
             >
-              Regístrate
-            </a>
+              Regístrate aquí
+            </Link>
           </p>
         </Col>
       </Row>

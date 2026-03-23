@@ -1,16 +1,39 @@
 import { Card, CardBody, Button } from "react-bootstrap";
-import { FaStar, FaHeart } from "react-icons/fa";
+import { FaStar, FaHeart, FaRegHeart } from "react-icons/fa";
 import "../assets/css/ProductCard.css";
 import { Link } from "react-router-dom";
-import { useContext } from "react";
+import { useContext, navigate } from "react";
 import { ProductContext } from "../context/ProductContext";
+import { UserContext } from "../context/UserContext";
+import Swal from "sweetalert2";
+import { CartContext } from "../context/CartContext";
 
 const ProductCard = ({ product }) => {
-
-  const { addToCart } = useContext(ProductContext);
-
+  const { favorites, toggleFavorite } = useContext(ProductContext);
+  const isFav = favorites.some((fav) => fav.product_id === product.product_id);
+  const { token } = useContext(UserContext);
+  const { addToCart } = useContext(CartContext);
 
   if (!product) return null;
+
+  const handleFavoriteClick = () => {
+    if (!token) {
+      Swal.fire({
+        title: "¡Vaya!",
+        text: "Debes iniciar sesión para guardar tus favoritos",
+        icon: "info",
+        confirmButtonText: "Ir al Login",
+        confirmButtonColor: "#3e2723",
+        showCancelButton: true,
+      }).then((result) => {
+        if (result.isConfirmed) {
+          navigate("/login");
+        }
+      });
+      return;
+    }
+    toggleFavorite(product);
+  };
 
   return (
     <Card className="product-card h-100 shadow-sm border-0">
@@ -35,13 +58,27 @@ const ProductCard = ({ product }) => {
               3 Opiniones
             </span>
           </div>
-          <FaHeart className="heart-icon fs-5" style={{ cursor: "pointer" }} />
+          <FaHeart
+            className="heart-icon fs-5"
+            style={{
+              cursor: "pointer",
+              color: isFav ? "#e63946" : "#ced4da", // Rojo si es fav, gris si no
+              transition: "color 0.3s ease",
+            }}
+            onClick={handleFavoriteClick}
+          />
         </div>
         <div className="text-center flex-grow-1">
-          {" "}
+          <p className="text-muted mb-3 text-start" style={{ fontSize: "0.8rem" }}>
+            {product.category
+              ? product.category.charAt(0).toUpperCase() +
+                product.category.slice(1)
+              : ""}
+          </p>
           <Card.Title className="card-title fw-bold mb-1 fs-6">
             {product.title}
           </Card.Title>
+
           <Card.Text
             className="text-muted small mb-3"
             style={{ fontSize: "0.8rem" }}
@@ -55,7 +92,7 @@ const ProductCard = ({ product }) => {
         <div className="d-flex justify-content-between align-items-center mt-3 px-1">
           <Button
             className="btn-add rounded-pill px-4"
-            onClick={() => addToCart(product, 1)}
+            onClick={() => addToCart(product)}
           >
             Añadir
           </Button>
