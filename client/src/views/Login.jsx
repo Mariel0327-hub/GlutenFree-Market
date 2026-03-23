@@ -9,64 +9,82 @@ import Swal from "sweetalert2";
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { user, login } = useContext(UserContext);
+  const { user, setToken, setUser } = useContext(UserContext);
 
   const navigate = useNavigate();
 
-
-const handleSubmit = (e) => {
-    e.preventDefault();
-
-    const passwordRegex = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
-
-    if (!email || !password) {
-      return Swal.fire("Campos vacíos", "Completa todos los datos.", "warning");
-    }
-
-    if (!passwordRegex.test(password)) {
-      return Swal.fire({
-        icon: "error",
-        title: "Contraseña poco segura",
-        html: `
-          <div class="text-start small">
-            <p>La contraseña debe cumplir con:</p>
-            <ul>
-              <li>Mínimo 8 caracteres</li>
-              <li>Al menos una letra mayúscula</li>
-              <li>Al menos un número</li>
-            </ul>
-          </div>
-        `,
-      });
-    }
-
-    //  Aqui realice la conexion con el contexto
-    // Simule que el backend me devuelve los datos del usuario basándose en lo que escribió
-    const loggedUser = {
-      email: email, // Traemos el email del estado local
-      name: "Usuario Demo", // Por ahora estático hasta que lo conecte la DB
-      avatar_url: "https://via.placeholder.com/150", // Un placeholder por defecto
-      role: "user"
-    };
-
-    // Enviamos los datos al Contexto (UserContext)
-    login(loggedUser); 
-
-    Swal.fire({
-      icon: "success",
-      title: "¡Bienvenido!",
-      text: "Has iniciado sesión correctamente.",
-      timer: 2000,
-      showConfirmButton: false
-    });
-    
-    
-  };
-    useEffect(() => {
+  useEffect(() => {
     if (user) {
       navigate("/perfil");
     }
   }, [user, navigate]);
+
+  const handleLogin = (e) => {
+    e.preventDefault();
+    
+    if (email === "test@test.com" && password === "Test123456") {
+      const loggedUser = {
+        email: "test@test.com",
+        name: "Usuario Demo",
+        orders: [
+          {
+            order_id: "ORD-001",
+            date: "2026-03-20",
+            total: 25000,
+            status: "Entregado",
+            items: [
+              {
+                product_id: 1,
+                title: "Pan Integral",
+                price: 5000,
+                quantity: 1,
+              },
+              { product_id: 2, title: "Muffin Gf", price: 3500, quantity: 2 },
+            ],
+          },
+          {
+            order_id: "ORD-002",
+            date: "2026-03-22",
+            total: 12500,
+            status: "Por retirar",
+            items: [
+              {
+                product_id: 3,
+                title: "Baguette Masa Madre",
+                price: 12500,
+                quantity: 1,
+              },
+            ],
+          },
+          {
+            order_id: "ORD-003",
+            date: "2026-03-22",
+            total: 18000,
+            status: "En proceso",
+            items: [
+              {
+                product_id: 4,
+                title: "Rollitos de Canela",
+                price: 4500,
+                quantity: 4,
+              },
+            ],
+          },
+        ],
+      };
+      // 1. Guardamos en el Estado Global
+      setUser(loggedUser);
+      setToken("token-demo-xyz-123");
+
+      // 2. Guardamos en LocalStorage para que no se borre al recargar
+      localStorage.setItem("user", JSON.stringify(loggedUser));
+      localStorage.setItem("token", "token-demo-xyz-123");
+
+      const params = new URLSearchParams(window.location.search);
+      const redirect = params.get("redirect") || "/perfil";
+      navigate(redirect);
+    }
+  };
 
   return (
     <Container className="my-5 pt-4">
@@ -81,7 +99,7 @@ const handleSubmit = (e) => {
           </h2>
           <p className="text-muted mb-4">¡Qué bueno verte de nuevo!</p>
 
-          <Form onSubmit={handleSubmit} className="text-start">
+          <Form onSubmit={handleLogin} className="text-start">
             <Form.Group className="mb-3">
               <Form.Label className="small fw-bold">E-mail</Form.Label>
               <Form.Control

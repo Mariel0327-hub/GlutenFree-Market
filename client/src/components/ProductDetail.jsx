@@ -6,17 +6,15 @@ import { FaStar, FaMinus, FaPlus } from "react-icons/fa";
 import "../assets/css/ProductDetail.css";
 import TestimonialsSection from "./TestimonialsSection";
 import { UserContext } from "../context/UserContext";
-import { OrderContext } from "../context/OrderContext";
+//import { OrderContext } from "../context/OrderContext";
 import { CartContext } from "../context/CartContext";
-
 
 const ProductDetail = () => {
   const { id } = useParams();
-  const { products} = useContext(ProductContext);
+  const { products } = useContext(ProductContext);
   const { addToCart } = useContext(CartContext);
   const [cantidad, setCantidad] = useState(1);
   const { user } = useContext(UserContext);
-  const { userHasPurchasedProduct } = useContext(OrderContext);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -46,7 +44,15 @@ const ProductDetail = () => {
   }
 
   // 3. Si llegamos aquí, ES SEGURO que el producto existe
-  const canReview = user && userHasPurchasedProduct(Number(product.product_id));
+  const canReview =
+    user &&
+    user.orders?.some(
+      (order) =>
+        order.status === "Entregado" &&
+        order.items?.some(
+          (item) => String(item.product_id) === String(product?.product_id),
+        ),
+    );
 
   return (
     <div className="product-detail-container">
@@ -73,9 +79,7 @@ const ProductDetail = () => {
               <div className="text-warning">
                 <FaStar /> <FaStar /> <FaStar /> <FaStar /> <FaStar />
               </div>
-              <span className="text-muted small">
-                (Reseñas)
-              </span>
+              <span className="text-muted small">(Reseñas)</span>
             </div>
 
             <h2 className="fw-bold mb-4">
@@ -123,7 +127,10 @@ const ProductDetail = () => {
             </div>
 
             <div className="d-flex gap-3">
-              <Button className="btn-order-now px-5 py-2 rounded-pill fw-bold" onClick={() => navigate('/checkout')}>
+              <Button
+                className="btn-order-now px-5 py-2 rounded-pill fw-bold"
+                onClick={() => navigate("/checkout")}
+              >
                 Ordenar ahora
               </Button>
               <Button

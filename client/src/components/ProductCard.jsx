@@ -3,9 +3,9 @@ import { FaStar, FaHeart, FaRegHeart } from "react-icons/fa";
 import "../assets/css/ProductCard.css";
 import { Link } from "react-router-dom";
 import { useContext, navigate } from "react";
-import { ProductContext} from "../context/ProductContext";
+import { ProductContext } from "../context/ProductContext";
 import { UserContext } from "../context/UserContext";
-import Swal from 'sweetalert2';
+import Swal from "sweetalert2";
 import { CartContext } from "../context/CartContext";
 
 const ProductCard = ({ product }) => {
@@ -34,6 +34,7 @@ const ProductCard = ({ product }) => {
     }
     toggleFavorite(product);
   };
+
   return (
     <Card className="product-card h-100 shadow-sm border-0">
       <Link
@@ -68,10 +69,16 @@ const ProductCard = ({ product }) => {
           />
         </div>
         <div className="text-center flex-grow-1">
-          {" "}
+          <p className="text-muted mb-3 text-start" style={{ fontSize: "0.8rem" }}>
+            {product.category
+              ? product.category.charAt(0).toUpperCase() +
+                product.category.slice(1)
+              : ""}
+          </p>
           <Card.Title className="card-title fw-bold mb-1 fs-6">
             {product.title}
           </Card.Title>
+
           <Card.Text
             className="text-muted small mb-3"
             style={{ fontSize: "0.8rem" }}

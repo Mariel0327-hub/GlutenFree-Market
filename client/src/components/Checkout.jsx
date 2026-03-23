@@ -3,13 +3,16 @@ import { Container, Row, Col, Card, Button, Form } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { CartContext } from "../context/CartContext";
 import { OrderContext } from "../context/OrderContext";
+import { UserContext } from "../context/UserContext";
+import Swal from "sweetalert2";
 
 export default function Checkout() {
   const { cart, cartTotal, clearCart } = useContext(CartContext);
   const navigate = useNavigate();
-  const { addOrder } = useContext(OrderContext);
+ // const { addOrder } = useContext(OrderContext);
+  const { user, setUser } = useContext(UserContext);
 
-  const handlePayment = () => {
+  /*const handlePayment = () => {
     // 1. Creamos el objeto de la orden con los datos actuales
     const newOrder = {
       order_id: Math.floor(Math.random() * 10000), // ID aleatorio para el simulacro
@@ -26,7 +29,7 @@ export default function Checkout() {
     // 3. Limpiamos el carrito y navegamos
     clearCart();
     navigate("/success");
-  };
+  };*/
   const [formData, setFormData] = useState({
     nombre: "",
     telefono: "",
@@ -64,6 +67,35 @@ export default function Checkout() {
   // 3. El formulario es inválido si el carrito está vacío O la info está incompleta
   const isFormInvalid = isCartEmpty || isInfoIncomplete;
 
+  const handleCheckout = () => {
+    // 1. Creamos el objeto de la nueva orden
+    const newOrder = {
+      order_id: `ORD-00${(user?.orders?.length || 0) + 1}`, // Genera ORD-004, ORD-005...
+      date: new Date().toISOString().split("T")[0], // Fecha de hoy: 2026-03-22
+      total: cartTotal,
+      status: "En proceso", // Estado inicial
+      items: cart.map((item) => ({
+        product_id: item.product_id,
+        title: item.title,
+        price: item.price,
+        quantity: item.quantity,
+      })),
+    };
+
+    // 2. Actualizamos al usuario con su nueva orden
+    const updatedUser = {
+      ...user,
+      orders: [newOrder, ...(user?.orders || [])], // Ponemos la nueva orden al principio
+    };
+
+    setUser(updatedUser);
+    localStorage.setItem("user", JSON.stringify(updatedUser)); // Persistencia
+
+    // 3. Limpiamos carrito y feedback
+    clearCart();
+    Swal.fire("¡Compra Exitosa!", "Tu pedido está en camino", "success");
+    navigate("/mis-pedidos");
+  };
   return (
     <Container className="py-5">
       <Row>
@@ -174,7 +206,7 @@ export default function Checkout() {
               variant="dark"
               // 🎨 Cambiamos dinámicamente el color según el error
               className={`btn btn-lg w-100 rounded-pill ${isFormInvalid ? "btn-secondary" : "btn-success"}`}
-              onClick={handlePayment}
+              onClick={ handleCheckout}
               disabled={isFormInvalid}
             >
               {isCartEmpty

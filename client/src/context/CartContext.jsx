@@ -44,10 +44,16 @@ export const CartProvider = ({ children }) => {
     });
   };
 
-  const cartTotal = cart.reduce(
+  
+
+// Sumamos el precio * cantidad de cada producto
+const cartTotal = cart.reduce(
     (acc, item) => acc + item.price * item.quantity,
     0,
   );
+// Definimos el umbral para que se active el envio gratis si el usuario tiene una compra con esta cantidad
+const FREE_SHIPPING_THRESHOLD = 20000;
+const shippingCost = cartTotal >= FREE_SHIPPING_THRESHOLD ? 0 : 5000;
 
   return (
     <CartContext.Provider
@@ -60,6 +66,8 @@ export const CartProvider = ({ children }) => {
         showToast,
         setShowToast,
         lastAdded,
+        shippingCost,
+        FREE_SHIPPING_THRESHOLD
       }}
     >
       {children}

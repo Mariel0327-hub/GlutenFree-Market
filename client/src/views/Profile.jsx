@@ -2,13 +2,12 @@ import React, { useContext, useState } from "react";
 import { Container, Card, Button, Row, Col, Form } from "react-bootstrap";
 import { UserContext } from "../context/UserContext";
 import { useNavigate } from "react-router-dom";
+//import { getInitials } from "../utils/helpers";
 
 import {
-  FaUserCircle,
   FaEnvelope,
   FaMapMarkerAlt,
   FaUserEdit,
-  FaCalendarAlt,
   FaCommentDots,
 } from "react-icons/fa";
 import Swal from "sweetalert2";
@@ -36,7 +35,6 @@ export default function Profile() {
 
   const handleSave = async () => {
     try {
-      // 🚀 Llamamos a la función del contexto que creamos
       const result = await updateUser(formData);
 
       if (result.success) {
@@ -53,7 +51,6 @@ export default function Profile() {
       Swal.fire("Error", "No se pudieron actualizar los datos", error);
     }
   };
-
   return (
     <Container className="py-5 d-flex justify-content-center">
       <Card
@@ -61,21 +58,32 @@ export default function Profile() {
         style={{ maxWidth: "550px", width: "100%" }}
       >
         <Card.Body>
-          {user?.avatar_url ? (
-            <img
-              src={user.avatar_url}
-              alt="Avatar"
-              className="rounded-circle shadow-sm border"
-              style={{ width: "100px", height: "100px", objectFit: "cover" }}
-              onError={(e) => {
-                e.target.src = "https://via.placeholder.com/100";
-              }} // Fallback por si el link falla
-            />
-          ) : (
-            <FaUserCircle size={80} className="text-secondary opacity-50" />
-          )}
+          <div
+            className="avatar-circle mx-auto mb-3 bg-dark text-white d-flex align-items-center justify-content-center overflow-hidden"
+            style={{
+              width: "100px",
+              height: "100px",
+              borderRadius: "50%",
+              fontSize: "32px",
+            }}
+          >
+            {user.avatar_url ? (
+              // ✅ Si hay URL, mostramos la imagen
+              <img
+                src={user.avatar_url}
+                alt={user.name}
+                className="w-100 h-100 object-fit-cover"
+              />
+            ) : (
+              // Fallback: Si no hay URL, mostramos las iniciales
+              user.name
+                .split(" ")
+                .map((n) => n[0])
+                .join("")
+            )}
+          </div>
 
-          <h2 className="fw-bold mt-3" style={{ color: "#3e2723" }}>
+          <h2 className="fw-bold mt-3 text-center" style={{ color: "#3e2723" }}>
             {isEditing ? "Editar Perfil" : "Mi Perfil"}
           </h2>
           <Form>

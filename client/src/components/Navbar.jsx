@@ -13,6 +13,7 @@ import { Form } from "react-bootstrap";
 import { UserContext } from "../context/UserContext";
 import { useNavigate } from "react-router-dom";
 import { CartContext } from "../context/CartContext";
+import { getInitials } from "../utils/helpers";
 
 const Navbar = () => {
   const { cart } = useContext(CartContext);
@@ -37,7 +38,8 @@ const Navbar = () => {
       setIsNavExpanded(false);
     }
   };
-
+  
+  console.log("Datos del usuario en Navbar:", user);
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-white shadow-sm py-3 sticky-top">
       <div className="container">
@@ -137,25 +139,43 @@ const Navbar = () => {
                 {/* Perfil */}
                 <NavLink
                   to="/perfil"
-                  className="nav-icon-link text-decoration-none d-flex align-items-center gap-1"
+                  className="nav-link d-flex align-items-center gap-2 py-0"
                 >
-                  {user?.avatar_url ? (
+                  {/* Lógica Condicional: ¿Hay avatar real o usamos iniciales? */}
+                  {user?.avatar_url &&
+                  !user.avatar_url.includes("placeholder") ? (
                     <img
                       src={user.avatar_url}
-                      className="rounded-circle"
+                      alt="Profile"
+                      className="rounded-circle border"
                       style={{
-                        width: "30px",
-                        height: "30px",
+                        width: "35px",
+                        height: "35px",
                         objectFit: "cover",
                       }}
-                      alt="User"
                     />
                   ) : (
-                    <FaUserCircle size={24} />
+                    <div
+                      className="icon-logo-nav rounded-circle d-flex align-items-center justify-content-center fw-bold text-white shadow-sm"
+                    >
+                      {getInitials(user?.name)}
+                    </div>
                   )}
-                  <span className="d-none d-xl-inline small fw-bold">
-                    {user ? `Hola, ${user.name.split(" ")[0]}` : "Mi Perfil"}
-                  </span>
+
+                  <div
+                    className="d-none d-md-block text-start"
+                    style={{ lineHeight: "1" }}
+                  >
+                    <span
+                      className="d-block small text-muted"
+                      style={{ fontSize: "0.65rem" }}
+                    >
+                      Bienvenido
+                    </span>
+                    <span className="fw-bold" style={{ fontSize: "0.9rem" }}>
+                      {user?.name ? user.name.split(" ")[0] : "Invitado"}
+                    </span>
+                  </div>
                 </NavLink>
 
                 {/* Botón Salir */}

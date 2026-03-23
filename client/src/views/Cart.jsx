@@ -1,17 +1,16 @@
 import React, { useContext } from "react";
 import { Container, Table, Button } from "react-bootstrap";
-import { FaTimes, FaPlus, FaMinus } from "react-icons/fa";
-import { ProductContext } from "../context/ProductContext";
+import {FaPlus, FaMinus } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { Row, Col } from "react-bootstrap";
-import { FaTrashAlt } from "react-icons/fa";
 import "../assets/css/Cart.css";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../context/UserContext";
 import { CartContext } from "../context/CartContext";
 
 export default function Cart() {
-  const { cart, handleDecrease, addToCart, cartTotal } = useContext(CartContext);
+  const { cart, handleDecrease, addToCart, cartTotal, shippingCost, FREE_SHIPPING_THRESHOLD } =
+    useContext(CartContext);
 
   const { token } = useContext(UserContext);
   const navigate = useNavigate();
@@ -114,28 +113,60 @@ export default function Cart() {
 
             {/* Resumen de la compra */}
             <Col lg={4}>
-              <div
-                className="summary-card p-4 bg-white shadow-sm rounded-4 border sticky-top"
-                style={{ top: "100px" }}
-              >
-                <h4 className="fw-bold mb-4 border-bottom pb-2">Resumen</h4>
-                <div className="d-flex justify-content-between mb-3">
-                  <span>
-                    Productos ({cart.reduce((a, b) => a + b.quantity, 0)})
-                  </span>
-                  <span>${cartTotal.toLocaleString("es-CL")}</span>
-                </div>
-                <div className="d-flex justify-content-between mb-4">
-                  <span>Envío</span>
-                  <span className="text-success fw-bold">¡Gratis!</span>
-                </div>
-                <hr />
-                <div className="d-flex justify-content-between align-items-center mb-4 mt-2">
-                  <span className="fs-5 fw-bold">Total a pagar</span>
-                  <span className="fs-4 fw-bold" style={{ color: "#7c5c4c" }}>
+              <div className="cart-summary p-4 border rounded-4 bg-light">
+                <h4 className="titles-font mb-4">Resumen de Compra</h4>
+
+                <div className="d-flex justify-content-between mb-2">
+                  <span>Subtotal:</span>
+                  <span className="fw-bold">
                     ${cartTotal.toLocaleString("es-CL")}
                   </span>
                 </div>
+
+                <div className="d-flex justify-content-between mb-2">
+                  <span>Envío:</span>
+                  {cartTotal >= FREE_SHIPPING_THRESHOLD ? (
+                    <span className="text-success fw-bold">¡GRATIS!</span>
+                  ) : (
+                    <span className="fw-bold">
+                      ${shippingCost.toLocaleString("es-CL")}
+                    </span>
+                  )}
+                </div>
+
+                {/* 🚀 Tip de UX: Barra de progreso para envío gratis */}
+                {cartTotal < FREE_SHIPPING_THRESHOLD && (
+                  <div className="mt-3">
+                    <small className="text-muted d-block mb-1">
+                      ¡Estás a solo{" "}
+                      <strong>
+                        $
+                        {(FREE_SHIPPING_THRESHOLD - cartTotal).toLocaleString(
+                          "es-CL",
+                        )}
+                      </strong>{" "}
+                      del envío gratis!
+                    </small>
+                    <div className="progress" style={{ height: "8px" }}>
+                      <div
+                        className="progress-bar bg-success"
+                        style={{
+                          width: `${(cartTotal / FREE_SHIPPING_THRESHOLD) * 100}%`,
+                        }}
+                      ></div>
+                    </div>
+                  </div>
+                )}
+
+                <hr />
+
+                <div className="d-flex justify-content-between fs-4 fw-bold">
+                  <span>Total:</span>
+                  <span style={{ color: "#3e2723" }}>
+                    ${(cartTotal+ shippingCost).toLocaleString("es-CL")}
+                  </span>
+                </div>
+
                 <Button
                   variant="dark"
                   className="w-100 rounded-pill"
