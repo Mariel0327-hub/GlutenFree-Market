@@ -2,15 +2,17 @@ import { pool } from "../db/db.js";
 import pkg from 'pg-format';
 
 //ver todos los productos
-const findAllProducts = async() =>{
+const findAllProducts = async(id) =>{
 const query = "SELECT * FROM product"
 const {rows} = await pool.query(query)
 return rows;
 }
 
 //ver productos según id de usuario
-const findProductByUSer = async()=>{
-
+const findProductByUSer = async(id)=>{
+const query = "SELECT * FROM product where customer_id = $1"
+const {rows} = await pool.query(query,[id])
+return rows[0];
 }
 
 //ver productos según
@@ -69,7 +71,7 @@ const {rows} = await pool.query(query,[id])
 return rows[0]
 }
 
-/* // RESTORE (soft delete)
+/* // RESTORE (soft delete reversed)
 const restoreProduct = async(id)=>{
 const query = "UPDATE product set is_active = true WHERE product_id = $1"
 const {rows} = await pool.query(query,[id])
