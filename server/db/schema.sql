@@ -10,7 +10,7 @@ DROP DATABASE gluten_free_market;
 c gluten_free_market;
 
 -- PK id shape <entity>_id
--- FK id shape id_<entity>
+-- FK id shape id_<entity>3
 
 --!!! CAMBIOS----------------
 -- TABLE ORDER -> ORDER_TOTAL
