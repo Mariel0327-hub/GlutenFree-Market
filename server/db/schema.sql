@@ -1,4 +1,4 @@
--- Active: 1769730037726@@127.0.0.1@5432@gluten_free_market
+
 CREATE DATABASE gluten_free_market;
 
 --drop databse in case of need:
