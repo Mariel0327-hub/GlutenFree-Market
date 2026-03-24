@@ -5,7 +5,7 @@ const productRouter = Router()
 
 productRouter.get('/', productController.readAllProducts )
 productRouter.get('/:id', productController.readProductsById )
-productRouter.get('/products/user/:id', productController.readProductsByUserId )   ////////////revisar esta ruta, como implementar
+productRouter.get('/user/:id', productController.readProductsByUserId )   ////////////revisar esta ruta, como implementar
 productRouter.post('/', productController.createNewProduct )
 productRouter.put('/:id', productController.updateNewProduct)
 productRouter.delete('/:id', productController.deleteNewProduct)

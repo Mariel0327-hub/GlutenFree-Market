@@ -8,7 +8,7 @@ const {rows} = await pool.query(query)
 return rows;
 }
 
-//ver productos según id de usuario
+//ver productos según id de usuario  
 const findProductByUSer = async(id)=>{
 const query = "SELECT * FROM product where customer_id = $1"
 const {rows} = await pool.query(query,[id])
@@ -22,7 +22,7 @@ const {rows} = await pool.query(query,[id])
 return rows[0];
 }
 
-// crear producto
+// crear producto  //ADMIN 
 const createProduct = async({
     title,
     product_description,
@@ -30,20 +30,20 @@ const createProduct = async({
     image_url,
     stock,
     sku,
-    category_id
+    category
 })=>{
 
-const product_id = `cust-${Math.floor(Math.random() * 3000)}`
+const product_id = `prod-${Math.floor(Math.random() * 3000)}`
 const is_active = true
 const created_at = new Date()
 const updated_at = null 
-const query = "INSERT INTO product values($1, $2, $3, $4,$5, $6, $7,$8, $9, $10, $11)"
-const values = [product_id,title,product_description,price,image_url,stock,category_id,sku,is_active, created_at, updated_at]
+const query = "INSERT INTO product (product_id, title, product_description, price, image_url,stock, category, sku, is_active, created_at, updated_at) values($1, $2, $3, $4,$5, $6, $7,$8, $9, $10, $11) RETURNING *"
+const values = [product_id,title,product_description,price,image_url,stock,category,sku,is_active, created_at, updated_at]
 const {rows} = await pool.query(query, values)
 return rows
 }
 
-// crear producto
+// crear producto //ADMIN 
 const updateProduct = async({
     id,
     title,
@@ -64,14 +64,14 @@ return rows[0]
 
 }
 
-// DELETE (soft delete)
+// DELETE (soft delete)  //ADMIN
 const deleteProduct = async(id)=>{
 const query = "UPDATE product set is_active = false WHERE product_id = $1"
 const {rows} = await pool.query(query,[id])
 return rows[0]
 }
 
-/* // RESTORE (soft delete reversed)
+/* // RESTORE (soft delete reversed) //ADMIN
 const restoreProduct = async(id)=>{
 const query = "UPDATE product set is_active = true WHERE product_id = $1"
 const {rows} = await pool.query(query,[id])

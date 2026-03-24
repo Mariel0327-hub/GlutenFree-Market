@@ -7,6 +7,7 @@ import orderRouter from './routes/order.routes.js'
 import productRouter from './routes/product.routes.js'
 import reviewRouter from './routes/reviews.routes.js'
 import { getDbConnection } from './db/db.js'
+import { getDbConnectionNeon } from './db/db_neon.js'
 
 
 dotenv.config()
@@ -27,6 +28,7 @@ app.use('/review', reviewRouter)
 
 app.listen(PORT, async ()=>{
     console.log(`Server running on http://localhost:${PORT}`)
-    await getDbConnection()
+    //await getDbConnection()
+    await getDbConnectionNeon()
 })
 

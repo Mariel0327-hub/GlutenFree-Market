@@ -4,12 +4,12 @@ import reviewController from '../controllers/reviews.controllers.js'
 const reviewRouter = Router()
 
 reviewRouter.get('/', reviewController.readAllReviews )
-reviewRouter.get('/reviews/users/:id', reviewController.readReviewsByUser )
-reviewRouter.get('/reviews/product/:id', reviewController.readReviewsByProduct )
-reviewRouter.get('/reviews/:id', reviewController.readReviewsById )
-reviewRouter.post('/reviews', reviewController.createNewReview)
-reviewRouter.put('/reviews/:id', reviewController.updateRegisteredReview)
-reviewRouter.delete('/reviews/:id', reviewController.deleteRegisteredReview)
+reviewRouter.get('/customer/:id', reviewController.readReviewsByUser )
+reviewRouter.get('/product/:id', reviewController.readReviewsByProduct )
+reviewRouter.get('/:id', reviewController.readReviewsById )
+reviewRouter.post('/', reviewController.createNewReview)
+reviewRouter.put('/:id', reviewController.updateRegisteredReview)
+reviewRouter.delete('/:id', reviewController.deleteRegisteredReview)
 
 
 export default reviewRouter

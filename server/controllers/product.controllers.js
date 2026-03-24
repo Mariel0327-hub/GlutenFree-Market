@@ -7,14 +7,14 @@ const readAllProducts = async (req, res) => {
     const result = await productModel.findAllProducts();
     return res.status(200).json(result);
   } catch (error) {
-    console.error();
+    console.error(error);
     return res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
 const readProductsById = async (req, res) => {
+  const { id } = req.params;
   try {
-    const { id } = req.params;
     const result = await productModel.findProductById(id);
     return res.status(200).json(result);
   } catch (error) {
@@ -23,9 +23,10 @@ const readProductsById = async (req, res) => {
   }
 };
 
-const readProductsByUserId = async () => {
+const readProductsByUserId = async (req, res) => {
+  const { id } = req.params;
   try {
-    await productModel.findProductByUSer();
+    await productModel.findProductByUSer(id);
   } catch (error) {
     return res.status(500).json({ message: "Internal Server Error" });
   }
@@ -39,50 +40,47 @@ const createNewProduct = async (req, res) => {
     image_url,
     stock,
     sku,
-    category_id,
+    category,
   } = req.body;
   try {
-    await productModel.createProduct(
-      {title,
+    await productModel.createProduct({
+      title,
       product_description,
       price,
       image_url,
       stock,
       sku,
-      category_id}
-    );
-    return res.status(201).json({message: "Producto creado de manera exitosa"})
+      category,
+    });
+    return res
+      .status(201)
+      .json({ message: "Producto creado de manera exitosa" });
   } catch (error) {
-    console.error(error)
+    console.error(error);
     return res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
-const updateNewProduct = async (req,res) => {
-  const {id} = req.params
-  const {
-    title,
-    product_description,
-    price,
-    image_url,
-    sku,
-    category,
-  } = req.body;
+const updateNewProduct = async (req, res) => {
+  const { id } = req.params;
+  const { title, product_description, price, image_url, sku, category } =
+    req.body;
   try {
-    const result = await productModel.updateProduct(
-      {
+    const result = await productModel.updateProduct({
       id,
       title,
       product_description,
       price,
       image_url,
       sku,
-      category}
-    );
-    console.log(result)
-    return res.status(200).json({message: "Producto modificado de manera exitosa"})
+      category,
+    });
+    console.log(result);
+    return res
+      .status(200)
+      .json({ message: "Producto modificado de manera exitosa" });
   } catch (error) {
-    console.error(error)
+    console.error(error);
     return res.status(500).json({ message: "Internal Server Error" });
   }
 };

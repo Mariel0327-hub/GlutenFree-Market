@@ -1,3 +1,5 @@
+-- Active: 1769730037726@@127.0.0.1@5432@gluten_free_market
+
 
 CREATE DATABASE gluten_free_market;
 
@@ -20,12 +22,12 @@ c gluten_free_market;
 ------------------------------
 CREATE TABLE customer (
     customer_id VARCHAR PRIMARY KEY,
-    email VARCHAR,
-    password VARCHAR,
-    shipping_adress VARCHAR,
-    billing_address VARCHAR,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    shipping_address VARCHAR  NOT NULL,
+    billing_address VARCHAR  NOT NULL,
     created_at TIMESTAMP,
-    updated_at TIMESTAMP
+    updated_at TIMESTAMP 
 )
 
 CREATE TABLE cart_item (
@@ -57,6 +59,7 @@ CREATE TABLE review (
     id_product VARCHAR REFERENCES product (product_id),
     about_product VARCHAR,
     review_body VARCHAR,
+    rating INT,
     created_at TIMESTAMP,
     updated_at TIMESTAMP
 )
@@ -126,7 +129,7 @@ CREATE TABLE categories(
 --   sofia.rodrigues → Braga@Granola55
 -- password column holds bcrypt hash (cost 12) of each plaintext above
 -- ------------------------------------------------------------
-INSERT INTO customer (customer_id, email, password, shipping_adress, billing_address, created_at, updated_at) VALUES
+INSERT INTO customer (customer_id, email, password, shipping_address, billing_address, created_at, updated_at) VALUES
     ('cust-001', 'ana.silva@email.com',        '$2b$12$xQO/br1xXPo25FWY1o7wBOAsVGIz1vUtGs6BiTg7ID866b6bLJbt2', 'Rua das Flores 12, Lisboa',     'Rua das Flores 12, Lisboa',     NOW() - INTERVAL '90 days', NOW() - INTERVAL '90 days'),
     ('cust-002', 'joao.costa@email.com',       '$2b$12$eQNZNJFj6/MC5QKLcWDo8OLdQSMESlMacDaGw0XsnvVQB0wl4VWXG', 'Av. Liberdade 45, Porto',       'Av. Liberdade 45, Porto',       NOW() - INTERVAL '60 days', NOW() - INTERVAL '60 days'),
     ('cust-003', 'maria.ferreira@email.com',   '$2b$12$H.pz1f0Bnh1eMLdDTBZUUuGmstWl7pDWSd6mU95qI.Vi268ZI24OC', 'Travessa do Mar 8, Faro',       'Travessa do Mar 8, Faro',       NOW() - INTERVAL '45 days', NOW() - INTERVAL '45 days'),

@@ -12,25 +12,42 @@ const readAllCart = async(req,res) =>{
   }
 }
 
-const readCartById = async() =>{
+const readCartById = async(req,res) =>{
+  const { id } = req.params;
+  try {
+    const result = await cartModel.findCartById(id);
+    return res.status(200).json(result);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+}
+
+const readCartByCustomer = async(req,res) =>{
+  const { id } = req.params;
+  try {
+    const result = await cartModel.findCartByCustomer(id);
+    return res.status(200).json(result);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+}
+
+
+const createNewCart = async(req,res) =>{
+    const {customer_id, cart} = req.body
     try {
-        await cartModel.findCart()
+        const result = await cartModel.createCart(customer_id, cart)
+        return res.status(201).json(result)
     } catch (error) {
+        console.error(error)
         return res.status(500).json({message: "Internal Server Error"})
     }
 }
 
 
-const createNewCart = async() =>{
-    try {
-        await cartModel.createCart()
-    } catch (error) {
-        return res.status(500).json({message: "Internal Server Error"})
-    }
-}
-
-
-const updateNewCart = async() =>{
+const updateNewCart = async(req,res) =>{
     try {
         await cartModel.updateCart()
     } catch (error) {
@@ -39,7 +56,7 @@ const updateNewCart = async() =>{
 }
 
 //!!!!!
-const deleteNewCart = async() =>{
+const deleteNewCart = async(req,res) =>{
     try {
         await cartModel.deleteCart()
     } catch (error) {
@@ -50,6 +67,7 @@ const deleteNewCart = async() =>{
 const cartController = {
     readAllCart,
     readCartById,
+    readCartByCustomer,
     createNewCart,
     updateNewCart,
     deleteNewCart,
