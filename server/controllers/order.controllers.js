@@ -13,9 +13,14 @@ const readAllOrders = async (req, res) => {
 };
 
 const readOrdersbyId = async (req, res) => {
-  const { id } = req.params;
   try {
+    const { id } = req.params;
     const result = await orderModel.findOrdersById(id);
+
+    if (!result) {
+      return res.status(404).json({ message: "Order not Found" });
+    }
+
     return res.status(200).json(result);
   } catch (error) {
     console.error(error);
@@ -55,9 +60,11 @@ const updateNewOrder = async (req, res) => {
 };
 
 const deleteNewOrder = async (req, res) => {
-  const { id } = req.params;
   try {
+    const { id } = req.params;
+
     await orderModel.deleteOrder(id);
+
     console.log(`Orden de compra ${id}, eliminada exitosamente`);
     return res
       .status(200)
