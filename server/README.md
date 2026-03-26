@@ -11,18 +11,22 @@ puts
 posts
 
 
+//// premisos para admin
+
+
 medio acabado:
 
+FALTA MOVEMENTS
 ->  revisar relaciones faltantaes a incorprar en forma de lógica  (join, queries compuestas etc....):
 
 insertar is_favorites en reviews,
 
 insertar variacion de stock en tablas cart, order, prodcutos -> (comprender y estudiar relación)
 
-FALTA MOVEMENTS
 
-//// premisos para admin
 
+
+///filtros
 
 //manejo de errores ( de momento controlados vía console.error() - dev)
 -> middlewares, códigos de erorres (DB), otros middleware.

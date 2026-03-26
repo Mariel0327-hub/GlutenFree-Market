@@ -101,7 +101,7 @@ CREATE TABLE order_item (
     created_at TIMESTAMP,
     updated_at TIMESTAMP
 );
-
+-- a testear en proximo sketch
 /* CREATE TABLE stock_mov(
 mov_id VARCHAR PRIMARY KEY,
 id_order_item VARCHAR REFERENCES order_item(order_item_id), 
@@ -116,6 +116,7 @@ CREATE TABLE categories (
     category_description VARCHAR NOT NULL
 );
 
+-- a testear en proximo sketch
 /* CREATE TABLE type_of_movements (
     type_mov_id VARCHAR PRIMARY KEY,
     type_mov_description VARCHAR NOT NULL

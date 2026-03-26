@@ -2,8 +2,8 @@ import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 dotenv.config();
 
-
 const SECRET = process.env.JWT_SECRET;
+const ADMIN_ROLE = process.env.ADMIN_ROLE
 
 //User token Auth
 export const tokenVerification = (req, res, next) => {
@@ -15,9 +15,9 @@ export const tokenVerification = (req, res, next) => {
     }
 
     const token = Authorization.split("Bearer ")[1];
-    
-    if(!SECRET){
-       throw { code: 401, message: "No Secet available" };  
+
+    if (!SECRET) {
+      throw { code: 401, message: "No Secet available" };
     }
     const decodedToken = jwt.verify(token, `${SECRET}`);
 
@@ -31,11 +31,15 @@ export const tokenVerification = (req, res, next) => {
 };
 
 //Admin credentials Auth (requiere backoffice en front)
-/* export const isAdminCheck = () =>{
+export const adminVerification = (role) => (req, res, next) => {
 
-  //pide usuario, eamail, contraseña, rol
-
-  //Debe generar un token para poder acceder a los mismos usos que los usuarios autorizados.
-  //Debe tener una crendecial extra para acceder con mayores privilegios (condición de filtro para restringir a otros usuarios)
-
-} */
+  try {
+    if(!req.user.role || req.user.role !== role){
+      return res.status(403).json({message: "Forbidden"})
+    }
+    next();
+  } catch (error) {
+    console.error(error);
+    return res.status(403).json({ message: "Invalid or expired token" });
+  }
+};

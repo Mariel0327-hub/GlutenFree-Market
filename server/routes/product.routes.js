@@ -1,10 +1,13 @@
 import {Router} from 'express'
 import productController from '../controllers/product.controllers.js'
+import { adminVerification, tokenVerification } from '../lib/middlewares/lib.middlewares.js'
+
+const ADMIN_ROLE = process.env.ADMIN_ROLE
 
 const productRouter = Router()
 
 //Para tood público
-productRouter.get('/', productController.readAllProducts )
+productRouter.get('/',tokenVerification, adminVerification(ADMIN_ROLE), productController.readAllProducts )
 productRouter.get('/:id', productController.readProductsById )
 productRouter.get('/category/:id', productController.readProductsByUserId )   //implementar para ver productos por categoría
 
