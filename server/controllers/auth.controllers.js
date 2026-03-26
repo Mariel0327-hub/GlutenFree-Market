@@ -36,9 +36,9 @@ const modifyUser = async () => {
 const authenticateUser = async (req, res) => {
   const { email, password } = req.body;
   try {
-    await authModel.verifyUser(email, password);
-    const token = jwt.sign({ email }, `${SECRET}`);
-    return res.status(200).json(token);
+    const customer = await authModel.verifyUser(email, password);
+    const token = jwt.sign({ id: customer.id, email }, `${SECRET}`);
+    return res.status(200).json({token});
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "Internal Server Error" });
@@ -51,7 +51,7 @@ const getUserProfile = async (req, res) => {
 /*     const Authorization = req.header("Authorization");
     const token = Authorization.split("Bearer ")[1];
     jwt.verify(token, `${SECRET}`); */
-    const {email} = jwt.decode(token)
+    const {email} = req.user
     const result = await authModel.getUserData(email);
     return res.status(200).json(result);
   } catch (error) {

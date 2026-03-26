@@ -96,12 +96,24 @@ const deleteNewProduct = async (req, res) => {
   }
 };
 
+const restoreOldProduct = async (req, res) => {
+  try {
+    const { id } = req.params;
+    await productModel.restoreProduct(id);
+    return res.status(200).json({ message: "Elemento recuperado con éxito" });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
 const productController = {
   readAllProducts,
   readProductsByUserId,
   readProductsById,
   createNewProduct,
   updateNewProduct,
+  restoreOldProduct,
   deleteNewProduct,
 };
 

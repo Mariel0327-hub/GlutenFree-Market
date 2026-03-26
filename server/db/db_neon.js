@@ -3,6 +3,8 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
+//CONEXIÓN BASE DE DATOS - NEON
+
 export const pool = new Pool({
   connectionString: process.env.CONNECTION_STRING,
   allowExitOnIdle: true,
@@ -15,8 +17,6 @@ export const getDbConnectionNeon = async () => {
   } catch (error) {
     console.error(error);
     console.log("error");
-    /*
-        Managing error with code from lib.errors
-        */
+
   }
 };

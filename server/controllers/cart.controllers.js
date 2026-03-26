@@ -4,7 +4,7 @@ import bycrpt from 'bcryptjs'
 
 const readAllCart = async(req,res) =>{
   try {
-    const result = await cartModel.findCart();
+    const result = await cartModel.findallCarts();
     return res.status(200).json(result);
   } catch (error) {
     console.error(error);
@@ -36,9 +36,10 @@ const readCartByCustomer = async(req,res) =>{
 
 
 const createNewCart = async(req,res) =>{
-    const {customer_id, cart} = req.body
+    const {email} = req.user
+    const {cart} = req.body
     try {
-        const result = await cartModel.createCart(customer_id, cart)
+        const result = await cartModel.createCart(email, cart)
         return res.status(201).json(result)
     } catch (error) {
         console.error(error)
@@ -55,11 +56,15 @@ const updateNewCart = async(req,res) =>{
     }
 }
 
-//!!!!!
+//Eliminar un Carrito (ADMIN ONLY)
 const deleteNewCart = async(req,res) =>{
-    try {
-        await cartModel.deleteCart()
+  const {id} = req.params  
+  try {
+        await cartModel.deleteCart(id)
+        console.log(`Carrito ${id}, eliminado exitosamente`)
+        return res.status(200).json({message: `Carrito ${id}, eliminado exitosamente`})
     } catch (error) {
+      console.error(error)
         return res.status(500).json({message: "Internal Server Error"})
     }
 }

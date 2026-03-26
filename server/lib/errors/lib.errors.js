@@ -7,6 +7,7 @@ const databaseError = {
     code: 500,
     message: "Tabla no definida",
   },
+  //'23502'
 };
 
 export const getDatabaseError = (code) => {

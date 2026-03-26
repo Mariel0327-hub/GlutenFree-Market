@@ -1,29 +1,20 @@
 import {Router} from 'express'
 import orderController from '../controllers/order.controllers.js'
+import { tokenVerification } from "../lib/middlewares/lib.middlewares.js";
+
 
 const orderRouter = Router()
 
+//ADMIN ONLY
 orderRouter.get('/', orderController.readAllOrders )
 orderRouter.get('/:id', orderController.readOrdersbyId )
-orderRouter.post('/', orderController.createNewOrder )
-orderRouter.put('/:id', orderController.updateNewOrder )
+
+//BOTH Cliente y ADMIN (token required)
+orderRouter.get('/customer/:id',tokenVerification, orderController.readOrdersbyCustomer)
+orderRouter.post('/', tokenVerification, orderController.createNewOrder )
+orderRouter.put('/:id', orderController.updateNewOrder )  //pasar a patch e implementar
+
+//ADMIN ONLY
 orderRouter.delete('/:id', orderController.deleteNewOrder)
 
 export default orderRouter
-
-
-
-
-//contract ORDERS:
-
-
-/*  
-    GET /orders
-    GET /orders/:id
-    POST /orders
-    PUT /orders:/id
-    DELETE /cart/:id   !! no está en contrato
-
-
-
-*/

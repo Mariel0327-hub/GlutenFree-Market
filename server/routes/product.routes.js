@@ -3,32 +3,17 @@ import productController from '../controllers/product.controllers.js'
 
 const productRouter = Router()
 
+//Para tood público
 productRouter.get('/', productController.readAllProducts )
 productRouter.get('/:id', productController.readProductsById )
-productRouter.get('/user/:id', productController.readProductsByUserId )   ////////////revisar esta ruta, como implementar
+productRouter.get('/category/:id', productController.readProductsByUserId )   //implementar para ver productos por categoría
+
+//ADMIN ONLY (BackOffice)
 productRouter.post('/', productController.createNewProduct )
 productRouter.put('/:id', productController.updateNewProduct)
-productRouter.delete('/:id', productController.deleteNewProduct)
+productRouter.put('/restore/:id', productController.restoreOldProduct) //recuperar producto eliminad (soft delete)
+productRouter.delete('/:id', productController.deleteNewProduct)  //usa soft delete (is_active = true -> is_active = false)
+
+//!!!!GENERAR MIDDLEWARE DE AUTENTIFICACIÒN DE ADMIN (isAdminCheck())
 
 export default productRouter
-
-//contract ROUTES:
-
-
-/*  
-    GET /products //////////LISTO
-    GET /products/:id //////////LISTO
-    POST /products //////////////LISTO (revisar columnas.... some are hardcoded)
-    PUT /products/:id //////////////LISTO (revisar columnas.... some are hardcoded)
-    DELETe /products/:id  ///////////LISTO (Soft Delete)
-
-
-
-*/
-
-//CATEGORIES
-/*  
-
-GET/ categories
-
-*/

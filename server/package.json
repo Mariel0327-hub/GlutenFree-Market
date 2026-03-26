@@ -4,9 +4,11 @@
     "cors": "^2.8.6",
     "dotenv": "^17.3.1",
     "express": "^5.2.1",
+    "jest": "^30.3.0",
     "jsonwebtoken": "^9.0.3",
     "pg": "^8.20.0",
-    "pg-format": "^1.0.4"
+    "pg-format": "^1.0.4",
+    "supertest": "^7.2.2"
   },
   "devDependencies": {
     "nodemon": "^3.1.14"
@@ -20,7 +22,11 @@
     "test": "tests"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --forceExit",
+    "test:product": "node --experimental-vm-modules node_modules/jest/bin/jest.js product.spec.js --forceExit",
+    "test:carts": "node --experimental-vm-modules node_modules/jest/bin/jest.js cart.spec.js --forceExit",
+    "test:orders": "node --experimental-vm-modules node_modules/jest/bin/jest.js order.spec.js --forceExit",
+    "test:reviews": "node --experimental-vm-modules node_modules/jest/bin/jest.js reviews.spec.js --forceExit",
     "dev": "nodemon index.js"
   },
   "keywords": [],

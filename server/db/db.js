@@ -3,6 +3,8 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
+//CONEXIÓN BASE DE DATOS - LOCAL
+
 export const pool = new Pool({
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,

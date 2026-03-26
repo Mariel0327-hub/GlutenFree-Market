@@ -69,6 +69,7 @@ const verifyUser = async (email, password) => {
       message: "Email o contraseña incorrectas",
     };
   }
+  return customer
 };
 
 //obtener perfilde usuario  //jwt
@@ -85,6 +86,7 @@ const getUserData = async (email) => {
   }
   return customer;
 };
+
 
 const authModel = {
   addUser,
