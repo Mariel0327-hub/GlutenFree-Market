@@ -10,9 +10,9 @@ return rows;
 
 //Ver productos según categoria (secciones de productos)
 const findProductByCategory = async(id)=>{
-const query = "SELECT * FROM categories where category_id = $1"
+const query = "SELECT * FROM product where category = $1"
 const {rows} = await pool.query(query,[id])
-return rows[0];
+return rows;
 }
 
 //ver producto específico según id (detallde de producto)
