@@ -76,10 +76,11 @@ export default function Profile() {
               />
             ) : (
               // Fallback: Si no hay URL, mostramos las iniciales
-              user.name
+              (user?.name || "Usuario")
                 .split(" ")
                 .map((n) => n[0])
                 .join("")
+                .toUpperCase()
             )}
           </div>
 

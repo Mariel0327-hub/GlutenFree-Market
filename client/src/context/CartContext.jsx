@@ -3,7 +3,10 @@ import { createContext, useState } from "react";
 export const CartContext = createContext();
 
 export const CartProvider = ({ children }) => {
-  const [cart, setCart] = useState([]);
+  const [cart, setCart] = useState(() => {
+    const savedCart = localStorage.getItem("cart");
+    return savedCart ? JSON.parse(savedCart) : [];
+  });
   const [showToast, setShowToast] = useState(false);
   const [lastAdded, setLastAdded] = useState(null);
 
@@ -11,19 +14,32 @@ export const CartProvider = ({ children }) => {
   const clearCart = () => setCart([]);
 
   const addToCart = (product, quantity = 1, toast = true) => {
+    const pId = product.product_id || product.id;
+
     setCart((prevCart) => {
       const existing = prevCart.find(
-        (item) => item.product_id === product.product_id,
+        (item) => (item.product_id || item.id) === pId,
       );
+
       if (existing) {
         return prevCart.map((item) =>
-          item.product_id === product.product_id
+          (item.product_id || item.id) === pId
             ? { ...item, quantity: item.quantity + quantity }
             : item,
         );
       }
-      return [...prevCart, { ...product, quantity }];
+
+      const productToStore = {
+        product_id: pId,
+        title: product.title,
+        price: Number(product.price),
+        image_url: product.image_url,
+        quantity: quantity,
+      };
+
+      return [...prevCart, productToStore];
     });
+
     if (toast) {
       setLastAdded(product);
       setShowToast(true);
@@ -44,16 +60,14 @@ export const CartProvider = ({ children }) => {
     });
   };
 
-  
-
-// Sumamos el precio * cantidad de cada producto
-const cartTotal = cart.reduce(
+  // Sumamos el precio * cantidad de cada producto
+  const cartTotal = cart.reduce(
     (acc, item) => acc + item.price * item.quantity,
     0,
   );
-// Definimos el umbral para que se active el envio gratis si el usuario tiene una compra con esta cantidad
-const FREE_SHIPPING_THRESHOLD = 20000;
-const shippingCost = cartTotal >= FREE_SHIPPING_THRESHOLD ? 0 : 5000;
+  // Definimos el umbral para que se active el envio gratis si el usuario tiene una compra con esta cantidad
+  const FREE_SHIPPING_THRESHOLD = 20000;
+  const shippingCost = cartTotal >= FREE_SHIPPING_THRESHOLD ? 0 : 5000;
 
   return (
     <CartContext.Provider
@@ -67,7 +81,7 @@ const shippingCost = cartTotal >= FREE_SHIPPING_THRESHOLD ? 0 : 5000;
         setShowToast,
         lastAdded,
         shippingCost,
-        FREE_SHIPPING_THRESHOLD
+        FREE_SHIPPING_THRESHOLD,
       }}
     >
       {children}

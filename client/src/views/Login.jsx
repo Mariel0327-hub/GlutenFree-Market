@@ -5,6 +5,7 @@ import { FaApple, FaFacebook } from "react-icons/fa";
 import { UserContext } from "../context/UserContext";
 import { useNavigate, Link } from "react-router-dom";
 import Swal from "sweetalert2";
+import { loginUserDB } from "../data/connection";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -19,70 +20,33 @@ export default function Login() {
     }
   }, [user, navigate]);
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    
-    if (email === "test@test.com" && password === "Test123456") {
-      const loggedUser = {
-        email: "test@test.com",
-        name: "Usuario Demo",
-        orders: [
-          {
-            order_id: "ORD-001",
-            date: "2026-03-20",
-            total: 25000,
-            status: "Entregado",
-            items: [
-              {
-                product_id: 1,
-                title: "Pan Integral",
-                price: 5000,
-                quantity: 1,
-              },
-              { product_id: 2, title: "Muffin Gf", price: 3500, quantity: 2 },
-            ],
-          },
-          {
-            order_id: "ORD-002",
-            date: "2026-03-22",
-            total: 12500,
-            status: "Por retirar",
-            items: [
-              {
-                product_id: 3,
-                title: "Baguette Masa Madre",
-                price: 12500,
-                quantity: 1,
-              },
-            ],
-          },
-          {
-            order_id: "ORD-003",
-            date: "2026-03-22",
-            total: 18000,
-            status: "En proceso",
-            items: [
-              {
-                product_id: 4,
-                title: "Rollitos de Canela",
-                price: 4500,
-                quantity: 4,
-              },
-            ],
-          },
-        ],
-      };
-      // 1. Guardamos en el Estado Global
-      setUser(loggedUser);
-      setToken("token-demo-xyz-123");
+    try {
+      //llamamos al Backend en Neon
+      const data = await loginUserDB({ email, password });
 
-      // 2. Guardamos en LocalStorage para que no se borre al recargar
-      localStorage.setItem("user", JSON.stringify(loggedUser));
-      localStorage.setItem("token", "token-demo-xyz-123");
+      if (data.token) {
+        // aqui ya se guardan los datos REALES que vienen del servidor
+        const loggedUser = data.user || data.customer || { email };
 
-      const params = new URLSearchParams(window.location.search);
-      const redirect = params.get("redirect") || "/perfil";
-      navigate(redirect);
+        setUser(loggedUser);
+        setToken(data.token);
+
+        // 2. Persistencia en LocalStorage
+        localStorage.setItem("user", JSON.stringify(loggedUser));
+        localStorage.setItem("token", data.token);
+
+        const params = new URLSearchParams(window.location.search);
+        const redirect = params.get("redirect") || "/perfil";
+        navigate(redirect);
+      }
+    } catch (error) {
+      // manejamos los errores
+      alert(
+        "Error al iniciar sesión: " +
+          (error.response?.data?.message || "Credenciales inválidas"),
+      );
     }
   };
 
