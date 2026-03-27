@@ -46,7 +46,7 @@ const updateUser = async (id) => {
   ];
 
   const query =
-    "UPDATE customer SET name = $1, email = $2, password = $3, shipping _adress = $4, billing_address = $5 WHERE customer_id = $5 RETURNING *";
+    "UPDATE customer SET name = ($1,name) email = ($2,email) password = ($3,password) shipping_address = ($4,shipping_address) billing_address = ($5, billing_address )WHERE customer_id = $5 RETURNING *";
   const { rows } = await pool.query(query, values);
   return rows;
 };

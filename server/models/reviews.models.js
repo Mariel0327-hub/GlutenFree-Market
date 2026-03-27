@@ -33,9 +33,6 @@ const findReviewsByProduct = async (id) => {
 
 
 // Crear Review (publico + ADMIN)
-//falta agergar customerid (token related)
-//if about product = true (get product_id)
-// about_product puede ser un botón (front) para identificar si es sobre un producto o no
 const createReview = async (email, about_product = false, id_product, review_body, rating) => {
    
   //id_customer:
@@ -74,9 +71,12 @@ const createReview = async (email, about_product = false, id_product, review_bod
 
 // modificar producto  (PUBLIC + ADMIN)
 const updateReview = async (id, about_product, id_product, review_body, rating ) => {
+  
   const updated_at = new Date();
+
     //lógica para identificar un producto
   id_product = about_product === true ? id_product : null;
+
   const query = "UPDATE review SET about_product =COALESCE($1, about_product), id_product = COALESCE($2, id_product), review_body =COALESCE($3, review_body), rating =COALESCE($4, rating), updated_at =COALESCE($5, updated_at)WHERE review_id = $6 RETURNING *"
   const values = [about_product, id_product, review_body, rating, updated_at, id];
   const { rows } = await pool.query(query, values);

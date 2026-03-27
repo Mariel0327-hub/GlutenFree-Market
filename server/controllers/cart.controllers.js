@@ -101,10 +101,11 @@ const createNewCart = async (req, res) => {
 };
 
 const updateNewCart = async (req, res) => {
-  const {} = req.body;
+  const { email } = req.user;
+  const {cart} = req.body;
   const { id } = req.params;
   try {
-    const result = await cartModel.updateCart(id);
+    const result = await cartModel.updateCart(id, email, cart);
 
     if (!result) {
       return res.status(404).json({ message: "No cart Mofidied" });

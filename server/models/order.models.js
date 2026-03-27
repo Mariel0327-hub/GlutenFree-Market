@@ -7,7 +7,7 @@ const findOrders = async () => {
   return rows;
 };
 
-//Ver una compra específica  //ADMIN
+//Ver una compra específica  //ADMIN  ??cliente?
 const findOrdersById = async (id) => {
   const query = "SELECT * FROM order_total WHERE order_total_id = $1";
   const { rows } = await pool.query(query, [id]);
@@ -136,7 +136,7 @@ const createOrders = async (email) => {
 const updateOrder = async (id) => {
   const updated_at = new Date();
   const query =
-    "UPDATE product SET, total = $1, is_paid = $2, is_shipped = $3, created_at = $4, updated_at = $5 WHERE order_id = $6 AND customer_id = $7 RETURNING *";
+    "UPDATE product SET total = COALESCE($1, total), is_paid = COALESCE($2, is_paid), is_shipped = COALESCE($3, is_shipped), created_at = COALESCE($4,created_at), updated_at = COALESCE($5,updated_at) WHERE order_id = $6 AND customer_id = $7 RETURNING *";
   const values = [
     total,
     is_paid,
