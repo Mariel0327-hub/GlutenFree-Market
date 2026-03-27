@@ -23,6 +23,22 @@ const readProductsById = async (req, res) => {
   }
 };
 
+const readProductsByCategory = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const result = await productModel.findProductByCategory(id);
+
+    if(!result){
+      throw{code: 404, message: "Product or category not found"}
+    }
+
+    return res.status(200).json(result);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
 const readProductsByUserId = async (req, res) => {
   const { id } = req.params;
   try {
@@ -110,6 +126,7 @@ const restoreOldProduct = async (req, res) => {
 const productController = {
   readAllProducts,
   readProductsByUserId,
+  readProductsByCategory,
   readProductsById,
   createNewProduct,
   updateNewProduct,

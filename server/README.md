@@ -10,21 +10,21 @@ puts
 
 posts
 
+premisos para admin
 
-//// premisos para admin
-
+MOVEMENTS
 
 medio acabado:
 
-FALTA MOVEMENTS
-->  revisar relaciones faltantaes a incorprar en forma de lógica  (join, queries compuestas etc....):
-
 insertar is_favorites en reviews,
 
-insertar variacion de stock en tablas cart, order, prodcutos -> (comprender y estudiar relación)
+tests ->
+Agregar otras rutas y ejemplos de contenido (array, objeto, etcc)
+
+-> agregar 1 sobre tokens (testera Admin vs user)
 
 
-
+Por comenzar
 
 ///filtros
 

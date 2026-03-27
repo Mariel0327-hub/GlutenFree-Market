@@ -53,7 +53,7 @@ CREATE TABLE product (
     price INT,
     image_url VARCHAR,
     stock INT,
-    category VARCHAR,
+    category VARCHAR REFERENCES categories(category_id),
     sku INT,
     is_active BOOLEAN,
     created_at TIMESTAMP,
@@ -75,7 +75,7 @@ CREATE TABLE stock_mov (
     mov_id SERIAL PRIMARY KEY,
     id_order_item VARCHAR REFERENCES order_item (order_item_id),
     id_product VARCHAR REFERENCES product (product_id),
-    type_mov VARCHAR,
+    id_type_mov VARCHAR REFERENCES type_of_movements (type_mov_id),
     quantity VARCHAR,
     created_at TIMESTAMP,
     updated_at TIMESTAMP
@@ -101,27 +101,25 @@ CREATE TABLE order_item (
     created_at TIMESTAMP,
     updated_at TIMESTAMP
 );
--- a testear en proximo sketch
-/* CREATE TABLE stock_mov(
-mov_id VARCHAR PRIMARY KEY,
-id_order_item VARCHAR REFERENCES order_item(order_item_id), 
-id_product VARCHAR REFERENCES product(product_id),
-type_mov VARCHAR NOT NULL
-created_at TIMESTAMP,
-updated_at TIMESTAMP
-) */
 
 CREATE TABLE categories (
     category_id VARCHAR PRIMARY KEY,
     category_description VARCHAR NOT NULL
 );
 
--- a testear en proximo sketch
-/* CREATE TABLE type_of_movements (
+CREATE TABLE type_of_movements (
     type_mov_id VARCHAR PRIMARY KEY,
     type_mov_description VARCHAR NOT NULL
 );
- */
+
+--para testear en próxima versión
+--FAVORITOS
+/* CREATE TABLE favoritos(
+favoritos_id VARCHAR PK)
+id_customer REFERENCES customer(customer_id)
+id_product REFERENCES product(product_id)
+)
+*/
 ---------------------------
 --DATASETS:
 
@@ -196,7 +194,7 @@ VALUES (
         2999,
         'https://img.com/mouse.jpg',
         50,
-        'Electronics',
+        'cat-001',
         1001,
         true,
         NOW(),
@@ -209,7 +207,7 @@ VALUES (
         7999,
         'https://img.com/kb.jpg',
         30,
-        'Electronics',
+        'cat-001',
         1002,
         true,
         NOW(),
@@ -222,7 +220,7 @@ VALUES (
         1499,
         'https://img.com/tshirt.jpg',
         100,
-        'Clothing',
+        'cat-003',
         1003,
         true,
         NOW(),
@@ -235,7 +233,7 @@ VALUES (
         3499,
         'https://img.com/book.jpg',
         20,
-        'Books',
+        'cat-002',
         1004,
         true,
         NOW(),
@@ -412,7 +410,7 @@ INSERT INTO
     stock_mov (
         id_order_item,
         id_product,
-        type_mov,
+        id_type_mov, -- Using your parameter table FK
         quantity,
         created_at,
         updated_at
@@ -420,35 +418,44 @@ INSERT INTO
 VALUES (
         'oi-001',
         'prod-001',
-        'OUT',
-        '1',
+        '2',
+        1,
         NOW(),
         NOW()
     ),
     (
         'oi-002',
         'prod-002',
-        'OUT',
         '2',
+        2,
         NOW(),
         NOW()
     ),
     (
         'oi-003',
         'prod-003',
-        'OUT',
-        '1',
+        '2',
+        1,
         NOW(),
         NOW()
     ),
     (
         'oi-004',
         'prod-004',
-        'OUT',
-        '1',
+        '2',
+        1,
         NOW(),
         NOW()
     );
+
+-- type_of_movments
+INSERT INTO
+    type_of_movements (
+        type_mov_id,
+        type_mov_description
+    )
+VALUES ('1', 'Entrada'),
+    ('2', 'Salida');
 
 -- reviews
 INSERT INTO
@@ -516,6 +523,8 @@ select * from cart_item;
 select * from order_item;
 
 select * from order_total;
+
+select * from stock_mov;
 
 select * from review;
 
