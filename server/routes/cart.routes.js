@@ -4,12 +4,17 @@ import { tokenVerification } from "../lib/middlewares/lib.middlewares.js";
 
 
 const cartRouter = Router()
+//Detalles de orden
+cartRouter.get('/items', cartController.readAllCartDetails )
+cartRouter.get('/items/:id', cartController.readCartsDetailsbyId )
+cartRouter.get('/customer/:id',tokenVerification, cartController.readCartByCustomer )
+
+
 //ADMIN ONLY
 cartRouter.get('/', cartController.readAllCart )
 cartRouter.get('/:id', cartController.readCartById )
 
 //Client  + ADMIN (token required)
-cartRouter.get('/customer/:id',tokenVerification, cartController.readCartByCustomer )
 cartRouter.post('/', tokenVerification, cartController.createNewCart )
 cartRouter.patch('/:id', tokenVerification, cartController.updateNewCart )
 

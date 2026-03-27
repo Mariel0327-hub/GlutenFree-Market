@@ -21,6 +21,22 @@ const findOrdersByCustomer = async (id) => {
   return rows[0];
 };
 
+////////Ver detalle de compra
+
+const findOrderDetails = async () =>{
+    const query = "SELECT * FROM order_item";
+  const { rows } = await pool.query(query);
+  return rows;
+}
+const findOrderDetailsbyId = async (id) =>{
+  const query = "SELECT * FROM order_item WHERE id_order_total = $1";
+  const { rows } = await pool.query(query, [id]);
+  return rows;
+}
+
+//////////////////
+
+
 //Crear Compra
 const createOrders = async (email) => {
   //dummy id
@@ -39,7 +55,7 @@ const createOrders = async (email) => {
   const id_customer = customerRows[0].customer_id;
 
   //subquery to calculate total
-  const { rows: cartData, dataRowCount } = await pool.query(
+  const { rows: cartData } = await pool.query(
     "SELECT ci.id_product, ci.quantity, p.price FROM cart_item ci JOIN product p ON ci.id_product = p.product_id WHERE ci.id_cart = (SELECT cart_id FROM cart WHERE id_customer = $1)",
     [id_customer],
   );
@@ -141,12 +157,16 @@ const deleteOrder = async (id) => {
   return rows[0];
 };
 const orderModel = {
+  //order
   findOrders,
   findOrdersById,
   findOrdersByCustomer,
   createOrders,
   updateOrder,
   deleteOrder,
+  //order-detail
+  findOrderDetails,
+  findOrderDetailsbyId
 };
 
 export default orderModel;

@@ -23,6 +23,22 @@ const findCartByCustomer = async (id) => {
   return rows;
 };
 
+
+////////Ver detalle de compra
+
+const findCartDetails = async () =>{
+    const query = "SELECT * FROM cart_item";
+  const { rows } = await pool.query(query);
+  return rows;
+}
+const findCartDetailsbyId = async (id) =>{
+  const query = "SELECT * FROM cart_item WHERE id_cart = $1";
+  const { rows } = await pool.query(query, [id]);
+  return rows;
+}
+
+//////////////////
+
 //Crear Instnacia de Carrito (Cliente al hacer checkout)
 const createCart = async (email, cart) => {
 
@@ -100,6 +116,8 @@ const deleteCart = async (id) => {
 const cartModel = {
   findallCarts,
   findCartById,
+  findCartDetails,
+  findCartDetailsbyId,
   findCartByCustomer,
   createCart,
   //updateCart,

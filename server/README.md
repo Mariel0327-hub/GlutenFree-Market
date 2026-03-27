@@ -46,3 +46,8 @@ Por comenzar
 
 
 // import { uuidv7 } from 'uuidv7';
+
+
+
+
+////////En próximas versiones, podría exisir una tabal admins, users, employees (o algo similar) para crear otros roles con menos privilegios que admin pero con más que los clientes, para gestionar la aplicación en la medida que esta vaya creciendo

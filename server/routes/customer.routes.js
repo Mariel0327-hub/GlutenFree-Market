@@ -1,22 +1,24 @@
 import {Router} from 'express'
-import customerController from '../controllers/cart.controllers.js'
+import customerController from '../controllers/customer.controllers.js'
 import { tokenVerification } from "../lib/middlewares/lib.middlewares.js";
 
 ///CAMBIAR METODOS PARA CUSTOMER
 
 const customerRouter = Router()
-//ADMIN ONLY
-customerRouter.get('/', customerController.readAllCart )
-customerRouter.get('/:id', customerController.readCartById )
-
+//FAVORITES
 //Client  + ADMIN (token required)
-customerRouter.get('/favorites',tokenVerification, customerController.readCartByCustomer)
-customerRouter.get('/favorites/:id',tokenVerification, customerController.readCartByCustomer )
-customerRouter.post('/favorites', tokenVerification, customerController.createNewCart )
-customerRouter.put('/favorites/:id', tokenVerification, customerController.updateNewCart )
-customerRouter.delete('/favorites:id', customerController.deleteNewCart)
+customerRouter.get('/favorites', customerController.readAllFavorites)
+customerRouter.get('/favorites/:id', customerController.readFavoritesbyId )
+customerRouter.post('/favorites', customerController.createNewFavorite )
+customerRouter.put('/favorites/:id', customerController.updateNewFavorite )
+customerRouter.delete('/favorites/:id', customerController.deleteNewFavorite)
 
-// ADMIN ONLY
-customerRouter.delete('/:id', customerController.deleteNewCart)
+//CLIENTES
+//ADMIN ONLY
+customerRouter.get('/', customerController.readAllCustomers )
+customerRouter.get('/:id', customerController.readCustomersbyId )
+customerRouter.delete('/:id', customerController.deleteNewCustomer )
+
+
 
 export default customerRouter
