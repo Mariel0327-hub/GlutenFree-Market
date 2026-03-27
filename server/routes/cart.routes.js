@@ -1,6 +1,6 @@
 import {Router} from 'express'
 import cartController from '../controllers/cart.controllers.js'
-import { tokenVerification } from "../lib/middlewares/lib.middlewares.js";
+import { adminVerification, tokenVerification } from "../lib/middlewares/lib.middlewares.js";
 
 
 const cartRouter = Router()
@@ -11,14 +11,14 @@ cartRouter.get('/customer/:id',tokenVerification, cartController.readCartByCusto
 
 
 //ADMIN ONLY
-cartRouter.get('/', cartController.readAllCart )
-cartRouter.get('/:id', cartController.readCartById )
+cartRouter.get('/', tokenVerification, cartController.readAllCart )
+cartRouter.get('/:id', tokenVerification, cartController.readCartById )
 
 //Client  + ADMIN (token required)
 cartRouter.post('/', tokenVerification, cartController.createNewCart )
 cartRouter.patch('/:id', tokenVerification, cartController.updateNewCart )
 
 // ADMIN ONLY?
-cartRouter.delete('/:id', cartController.deleteNewCart)
+cartRouter.delete('/:id', tokenVerification, adminVerification, cartController.deleteNewCart)
 
 export default cartRouter
