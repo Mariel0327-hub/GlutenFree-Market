@@ -19,12 +19,19 @@ const registerUser = async (req, res) => {
 };
 
 ///add to routes?
-const modifyUser = async (id) => {
+const modifyUser = async (req, res) => {
+  const { id } = req.params;
+  const customer = req.body;
   try {
-/*     const Authorization = req.header("Authorization");
+    /*     const Authorization = req.header("Authorization");
     const token = Authorization.split("Bearer")[1];
     jwt.verify(token, `${SECRET}`); */
-    const result = await authModel.updateUser(id);
+    const result = await authModel.updateUser(id, customer);
+
+        if (!result) {
+      return res.status(404).json({ message: "No Customer Found" });
+    }
+
     return res.status(200).json(result);
   } catch (error) {
     console.error(error);
@@ -38,7 +45,7 @@ const authenticateUser = async (req, res) => {
   try {
     const customer = await authModel.verifyUser(email, password);
     const token = jwt.sign({ id: customer.customer_id, email }, `${SECRET}`);
-    return res.status(200).json({token});
+    return res.status(200).json({ token });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "Internal Server Error" });
@@ -48,10 +55,10 @@ const authenticateUser = async (req, res) => {
 //profile
 const getUserProfile = async (req, res) => {
   try {
-/*     const Authorization = req.header("Authorization");
+    /*     const Authorization = req.header("Authorization");
     const token = Authorization.split("Bearer ")[1];
     jwt.verify(token, `${SECRET}`); */
-    const {email} = req.user
+    const { email } = req.user;
     const result = await authModel.getUserData(email);
     return res.status(200).json(result);
   } catch (error) {

@@ -30,25 +30,24 @@ const addUser = async (customer) => {
 //falta udptade user
 //si se cambia el password se debe cambiar el hash.
 
-const updateUser = async (id) => {
-  let { name, email, password, shipping_address, billing_address } = customer;
+const updateUser = async (id, customer) => {
+  let { email, password, shipping_address, billing_address } = customer;
 
   //hash PASS
   const updated_at = new Date();
   const values = [
-    customer_id,
-    name,
     email,
     password,
     shipping_address,
     billing_address,
     updated_at,
+    id
   ];
 
   const query =
-    "UPDATE customer SET name = ($1,name) email = ($2,email) password = ($3,password) shipping_address = ($4,shipping_address) billing_address = ($5, billing_address )WHERE customer_id = $5 RETURNING *";
+    "UPDATE customer SET email = COALESCE($1,email), password = COALESCE($2,password), shipping_address = COALESCE($3,shipping_address), billing_address = COALESCE($4, billing_address), updated_at = ($5) WHERE customer_id = $6 RETURNING *";
   const { rows } = await pool.query(query, values);
-  return rows;
+  return rows[0];
 };
 
 ////////////////////
@@ -84,7 +83,7 @@ const getUserData = async (email) => {
       message: "Customer not found",
     };
   }
-  return customer;
+  return customer[0];
 };
 
 
