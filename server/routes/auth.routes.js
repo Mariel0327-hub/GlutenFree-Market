@@ -9,6 +9,7 @@ const authRouter = Router();
 authRouter.post("/register", authController.registerUser);
 authRouter.post("/login", authController.authenticateUser);
 authRouter.get("/profile", tokenVerification, authController.getUserProfile);
+authRouter.put("/alter_profile/:id", tokenVerification, authController.modifyUser);
 
 //ADMIN
 authRouter.post("/admin", authenticateAdmin);

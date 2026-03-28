@@ -3,6 +3,7 @@ import { Container, Card, Button, Row, Col, Form } from "react-bootstrap";
 import { UserContext } from "../context/UserContext";
 import { useNavigate } from "react-router-dom";
 //import { getInitials } from "../utils/helpers";
+import { FaCamera, FaLock } from "react-icons/fa";
 
 import {
   FaEnvelope,
@@ -21,11 +22,18 @@ export default function Profile() {
   // Estado local para los inputs del formulario
   const [formData, setFormData] = useState({ name: "", shipping_address: "" });
   const handleEditClick = () => {
-    setFormData({
-      name: user?.name || "",
-      shipping_address: user?.shipping_address || "",
-    });
-    setIsEditing(true);
+    if (user) {
+      setFormData({
+        name: user.name || "",
+        email: user.email || "",
+        shipping_address: user.shipping_address || "",
+        billing_address: user.billing_address || "",
+        profile_image: user?.profile_image || "",
+        password: "",
+        customer_id: user.customer_id,
+      });
+      setIsEditing(true);
+    }
   };
 
   const handleLogout = () => {
@@ -35,20 +43,30 @@ export default function Profile() {
 
   const handleSave = async () => {
     try {
-      const result = await updateUser(formData);
+      const cleanData = {
+        ...formData,
+        password:
+          formData.password && formData.password.trim() !== ""
+            ? formData.password
+            : null,
+      };
+      const result = await updateUser(cleanData);
 
       if (result.success) {
         setIsEditing(false);
+        setFormData((prev) => ({ ...prev, password: "" }));
+
         Swal.fire({
           icon: "success",
-          title: "¡Actualizado!",
-          text: "Tus datos se han guardado con éxito.",
+          title: "¡Perfil Actualizado!",
+          text: "Los cambios se guardaron correctamente.",
+          timer: 2000,
           showConfirmButton: false,
-          timer: 1500,
         });
       }
     } catch (error) {
-      Swal.fire("Error", "No se pudieron actualizar los datos", error);
+      console.error("Error al guardar:", error);
+      Swal.fire("Error", "No se pudo conectar con el servidor", "error");
     }
   };
   return (
@@ -67,20 +85,19 @@ export default function Profile() {
               fontSize: "32px",
             }}
           >
-            {user.avatar_url ? (
+            {user.profile_image ? (
               // ✅ Si hay URL, mostramos la imagen
               <img
-                src={user.avatar_url}
+                src={user.profile_image}
                 alt={user.name}
                 className="w-100 h-100 object-fit-cover"
               />
             ) : (
               // Fallback: Si no hay URL, mostramos las iniciales
-              (user?.name || "Usuario")
+              user.name
                 .split(" ")
                 .map((n) => n[0])
                 .join("")
-                .toUpperCase()
             )}
           </div>
 
@@ -111,6 +128,34 @@ export default function Profile() {
                   )}
                 </div>
               </Col>
+              {/* Campo URL de Imagen (Solo aparece al editar) */}
+              {isEditing && (
+                <Col xs={12} className="d-flex align-items-start gap-3 mt-3">
+                  <FaCamera className="text-muted mt-2" />
+                  <div className="flex-grow-1">
+                    <small className="d-block text-muted fw-bold text-uppercase">
+                      URL de Imagen de Perfil
+                    </small>
+                    <Form.Control
+                      type="text"
+                      placeholder="https://ejemplo.com/tu-foto.jpg"
+                      value={formData.profile_image}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          profile_image: e.target.value,
+                        })
+                      }
+                    />
+                    <Form.Text
+                      className="text-muted"
+                      style={{ fontSize: "12px" }}
+                    >
+                      Pega el enlace de una imagen externa (JPG, PNG o SVG).
+                    </Form.Text>
+                  </div>
+                </Col>
+              )}
 
               {/* Campo Email (Solo lectura por seguridad) */}
               <Col xs={12} className="d-flex align-items-start gap-3">
@@ -150,6 +195,30 @@ export default function Profile() {
                 </div>
               </Col>
             </Row>
+            {isEditing && (
+              <>
+                <hr className="my-4 text-muted" />
+                <Col xs={12} className="d-flex align-items-start gap-3">
+                  <FaLock className="text-muted mt-2" />
+                  <div className="flex-grow-1">
+                    <small className="d-block text-muted fw-bold text-uppercase">
+                      Cambiar Contraseña (Opcional)
+                    </small>
+                    <Form.Control
+                      type="password"
+                      placeholder="Nueva contraseña"
+                      value={formData.password || ""}
+                      onChange={(e) =>
+                        setFormData({ ...formData, password: e.target.value })
+                      }
+                    />
+                    <Form.Text className="text-muted">
+                      Déjalo en blanco si no deseas cambiarla.
+                    </Form.Text>
+                  </div>
+                </Col>
+              </>
+            )}
 
             <div className="d-grid gap-2">
               {isEditing ? (

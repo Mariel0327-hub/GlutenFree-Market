@@ -40,9 +40,14 @@ const readOrdersbyCustomer = async (req, res) => {
 };
 
 const createNewOrder = async (req, res) => {
-  const { email } = req.user;
+  const { id } = req.user;
   try {
-    const order = await orderModel.createOrders(email);
+    const order = await orderModel.createOrders(id);
+
+    if(!order){
+      throw {code: 404, message: "Not order found"}
+    }
+
     res.status(201).json(order);
   } catch (error) {
     console.error(error);

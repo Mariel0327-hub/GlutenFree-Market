@@ -2,9 +2,6 @@ import bcrypt from "bcryptjs";
 import { pool } from "../db/db.js";
 import pkg from "pg-format";
 
-
-
-
 //registrar usuario nuevo
 const addUser = async (customer) => {
   let { email, shipping_address, billing_address, password } = customer;
@@ -29,53 +26,79 @@ const addUser = async (customer) => {
 
 //falta udptade user
 //si se cambia el password se debe cambiar el hash.
-
-const updateUser = async (id) => {
-  let { name, email, password, shipping_address, billing_address } = customer;
-
-  //hash PASS
-  const updated_at = new Date();
-  const values = [
-    customer_id,
+export const updateUser = async (id, customerData) => {
+  let {
     name,
-    email,
     password,
+    email,
     shipping_address,
     billing_address,
+    profile_image,
+  } = customerData;
+
+  const encryptedPass = password ? bcrypt.hashSync(password, 10) : null;
+
+  const updated_at = new Date();
+  const values = [
+    name || null,
+    email || null,
+    encryptedPass,
+    shipping_address || null,
+    billing_address || null,
+    profile_image || null,
     updated_at,
+    id,
   ];
 
-  const query =
-    "UPDATE customer SET name = $1, email = $2, password = $3, shipping _adress = $4, billing_address = $5 WHERE customer_id = $5 RETURNING *";
-  const { rows } = await pool.query(query, values);
-  return rows;
-};
+  const query = `
+    UPDATE customer 
+    SET name = COALESCE($1, name), 
+        email = COALESCE($2, email), 
+        password = COALESCE($3, password), 
+        shipping_address = COALESCE($4, shipping_address),
+        billing_address = COALESCE($5, billing_address),
+        profile_image = COALESCE($6, profile_image),
+        updated_at = $7
+    WHERE customer_id = $8 
+    RETURNING *`;
 
+  const { rows } = await pool.query(query, values);
+  return rows[0];
+};
 ////////////////////
 
 //hacer login   //jwt
 const verifyUser = async (email, password) => {
   const query = "SELECT * FROM customer WHERE email = $1";
-  const { rows: [customer], rowCount } = await pool.query(query, [email]);
+  const {
+    rows: [customer],
+    rowCount,
+  } = await pool.query(query, [email]);
 
   //NotFound case (404)  -rowCount
-
-  const { password: encryptedPass } = customer;
-  const rightPass = bcrypt.compareSync(password, encryptedPass);
-
-  if (!rightPass || !rowCount) {
+  //con esto verificamos primero si el usuario EXISTE
+  if (!rowCount) {
     throw {
       code: 401,
       message: "Email o contraseña incorrectas",
     };
   }
-  return customer
+  const { password: encryptedPass } = customer;
+  const rightPass = bcrypt.compareSync(password, encryptedPass);
+
+  if (!rightPass) {
+    throw {
+      code: 401,
+      message: "Email o contraseña incorrectas",
+    };
+  }
+  return customer;
 };
 
 //obtener perfilde usuario  //jwt
 const getUserData = async (email) => {
   //headers
-  console.log(email)
+  console.log(email);
   const query = "SELECT * FROM customer WHERE email = $1";
   const { rows: customer, rowCount } = await pool.query(query, [email]);
   if (!rowCount) {
@@ -86,7 +109,6 @@ const getUserData = async (email) => {
   }
   return customer;
 };
-
 
 const authModel = {
   addUser,

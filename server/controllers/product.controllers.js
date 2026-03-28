@@ -122,8 +122,7 @@ const restoreOldProduct = async (req, res) => {
     return res.status(500).json({ message: "Internal Server Error" });
   }
 };
-
-const productController = {
+ const productController = {
   readAllProducts,
   readProductsByUserId,
   readProductsByCategory,
