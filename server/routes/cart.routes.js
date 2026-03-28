@@ -11,21 +11,19 @@ cartRouter.get('/items/:id', cartController.readCartsDetailsbyId )
 //obtener los items del carritod de un usuario
 cartRouter.get('/customer/:id',tokenVerification, cartController.readCartByCustomer )
 
-
-
-//Client  + ADMIN (token required)
-//cartRouter.post('/', tokenVerification, cartController.createNewCart )
-//cartRouter.put('/:id', tokenVerification, cartController.updateNewCart )
-
+// crear, modificar, eliminar productos del carrito persistente
 cartRouter.post('/product', tokenVerification, cartController.createNewCartProduct )
 cartRouter.put('/product', tokenVerification, cartController.updateExistingCartProduct )
 cartRouter.delete('/product', tokenVerification, cartController.deleteExistingCartProduct )
 
+//Funciones Genéricas / ADMIN
+// ver todos los carritos
+cartRouter.get('/', tokenVerification, adminVerification, cartController.readAllCart )
+cartRouter.get('/:id', tokenVerification, adminVerification, cartController.readCartById )
 
-cartRouter.get('/', tokenVerification, cartController.readAllCart )
-cartRouter.get('/:id', tokenVerification, cartController.readCartById )
+//crear un carrito cliente, admin? cuando se crea en específico?
 cartRouter.post('/', tokenVerification, cartController.createNewCartInstance )
-
+//eliminar un carrito antes de la orden compra, AMDMIN;
 cartRouter.delete('/:id', tokenVerification, adminVerification, cartController.deleteNewCart)
 
 export default cartRouter
