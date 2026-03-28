@@ -1,45 +1,25 @@
-Implementado:
+Por acabar
 
-Rutas get, get/:id
-
-auth
-
-delete
-
-puts
-
-posts
-
-premisos para admin
-
-MOVEMENTS
-
-medio acabado:
-
-insertar is_favorites en reviews,
 
 tests ->
-Agregar otras rutas y ejemplos de contenido (array, objeto, etcc)
-
--> agregar 1 sobre tokens (testera Admin vs user)
+Leer descripción en cada grupo de tests.
 
 
 Por comenzar
 
-///filtros
+
 
 //manejo de errores ( de momento controlados vía console.error() - dev)
 -> middlewares, códigos de erorres (DB), otros middleware.
 
-- 404, not found
-- already exists
-- not authorized
-- db mistakes
-- wrong request, etc...
+- 404, not found  /// practicamente acabado (revisar!!!!!!!!!!!!)
+- already exists //login (agregar constratints unique a correo y otras credenciales)
+- not authorized // ya implmementadas en middleware de autenticación (partially done)
+
+- db mistakes // en lib db, importar en catch!!!!!!!!!!!!!
+
+- wrong request, etc...//// revisar!!!!!!!!!!!!!!!!!!!
 - ## Add controllers
-
-
-
 
 
 // dependencias para creación de id (nanoid, uui)
