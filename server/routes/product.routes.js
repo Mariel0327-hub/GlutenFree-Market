@@ -7,9 +7,15 @@ const ADMIN_ROLE = process.env.ADMIN_ROLE
 const productRouter = Router()
 
 //Para tood público
+//Ruta específica para redirigir a categorías
 productRouter.get('/category/:id', productController.readProductsByCategory )   //implementar para ver productos por categoría
+//Ruta para filtrar todos los productos por precio, categoría, relevancia**, stock, etc...
+productRouter.get('/filter', productController.readAllProductsFiltered )
+// Rutas generales para revisar productos (inventario) público
 productRouter.get('/:id', productController.readProductsById )
-productRouter.get('/',tokenVerification, productController.readAllProducts )
+productRouter.get('/', productController.readAllProducts )
+
+
 
 //ADMIN ONLY (BackOffice)
 productRouter.post('/', tokenVerification, adminVerification,  productController.createNewProduct )

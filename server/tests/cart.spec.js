@@ -27,15 +27,17 @@ describe("Operaciones CRUD relacionadsa a registro e incio de sesión", () => {
     // Exclusivamente un array? (Object también pasa el test, por tanto aquí se filtra))
     expect(Array.isArray(cart)).toBe(true);
 
-/*     //Desde que el length no sea 0, el test pasa.
+    /*     //Desde que el length no sea 0, el test pasa.
     expect(cantidadCafes).not.toBe(0); */
   });
 
-   //si se usa id que no existe
+  //si se usa id que no existe
   it("GET/cart/:id status wrong id gives error?", async () => {
-    const wrongId = "cust-99999999999999999999999999999"    
+    const wrongId = "cust-99999999999999999999999999999";
     //Request:
-    const { body, statusCode } = await request(app).get(`/cart/${wrongId}`).send();
+    const { body, statusCode } = await request(app)
+      .get(`/cart/${wrongId}`)
+      .send();
     //Status code:
     const status = statusCode;
     //elemento dentro del request
@@ -45,16 +47,29 @@ describe("Operaciones CRUD relacionadsa a registro e incio de sesión", () => {
 
     //revisar statusCode
     expect(status).toBe(404);
-
-    //Doble revisión: es una instancia de tipo array?
-    //expect(cart).toBeInstanceOf(Object);
-    // Exclusivamente un array? (Object también pasa el test, por tanto aquí se filtra))
-    //expect(Array.isArray(cart)).toBe(true);
-    //Desde que el length no sea 0, el test pasa.
-    //expect(cantidadCafes).not.toBe(0);
   });
 
- /* it("GET/products status code === 200?", async () => {
-    "...";
+  /* it("POST/cart/ status code === 200?", async () => {
+      CREAR UNA INSTANCIA DE CARRITO
+     - se necesitan token para validar y poblar el payload (login)
+  - payload de producto y cantidad
+  - metodo de creacion 
+
+  }); */
+
+  /* it("POST/product status code === 200?", async () => {
+
+    //INSERTAR UN PRODUCTO EN EL CARRITO
+ - se necesitan token para validar y poblar el payload (login)
+  - payload de producto y cantidad
+  - metodo de creacion 
+
+
+  }); */
+
+  /* it("GET/cart/items status code === 200?", async () => {
+- se necesitan token para validar y poblar el payload (login)
+    mirar el detalle de un carrito de un  cliente verificado.
+
   }); */
 });

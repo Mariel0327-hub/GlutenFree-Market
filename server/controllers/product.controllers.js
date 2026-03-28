@@ -17,6 +17,24 @@ const readAllProducts = async (req, res) => {
   }
 };
 
+//IMPLEMENTAR PG_FORMAT
+const readAllProductsFiltered = async (req, res) => {
+  const queryString = req.query
+  console.log(queryString)
+  try {
+    const result = await productModel.findAllProductsFiltered(queryString);
+
+    if (!result) {
+      return res.status(404).json({ message: "No Products Found" });
+    }
+
+    return res.status(200).json(result);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
 const readProductsById = async (req, res) => {
   const { id } = req.params;
   try {
@@ -48,16 +66,6 @@ const readProductsByCategory = async (req, res) => {
     return res.status(500).json({ message: "Internal Server Error" });
   }
 };
-
-//no será usado (favoritos instead)
-/* const readProductsByUserId = async (req, res) => {
-  const { id } = req.params;
-  try {
-    await productModel.findProductByUSer(id);
-  } catch (error) {
-    return res.status(500).json({ message: "Internal Server Error" });
-  }
-}; */
 
 const createNewProduct = async (req, res) => {
   const { title, product_description, price, image_url, stock, sku, category } =
@@ -148,7 +156,7 @@ const restoreOldProduct = async (req, res) => {
 
 const productController = {
   readAllProducts,
-  //readProductsByUserId,
+  readAllProductsFiltered,
   readProductsByCategory,
   readProductsById,
   createNewProduct,

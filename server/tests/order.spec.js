@@ -56,6 +56,8 @@ describe("Operaciones CRUD relacionadsa a registro e incio de sesión", () => {
   });
 /*
   it("GET/products status code === 200?", async () => {
-    "...";
+      Ver orden de compra de un cliente
+      - login
+      - activar ruta para ver orden de un cliente 
   }); */
 });

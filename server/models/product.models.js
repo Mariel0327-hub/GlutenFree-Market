@@ -1,12 +1,22 @@
 import { pool } from "../db/db.js";
-import pkg from 'pg-format';
+import format from 'pg-format';
 
 //ver todos los productos
-const findAllProducts = async(id) =>{
+const findAllProducts = async() =>{
 const query = "SELECT * FROM product"
 const {rows} = await pool.query(query)
 return rows;
 }
+
+//IMPLEMENTAR PG_FORMAT
+//ver todos los productos
+const findAllProductsFiltered = async({limit = 10, order_by}) =>{
+const [campo, dir] = order_by.split("_")
+const queryFormat = format("SELECT * FROM product ORDER BY %s %s LIMIT %s", campo, dir, limit)
+const {rows: filters} = await pool.query(queryFormat)
+return filters;
+}
+
 
 //Ver productos según categoria (secciones de productos)
 const findProductByCategory = async(id)=>{
@@ -79,6 +89,7 @@ return rows
 
 const productModel = {
     findAllProducts,
+    findAllProductsFiltered,
     findProductByCategory,
     findProductById,
     createProduct,
