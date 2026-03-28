@@ -38,20 +38,20 @@ const findOrderDetailsbyId = async (id) =>{
 
 
 //Crear Compra
-const createOrders = async (email) => {
+const createOrders = async (id) => {
   //dummy id
   const order_total_id = `order-t-${Math.floor(Math.random() * 3000)}`;
 
   //id_customer:
   const { rows: customerRows, rowCount } = await pool.query(
-    "SELECT customer_id FROM customer WHERE email = $1",
-    [email],
+    "SELECT customer_id FROM customer WHERE customer_id = $1",
+    [id],
   );
 
   if (rowCount === 0) {
     throw { code: 404, message: "Customer not found" };
   }
-
+  
   const id_customer = customerRows[0].customer_id;
 
   //subquery to calculate total
@@ -95,16 +95,17 @@ const createOrders = async (email) => {
 
     //CREATE ORDER_ITEM
     const order_item_id = `order-it-${Math.floor(Math.random() * 3000)}`;
-
+    const created_at = new Date()
     const itemValues = [
       order_item_id,
       newOrder.order_total_id,
       item.id_product,
       item.quantity,
       item.price,
+      created_at
     ];
     await pool.query(
-      "INSERT INTO order_item (order_item_id,id_order_total, id_product, quantity, unit_price) values($1, $2, $3, $4, $5)",
+      "INSERT INTO order_item (order_item_id,id_order_total, id_product, quantity, unit_price, created_at) values($1, $2, $3, $4, $5, $6)",
       itemValues,
     );
 
@@ -124,6 +125,7 @@ const createOrders = async (email) => {
     await pool.query("INSERT INTO stock_mov (id_order_item, id_product, id_type_mov, quantity, created_at) VALUES ($1, $2, $3, $4, $5)", stockMoveValues)
   }
 
+  //Eliminar carro(s) del cliente
   await pool.query(
     "DELETE FROM cart_item WHERE id_cart = (SELECT cart_id FROM cart WHERE id_customer =$1)",
     [id_customer],

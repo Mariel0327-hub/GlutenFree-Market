@@ -87,7 +87,7 @@ const updateFavorites = async (id) => {
   }
 
   const id_customer = customerRows[0].customer_id;
-  favProduct = id_product
+  const favProduct = id_product
   const updated_at = new Date();
 
   const values = [

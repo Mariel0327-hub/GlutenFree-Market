@@ -2,9 +2,6 @@ import bcrypt from "bcryptjs";
 import { pool } from "../db/db.js";
 import pkg from "pg-format";
 
-
-
-
 //registrar usuario nuevo
 const addUser = async (customer) => {
   let { email, shipping_address, billing_address, password } = customer;
@@ -31,21 +28,24 @@ const addUser = async (customer) => {
 //si se cambia el password se debe cambiar el hash.
 
 const updateUser = async (id, customer) => {
-  let { email, password, shipping_address, billing_address } = customer;
+  let { name, email, password, shipping_address, billing_address } = customer;
+
+  const encryptedPass = bcrypt.hashSync(password);
 
   //hash PASS
   const updated_at = new Date();
   const values = [
+    //name || null,
     email,
-    password,
-    shipping_address,
-    billing_address,
+    encryptedPass,
+    shipping_address || "",
+    billing_address || "",
     updated_at,
-    id
+    id,
   ];
-
+  
   const query =
-    "UPDATE customer SET email = COALESCE($1,email), password = COALESCE($2,password), shipping_address = COALESCE($3,shipping_address), billing_address = COALESCE($4, billing_address), updated_at = ($5) WHERE customer_id = $6 RETURNING *";
+    "UPDATE customer SET name = COALESCE($1, name), email = COALESCE($2,email), password = COALESCE($3,password), shipping_address = COALESCE($4,shipping_address), billing_address = COALESCE($5, billing_address), updated_at = ($6) WHERE customer_id = $7 RETURNING *";
   const { rows } = await pool.query(query, values);
   return rows[0];
 };
@@ -55,7 +55,10 @@ const updateUser = async (id, customer) => {
 //hacer login   //jwt
 const verifyUser = async (email, password) => {
   const query = "SELECT * FROM customer WHERE email = $1";
-  const { rows: [customer], rowCount } = await pool.query(query, [email]);
+  const {
+    rows: [customer],
+    rowCount,
+  } = await pool.query(query, [email]);
 
   //NotFound case (404)  -rowCount
 
@@ -68,13 +71,13 @@ const verifyUser = async (email, password) => {
       message: "Email o contraseña incorrectas",
     };
   }
-  return customer
+  return customer;
 };
 
 //obtener perfilde usuario  //jwt
 const getUserData = async (email) => {
   //headers
-  console.log(email)
+  console.log(email);
   const query = "SELECT * FROM customer WHERE email = $1";
   const { rows: customer, rowCount } = await pool.query(query, [email]);
   if (!rowCount) {
@@ -85,7 +88,6 @@ const getUserData = async (email) => {
   }
   return customer[0];
 };
-
 
 const authModel = {
   addUser,

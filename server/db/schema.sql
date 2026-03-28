@@ -19,6 +19,8 @@ c gluten_free_market;
 -- TABLE ORDER_TOTAL, column date -> order_date
 
 ------------------------------
+-- agregar  --name VARCHAR PRIMARY KEY,
+--agregar   --imagen_url 
 CREATE TABLE customer (
     customer_id VARCHAR PRIMARY KEY,
     email VARCHAR(255) NOT NULL UNIQUE,
