@@ -4,8 +4,10 @@ import bycrpt from "bcryptjs";
 
 /* 
 DE MOMENTO, CLIENTES Y FAVORITOS ESTÁN JUNTOS EN LA MEDIDA QUE HAY UNA RELACIÓN DIRECTA ENTRE AMBAS TABLAS Y LAS RTAS NO SON LO SUFICIENTEMENTE COMPLEJAS COMO PARA SEPARARLAS. PARA VERSIONES POSTERIORES, DE CRECER MÁS DE LO CONTROLABLE EN ESTA FORMA, SE SEPARARÁN LAS RUTAS EN /customers ; /favorites. 
+
 De momento las rutas serán /customer -> /customer/favorites;
 Debido a que solo un cliente registrado puede tener favoritos.
+
  */
 //Clientes
 const readAllCustomers = async (req, res) => {

@@ -81,39 +81,8 @@ const readCartsDetailsbyId = async (req, res) => {
     return res.status(500).json({ message: "Internal Server Error" });
   }
 };
-///////////////////////
 
-/* const createNewCart = async (req, res) => {
-  const { email } = req.user;
-  const { cart } = req.body;
-  try {
-    const result = await cartModel.createCart(email, cart);
-    if (!result) {
-      return res.status(404).json({ message: "No cart Created" });
-    }
-    return res.status(201).json(result);
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({ message: "Internal Server Error" });
-  }
-};
-const updateNewCart = async (req, res) => {
-  const { email } = req.user;
-  const { cart } = req.body;
-  const { id } = req.params;
-  try {
-    const result = await cartModel.updateCart(id, email, cart);
-    if (!result) {
-      return res.status(404).json({ message: "No cart Mofidied" });
-    }
-    return res.status(200).json(result);
-  } catch (error) {
-    return res.status(500).json({ message: "Internal Server Error" });
-  }
-};
- */
-//Crear un carrito
-
+//Crear nueva instancia de carrito
 const createNewCartInstance = async (req, res) => {
   const { id } = req.user;
 
@@ -151,7 +120,7 @@ const createNewCartProduct = async (req, res) => {
     return res.status(500).json({ message: "Internal Server Error" });
   }
 };
-// Para Botones + -
+//Actualizar cantidad -> Para Botones + -
 const updateExistingCartProduct = async (req, res) => {
   try {
     // producto considera id de producto y cantidad de producto
@@ -174,7 +143,7 @@ const updateExistingCartProduct = async (req, res) => {
 
 //Eliminar un Carrito (ADMIN ONLY)
 const deleteExistingCartProduct = async (req, res) => {
-
+  
   const { id } = req.user;
   const {productToDelete} = req.body
   try {
@@ -215,12 +184,12 @@ const deleteNewCart = async (req, res) => {
 };
 
 const cartController = {
+  //lecturas de carrito
   readAllCart,
   readCartById,
   readCartByCustomer,
   readAllCartDetails,
   readCartsDetailsbyId,
-  //createNewCart,
 
   //product managing:
   createNewCartInstance,
@@ -228,7 +197,7 @@ const cartController = {
   updateExistingCartProduct,
   deleteExistingCartProduct,
 
-  //updateNewCart,
+  //eliminar un carrito corrupto
   deleteNewCart,
 };
 

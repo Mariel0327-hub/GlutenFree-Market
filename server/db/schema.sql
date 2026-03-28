@@ -19,6 +19,8 @@ c gluten_free_market;
 -- TABLE ORDER_TOTAL, column date -> order_date
 
 ------------------------------
+-- agregar  --name VARCHAR PRIMARY KEY,
+--agregar   --imagen_url 
 CREATE TABLE customer (
     customer_id VARCHAR PRIMARY KEY,
     email VARCHAR(255) NOT NULL UNIQUE,
@@ -53,7 +55,7 @@ CREATE TABLE product (
     price INT,
     image_url VARCHAR,
     stock INT,
-    category VARCHAR REFERENCES categories(category_id),
+    category VARCHAR REFERENCES categories (category_id),
     sku INT,
     is_active BOOLEAN,
     created_at TIMESTAMP,
@@ -112,14 +114,13 @@ CREATE TABLE type_of_movements (
     type_mov_description VARCHAR NOT NULL
 );
 
---para testear en próxima versión
 --FAVORITOS
-/* CREATE TABLE favoritos(
-favoritos_id VARCHAR PK)
-id_customer REFERENCES customer(customer_id)
-id_product REFERENCES product(product_id)
-)
-*/
+CREATE TABLE favoritos (
+    favoritos_id VARCHAR PRIMARY KEY,
+    id_customer VARCHAR REFERENCES customer (customer_id),
+    id_product VARCHAR REFERENCES product (product_id)
+);
+
 ---------------------------
 --DATASETS:
 
@@ -510,6 +511,58 @@ VALUES (
         NOW()
     );
 
+--favoritos
+INSERT INTO
+    favoritos (
+        favoritos_id,
+        id_customer,
+        id_product
+    )
+VALUES (
+        'fav-001',
+        'cust-002',
+        'prod-004'
+    ),
+    (
+        'fav-002',
+        'cust-001',
+        'prod-003'
+    ),
+    (
+        'fav-003',
+        'cust-003',
+        'prod-001'
+    ),
+    (
+        'fav-004',
+        'cust-002',
+        'prod-002'
+    ),
+    (
+        'fav-005',
+        'cust-001',
+        'prod-001'
+    ),
+    (
+        'fav-006',
+        'cust-003',
+        'prod-004'
+    ),
+    (
+        'fav-007',
+        'cust-002',
+        'prod-003'
+    ),
+    (
+        'fav-008',
+        'cust-001',
+        'prod-002'
+    ),
+    (
+        'fav-009',
+        'cust-003',
+        'prod-002'
+    );
 ---------------------------
 
 select * from customer;
@@ -529,3 +582,5 @@ select * from stock_mov;
 select * from review;
 
 select * from categories;
+
+select * from favoritos;

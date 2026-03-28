@@ -7,7 +7,7 @@ const findOrders = async () => {
   return rows;
 };
 
-//Ver una compra específica  //ADMIN
+//Ver una compra específica  //ADMIN  ??cliente?
 const findOrdersById = async (id) => {
   const query = "SELECT * FROM order_total WHERE order_total_id = $1";
   const { rows } = await pool.query(query, [id]);
@@ -21,25 +21,41 @@ const findOrdersByCustomer = async (id) => {
   return rows[0];
 };
 
+////////Ver detalle de compra
+
+const findOrderDetails = async () =>{
+    const query = "SELECT * FROM order_item";
+  const { rows } = await pool.query(query);
+  return rows;
+}
+const findOrderDetailsbyId = async (id) =>{
+  const query = "SELECT * FROM order_item WHERE id_order_total = $1";
+  const { rows } = await pool.query(query, [id]);
+  return rows;
+}
+
+//////////////////
+
+
 //Crear Compra
-const createOrders = async (email) => {
+const createOrders = async (id) => {
   //dummy id
   const order_total_id = `order-t-${Math.floor(Math.random() * 3000)}`;
 
   //id_customer:
   const { rows: customerRows, rowCount } = await pool.query(
-    "SELECT customer_id FROM customer WHERE email = $1",
-    [email],
+    "SELECT customer_id FROM customer WHERE customer_id = $1",
+    [id],
   );
 
   if (rowCount === 0) {
     throw { code: 404, message: "Customer not found" };
   }
-
+  
   const id_customer = customerRows[0].customer_id;
 
   //subquery to calculate total
-  const { rows: cartData, dataRowCount } = await pool.query(
+  const { rows: cartData } = await pool.query(
     "SELECT ci.id_product, ci.quantity, p.price FROM cart_item ci JOIN product p ON ci.id_product = p.product_id WHERE ci.id_cart = (SELECT cart_id FROM cart WHERE id_customer = $1)",
     [id_customer],
   );
@@ -79,16 +95,17 @@ const createOrders = async (email) => {
 
     //CREATE ORDER_ITEM
     const order_item_id = `order-it-${Math.floor(Math.random() * 3000)}`;
-
+    const created_at = new Date()
     const itemValues = [
       order_item_id,
       newOrder.order_total_id,
       item.id_product,
       item.quantity,
       item.price,
+      created_at
     ];
     await pool.query(
-      "INSERT INTO order_item (order_item_id,id_order_total, id_product, quantity, unit_price) values($1, $2, $3, $4, $5)",
+      "INSERT INTO order_item (order_item_id,id_order_total, id_product, quantity, unit_price, created_at) values($1, $2, $3, $4, $5, $6)",
       itemValues,
     );
 
@@ -108,6 +125,7 @@ const createOrders = async (email) => {
     await pool.query("INSERT INTO stock_mov (id_order_item, id_product, id_type_mov, quantity, created_at) VALUES ($1, $2, $3, $4, $5)", stockMoveValues)
   }
 
+  //Eliminar carro(s) del cliente
   await pool.query(
     "DELETE FROM cart_item WHERE id_cart = (SELECT cart_id FROM cart WHERE id_customer =$1)",
     [id_customer],
@@ -120,7 +138,7 @@ const createOrders = async (email) => {
 const updateOrder = async (id) => {
   const updated_at = new Date();
   const query =
-    "UPDATE product SET, total = $1, is_paid = $2, is_shipped = $3, created_at = $4, updated_at = $5 WHERE order_id = $6 AND customer_id = $7 RETURNING *";
+    "UPDATE product SET total = COALESCE($1, total), is_paid = COALESCE($2, is_paid), is_shipped = COALESCE($3, is_shipped), created_at = COALESCE($4,created_at), updated_at = COALESCE($5,updated_at) WHERE order_id = $6 AND customer_id = $7 RETURNING *";
   const values = [
     total,
     is_paid,
@@ -141,12 +159,16 @@ const deleteOrder = async (id) => {
   return rows[0];
 };
 const orderModel = {
+  //order
   findOrders,
   findOrdersById,
   findOrdersByCustomer,
   createOrders,
   updateOrder,
   deleteOrder,
+  //order-detail
+  findOrderDetails,
+  findOrderDetailsbyId
 };
 
 export default orderModel;

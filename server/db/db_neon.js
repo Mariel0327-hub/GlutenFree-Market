@@ -17,5 +17,6 @@ export const getDbConnectionNeon = async () => {
   } catch (error) {
     console.error(error);
     console.log("error");
+
   }
 };

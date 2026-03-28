@@ -26,45 +26,30 @@ const addUser = async (customer) => {
 
 //falta udptade user
 //si se cambia el password se debe cambiar el hash.
-export const updateUser = async (id, customerData) => {
-  let {
-    name,
-    password,
-    email,
-    shipping_address,
-    billing_address,
-    profile_image,
-  } = customerData;
 
-  const encryptedPass = password ? bcrypt.hashSync(password, 10) : null;
+const updateUser = async (id, customer) => {
+  let { name, email, password, shipping_address, billing_address } = customer;
 
+  const encryptedPass = bcrypt.hashSync(password);
+
+  //hash PASS
   const updated_at = new Date();
   const values = [
-    name || null,
-    email || null,
+    //name || null,
+    email,
     encryptedPass,
-    shipping_address || null,
-    billing_address || null,
-    profile_image || null,
+    shipping_address || "",
+    billing_address || "",
     updated_at,
     id,
   ];
-
-  const query = `
-    UPDATE customer 
-    SET name = COALESCE($1, name), 
-        email = COALESCE($2, email), 
-        password = COALESCE($3, password), 
-        shipping_address = COALESCE($4, shipping_address),
-        billing_address = COALESCE($5, billing_address),
-        profile_image = COALESCE($6, profile_image),
-        updated_at = $7
-    WHERE customer_id = $8 
-    RETURNING *`;
-
+  
+  const query =
+    "UPDATE customer SET name = COALESCE($1, name), email = COALESCE($2,email), password = COALESCE($3,password), shipping_address = COALESCE($4,shipping_address), billing_address = COALESCE($5, billing_address), updated_at = ($6) WHERE customer_id = $7 RETURNING *";
   const { rows } = await pool.query(query, values);
   return rows[0];
 };
+
 ////////////////////
 
 //hacer login   //jwt
@@ -76,17 +61,11 @@ const verifyUser = async (email, password) => {
   } = await pool.query(query, [email]);
 
   //NotFound case (404)  -rowCount
-  //con esto verificamos primero si el usuario EXISTE
-  if (!rowCount) {
-    throw {
-      code: 401,
-      message: "Email o contraseña incorrectas",
-    };
-  }
+
   const { password: encryptedPass } = customer;
   const rightPass = bcrypt.compareSync(password, encryptedPass);
 
-  if (!rightPass) {
+  if (!rightPass || !rowCount) {
     throw {
       code: 401,
       message: "Email o contraseña incorrectas",
@@ -107,7 +86,7 @@ const getUserData = async (email) => {
       message: "Customer not found",
     };
   }
-  return customer;
+  return customer[0];
 };
 
 const authModel = {
