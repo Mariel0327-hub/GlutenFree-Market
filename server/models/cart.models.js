@@ -157,6 +157,7 @@ const deleteCart = async (id) => {
 };
 
 const cartModel = {
+  //Lecturas de carrito
   findallCarts,
   findCartById,
   findCartDetails,
@@ -169,6 +170,7 @@ const cartModel = {
   updateCartProduct,
   deleteProductFromCart,
 
+  //Admin
   deleteCart,
 };
 

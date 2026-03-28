@@ -11,7 +11,7 @@ cartRouter.get('/items/:id', cartController.readCartsDetailsbyId )
 //obtener los items del carritod de un usuario
 cartRouter.get('/customer/:id',tokenVerification, cartController.readCartByCustomer )
 
-// crear, modificar, eliminar productos del carrito persistente
+//Crear, modificar, eliminar productos del carrito persistente
 cartRouter.post('/product', tokenVerification, cartController.createNewCartProduct )
 cartRouter.put('/product', tokenVerification, cartController.updateExistingCartProduct )
 cartRouter.delete('/product', tokenVerification, cartController.deleteExistingCartProduct )
