@@ -27,6 +27,7 @@
     "test:carts": "node --experimental-vm-modules node_modules/jest/bin/jest.js cart.spec.js --forceExit",
     "test:orders": "node --experimental-vm-modules node_modules/jest/bin/jest.js order.spec.js --forceExit",
     "test:reviews": "node --experimental-vm-modules node_modules/jest/bin/jest.js reviews.spec.js --forceExit",
+    "test:auth": "node --experimental-vm-modules node_modules/jest/bin/jest.js auth.spec.js --forceExit --verbose",
     "dev": "nodemon index.js"
   },
   "keywords": [],

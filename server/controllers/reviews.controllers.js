@@ -5,6 +5,11 @@ import bycrpt from "bcryptjs";
 const readAllReviews = async (req, res) => {
   try {
     const result = await reviewModel.findAllReviews();
+
+    if (!result) {
+      return res.status(404).json({ message: "No hay Review disponibles" });
+    }
+
     return res.status(200).json(result);
   } catch (error) {
     console.error(error);
@@ -16,6 +21,13 @@ const readReviewsByUser = async (req, res) => {
   const { id } = req.params;
   try {
     const result = await reviewModel.findReviewsByUSer(id);
+
+    if (!result) {
+      return res
+        .status(404)
+        .json({ message: "Review no encontrado o Id inválido" });
+    }
+
     return res.status(200).json(result);
   } catch (error) {
     console.error(error);
@@ -27,6 +39,13 @@ const readReviewsByProduct = async (req, res) => {
   const { id } = req.params;
   try {
     const result = await reviewModel.findReviewsByProduct(id);
+
+    if (!result) {
+      return res
+        .status(404)
+        .json({ message: "Review no encontrado o Id inválido" });
+    }
+
     return res.status(200).json(result);
   } catch (error) {
     console.error(error);
@@ -39,6 +58,13 @@ const readReviewsById = async (req, res) => {
   const { id } = req.params;
   try {
     const result = await reviewModel.findReviewsById(id);
+
+    if (!result) {
+      return res
+        .status(404)
+        .json({ message: "Review no encontrado o Id inválido" });
+    }
+
     return res.status(200).json(result);
   } catch (error) {
     console.error(error);
@@ -65,6 +91,7 @@ const createNewReview = async (req, res) => {
 };
 
 const updateRegisteredReview = async (req, res) => {
+  //id del review (que ya fue creado)
   const { id } = req.params;
   const { about_product, id_product, review_body, rating } = req.body;
   try {
@@ -83,7 +110,7 @@ const updateRegisteredReview = async (req, res) => {
 };
 
 const deleteRegisteredReview = async (req, res) => {
-  const {id} = req.params
+  const { id } = req.params;
   try {
     await reviewModel.deleteReview(id);
     return res.status(200).json({ message: "Reseña eliminada con éxito" });

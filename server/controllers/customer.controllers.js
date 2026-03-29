@@ -36,7 +36,7 @@ const readCustomersbyId = async (req, res) => {
   }
 };
 
-const deleteNewCustomer = async (req, res) => {
+/* const deleteNewCustomer = async (req, res) => {
   try {
     const { id } = req.params;
 
@@ -51,7 +51,7 @@ const deleteNewCustomer = async (req, res) => {
     return res.status(500).json({ message: "Internal Server Error" });
   }
 };
-
+ */
 
 /////Favroritos
 const readAllFavorites = async (req, res) => {
@@ -120,7 +120,7 @@ const deleteNewFavorite = async (req, res) => {
 const customerController = {
   readAllCustomers,
   readCustomersbyId,
-  deleteNewCustomer,
+  //deleteNewCustomer,
   readAllFavorites,
   readFavoritesbyId,
   createNewFavorite,

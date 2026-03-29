@@ -2,7 +2,7 @@ import {Router} from 'express'
 import customerController from '../controllers/customer.controllers.js'
 import { adminVerification, tokenVerification } from "../lib/middlewares/lib.middlewares.js";
 
-///CAMBIAR METODOS PARA CUSTOMER
+const ADMIN_ROLE = process.env.ADMIN_ROLE
 
 const customerRouter = Router()
 //FAVORITES
@@ -15,9 +15,10 @@ customerRouter.delete('/favorites/:id',tokenVerification, customerController.del
 
 //CLIENTES
 //ADMIN ONLY
-customerRouter.get('/', tokenVerification, adminVerification, customerController.readAllCustomers )
+customerRouter.get('/', tokenVerification, adminVerification(ADMIN_ROLE), customerController.readAllCustomers )
 customerRouter.get('/:id', tokenVerification, adminVerification, customerController.readCustomersbyId )
-customerRouter.delete('/:id', tokenVerification, adminVerification, customerController.deleteNewCustomer )
+//already exists in auth routes 
+//customerRouter.delete('/:id', tokenVerification, adminVerification, customerController.deleteNewCustomer )
 
 
 

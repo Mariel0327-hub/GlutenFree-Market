@@ -58,9 +58,25 @@ const getUserProfile = async (req, res) => {
     /*     const Authorization = req.header("Authorization");
     const token = Authorization.split("Bearer ")[1];
     jwt.verify(token, `${SECRET}`); */
-    const { email } = req.user;
-    const result = await authModel.getUserData(email);
+    const  customer  = req.user;
+    const result = await authModel.getUserData(customer);
     return res.status(200).json(result);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+const deleteNewUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    await authModel.deleteUser(id);
+
+    console.log(`Cliente ${id}, eliminadx exitosamente`);
+    return res
+      .status(200)
+      .json({ message: `Cliente ${id}, eliminadx exitosamente` });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "Internal Server Error" });
@@ -69,9 +85,10 @@ const getUserProfile = async (req, res) => {
 
 const authController = {
   registerUser,
-  modifyUser, // ruta nueva?
+  modifyUser, 
   authenticateUser,
   getUserProfile,
+  deleteNewUser,
 };
 
 export default authController;

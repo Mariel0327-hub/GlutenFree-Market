@@ -17,12 +17,12 @@ const findCustomerById = async (id) => {
   return rows[0];
 };
 
-//Eliminar cliente  //ADMIN
+/* //Eliminar cliente  //ADMIN
 const deleteCustomer = async (id) => {
   const query = "DELETE FROM customer WHERE customer_id = $1";
   const { rows } = await pool.query(query, [id]);
   return rows[0];
-};
+}; */
 
 //FAVORITOS
 
@@ -111,7 +111,7 @@ const deleteFavorite = async(id)=>{
 const customerModel = {
   findCustomers,
   findCustomerById,
-  deleteCustomer,
+  //deleteCustomer,
   findFavorites,
   findFavoritesById,
   createFavorites,

@@ -75,18 +75,26 @@ const verifyUser = async (email, password) => {
 };
 
 //obtener perfilde usuario  //jwt
-const getUserData = async (email) => {
+const getUserData = async (customer) => {
   //headers
-  console.log(email);
-  const query = "SELECT * FROM customer WHERE email = $1";
-  const { rows: customer, rowCount } = await pool.query(query, [email]);
+  console.log(customer.id);
+  const query = "SELECT * FROM customer WHERE customer_id = $1";
+  const { rows: customerRows, rowCount } = await pool.query(query, [customer.id]);
   if (!rowCount) {
     throw {
       code: 404,
-      message: "Customer not found",
+      message: "Customer not found"
     };
   }
-  return customer[0];
+  return customerRows[0];
+};
+
+//ADMIN USE ONLY
+//Eliminar cliente  //ADMIN
+const deleteUser = async (id) => {
+  const query = "DELETE FROM customer WHERE customer_id = $1";
+  const { rows } = await pool.query(query, [id]);
+  return rows[0];
 };
 
 const authModel = {
@@ -94,6 +102,7 @@ const authModel = {
   updateUser,
   verifyUser,
   getUserData,
+  deleteUser,
 };
 
 export default authModel;
