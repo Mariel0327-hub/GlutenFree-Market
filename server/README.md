@@ -2,10 +2,10 @@ Por acabar
 
 
 tests ->
-Leer descripción en cada grupo de tests.
+falta colocar tests en order y cart
 
 
-Por comenzar
+En proceso
 
 
 
@@ -19,14 +19,14 @@ Por comenzar
 - db mistakes // en lib db, importar en catch!!!!!!!!!!!!!
 
 - wrong request, etc...//// revisar!!!!!!!!!!!!!!!!!!!
-- ## Add controllers
+- ## Add to controllers
 
+Por comenzar
 
 // dependencias para creación de id (nanoid, uui)
 
 
-// import { uuidv7 } from 'uuidv7';
-
+// 
 
 
 
