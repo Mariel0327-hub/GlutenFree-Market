@@ -1,7 +1,6 @@
 import dotenv from "dotenv";
 import authModel from "../models/auth.models.js";
 import jwt from "jsonwebtoken";
-import bycrpt from "bcryptjs";
 dotenv.config();
 
 const SECRET = process.env.JWT_SECRET;
@@ -28,7 +27,7 @@ const modifyUser = async (req, res) => {
     jwt.verify(token, `${SECRET}`); */
     const result = await authModel.updateUser(id, customer);
 
-        if (!result) {
+    if (!result) {
       return res.status(404).json({ message: "No Customer Found" });
     }
 
@@ -55,10 +54,7 @@ const authenticateUser = async (req, res) => {
 //profile
 const getUserProfile = async (req, res) => {
   try {
-    /*     const Authorization = req.header("Authorization");
-    const token = Authorization.split("Bearer ")[1];
-    jwt.verify(token, `${SECRET}`); */
-    const  customer  = req.user;
+    const customer = req.user;
     const result = await authModel.getUserData(customer);
     return res.status(200).json(result);
   } catch (error) {
@@ -86,7 +82,7 @@ const deleteNewUser = async (req, res) => {
 
 const authController = {
   registerUser,
-  modifyUser, 
+  modifyUser,
   authenticateUser,
   getUserProfile,
   deleteNewUser,

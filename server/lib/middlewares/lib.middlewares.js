@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const SECRET = process.env.JWT_SECRET;
-const ADMIN_ROLE = process.env.ADMIN_ROLE
+const ADMIN_ROLE = process.env.ADMIN_ROLE;
 
 //User token Auth
 export const tokenVerification = (req, res, next) => {
@@ -32,10 +32,9 @@ export const tokenVerification = (req, res, next) => {
 
 //Admin credentials Auth (requiere backoffice en front)
 export const adminVerification = (role) => (req, res, next) => {
-
   try {
-    if(!req.user.role || req.user.role !== role){
-      return res.status(403).json({message: "Forbidden"})
+    if (!req.user.role || req.user.role !== role) {
+      return res.status(403).json({ message: "Forbidden" });
     }
     next();
   } catch (error) {

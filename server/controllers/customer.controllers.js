@@ -1,6 +1,5 @@
 import customerModel from "../models/customer.models.js";
-import jwt from "jsonwebtoken";
-import bycrpt from "bcryptjs";
+
 
 /* 
 DE MOMENTO, CLIENTES Y FAVORITOS ESTÁN JUNTOS EN LA MEDIDA QUE HAY UNA RELACIÓN DIRECTA ENTRE AMBAS TABLAS Y LAS RTAS NO SON LO SUFICIENTEMENTE COMPLEJAS COMO PARA SEPARARLAS. PARA VERSIONES POSTERIORES, DE CRECER MÁS DE LO CONTROLABLE EN ESTA FORMA, SE SEPARARÁN LAS RUTAS EN /customers ; /favorites. 
@@ -52,7 +51,6 @@ const deleteNewCustomer = async (req, res) => {
   }
 };
 
-
 /////Favroritos
 const readAllFavorites = async (req, res) => {
   try {
@@ -83,12 +81,12 @@ const readFavoritesbyId = async (req, res) => {
 //Seleccionar y almacenar un producto favorito
 const createNewFavorite = async (req, res) => {
   const { email } = req.user;
-  const {favProduct} = req.body
+  const { favProduct } = req.body;
   try {
     const result = await customerModel.createFavorites(email, favProduct);
 
-    if(!result){
-      return res.status(404).json({message: "Producto no encontrado"})
+    if (!result) {
+      return res.status(404).json({ message: "Producto no encontrado" });
     }
 
     res.status(201).json(result);

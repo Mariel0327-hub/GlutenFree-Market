@@ -1,6 +1,4 @@
 import cartModel from "../models/cart.models.js";
-//import jwt from "jsonwebtoken";
-//import bycrpt from "bcryptjs";
 
 const readAllCart = async (req, res) => {
   try {
@@ -143,9 +141,8 @@ const updateExistingCartProduct = async (req, res) => {
 
 //Eliminar un Carrito (ADMIN ONLY)
 const deleteExistingCartProduct = async (req, res) => {
-  
   const { id } = req.user;
-  const {productToDelete} = req.body
+  const { productToDelete } = req.body;
   try {
     const result = await cartModel.deleteProductFromCart(id, productToDelete);
 
@@ -154,13 +151,11 @@ const deleteExistingCartProduct = async (req, res) => {
     }
 
     console.log(`Carrito ${id}, eliminado exitosamente`);
-    return res
-      .status(200)
-      .json(result);
+    return res.status(200).json(result);
   } catch (error) {
     console.error(error);
-    if(error.code === 404){
-      return res.status(404).json({ message: error.message })
+    if (error.code === 404) {
+      return res.status(404).json({ message: error.message });
     }
     return res.status(500).json({ message: "Internal Server Error" });
   }

@@ -50,7 +50,7 @@ const createCartInstance = async (id) => {
   await pool.query("DELETE FROM cart WHERE id_customer = $1", [id_customer]);
 
   //Crear una instancia de carrito
-  const cartIdBody = uuidv7()
+  const cartIdBody = uuidv7();
   const cart_id = `cart-${cartIdBody}`;
   const created_at = new Date();
   const is_active = true;
@@ -74,7 +74,7 @@ const addProductToCart = async (id, newCartProduct) => {
   const cart_id = cartResult[0].cart_id;
 
   //generate cart_item id
-  const cartItemIdBody = uuidv7()
+  const cartItemIdBody = uuidv7();
   let cart_item_id = `cart-item-${cartItemIdBody}`;
 
   const created_at = new Date();

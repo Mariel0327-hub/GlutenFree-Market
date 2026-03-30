@@ -17,6 +17,9 @@ export const getDbConnectionNeon = async () => {
   } catch (error) {
     console.error(error);
     console.log("error");
-
   }
 };
+
+/* Se facilitará un string de 
+conexión para la base de datos 
+online por vía privada */

@@ -11,7 +11,7 @@ DROP DATABASE gluten_free_market;
 c gluten_free_market;
 
 -- PK id shape <entity>_id
--- FK id shape id_<entity>3
+-- FK id shape id_<entity>
 
 --!!! CAMBIOS----------------
 -- TABLE ORDER -> ORDER_TOTAL
@@ -32,7 +32,10 @@ CREATE TABLE type_of_movements (
 
 --|||ADAPTACIONES PARA IMPLEMENTAR EN FRONT hito4
 -- agregar  --name VARCHAR PRIMARY KEY,
---agregar   --imagen_url
+--agregar   --img_url_customer
+
+--password UNIQUE; colocar otro nombre?
+
 CREATE TABLE customer (
     customer_id VARCHAR PRIMARY KEY,
     email VARCHAR(255) NOT NULL UNIQUE,
@@ -410,7 +413,7 @@ VALUES (
         NOW()
     );
 
-    -- type_of_movments
+-- type_of_movments
 INSERT INTO
     type_of_movements (
         type_mov_id,
@@ -418,7 +421,6 @@ INSERT INTO
     )
 VALUES ('1', 'Entrada'),
     ('2', 'Salida');
-
 
 -- stock_mov
 INSERT INTO
@@ -462,7 +464,6 @@ VALUES (
         NOW(),
         NOW()
     );
-
 
 -- reviews
 INSERT INTO

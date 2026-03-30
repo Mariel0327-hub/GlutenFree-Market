@@ -1,6 +1,4 @@
 import productModel from "../models/product.models.js";
-import jwt from "jsonwebtoken";
-import bycrpt from "bcryptjs";
 
 const readAllProducts = async (req, res) => {
   try {

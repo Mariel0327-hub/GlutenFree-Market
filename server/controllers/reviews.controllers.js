@@ -72,7 +72,7 @@ const readReviewsById = async (req, res) => {
   }
 };
 
-//cambiar email para id 
+//cambiar email para id
 const createNewReview = async (req, res) => {
   const { email } = req.user;
   const { about_product, id_product, review_body, rating } = req.body;

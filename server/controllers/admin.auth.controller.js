@@ -1,14 +1,11 @@
-//ADMIN credenetials are stored as .env variables:
-
 import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
-import bycrpt from "bcryptjs";
+
 dotenv.config();
 
 const ADM_USER = process.env.ADMIN_USERNAME;
 const ADM_PASS = process.env.ADMIN_PASSWORD;
 const SECRET = process.env.JWT_SECRET;
-
 
 //login
 export const authenticateAdmin = async (req, res) => {
@@ -26,9 +23,13 @@ export const authenticateAdmin = async (req, res) => {
     }
 
     //create Admin Token
-    const adminToken = jwt.sign({ user: ADM_USER, role: process.env.ADMIN_ROLE }, SECRET, {
-      expiresIn: "3h",
-    });
+    const adminToken = jwt.sign(
+      { user: ADM_USER, role: process.env.ADMIN_ROLE },
+      SECRET,
+      {
+        expiresIn: "3h",
+      },
+    );
 
     return res.status(200).json({ adminToken });
   } catch (error) {

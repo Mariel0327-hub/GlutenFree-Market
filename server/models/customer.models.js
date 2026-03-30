@@ -1,5 +1,5 @@
 import { pool } from "../db/db.js";
-import {uuidv7} from 'uuidv7'
+import { uuidv7 } from "uuidv7";
 //import pkg from "pg-format"; (para potenciales filtros en el futuro)
 
 //CUSTOMERS
@@ -17,12 +17,12 @@ const findCustomerById = async (id) => {
   return rows[0];
 };
 
- //Eliminar cliente  //ADMIN
+//Eliminar cliente  //ADMIN
 const deleteCustomer = async (id) => {
   const query = "DELETE FROM customer WHERE customer_id = $1";
   const { rows } = await pool.query(query, [id]);
   return rows[0];
-}; 
+};
 
 //FAVORITOS
 
@@ -43,7 +43,7 @@ const findFavoritesById = async (id) => {
 //Crear Favorito (obtener id directo del token)
 const createFavorites = async (email, favProduct) => {
   //dummy id
-  const favIdBody = uuidv7()
+  const favIdBody = uuidv7();
   const favoritos_id = `fav-${favIdBody}`;
 
   //id_customer:
@@ -109,7 +109,6 @@ const customerModel = {
   findCustomers,
   findCustomerById,
   deleteCustomer,
-
 
   //favoritos
   findFavorites,

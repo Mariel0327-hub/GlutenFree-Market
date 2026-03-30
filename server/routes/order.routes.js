@@ -62,7 +62,7 @@ orderRouter.put(
   tokenVerification,
   adminVerification(ADMIN_ROLE),
   orderController.updateNewOrder,
-); 
+);
 
 //Se elimina una orden de compra
 orderRouter.delete(

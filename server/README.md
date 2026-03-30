@@ -1,13 +1,99 @@
-// COMENTARIOS RELEVANTES:
-
 ## Gluten-Free-Market: Apartado Backend
 
-- OBSERVACIONES INICIALES
+API REST para gestionar consultas a la base de datos de un e-commerce.
+
+## Tecnologías Empleadas
+
+- Node.js, express.js, postgreSQL, 
+
+## Dependencias
+
+- express: Servidor API.
+
+- pg: Conexión a PostgreSQL.
+
+- pg-format: Formatado y parametrización de consultas.
+
+- jsonwebtoken: Seguridad para las rutas privadas.
+
+- cors: Permisos de conexión.
+
+- dotenv: Seguridad de claves.
+
+- bcryptjs: Encriptación de credenciales de usuario.
+
+- jest: Motor de pruebas.
+
+- supertest: Peticiones simuladas a los endpoints.
+
+- nodemon: Reinicio automático del servidor en desarrollo.
+
+- uuidv7: Generación de id.
+
+
+## Instalación y uso.
+
+Instrucciones des instalación y configuración del proyecto:
+
+
+
+1. * Clonar repositorio:
+
+```bash
+git clone git@github.com:Mariel0327-hub/GlutenFree-Market.git
+```
+
+* (Esta instrucción aplica para la descarga del main de la aplicación,
+que estará funcional dentro de una semana)
+
+2. Instalar dependencias:
+
+```bash
+npm install
+```
+
+3. Crear la base de datos en el servidor local usando el archivo
+   'schema.sql' 
+
+   - server-> db -> schema.sql 
+
+4. Insertar los datos 'dummy a la base de datos'
+
+
+5. Para Levantar el servidor:
+
+```bash
+npm run dev
+```
+
+6. Para Probar tests:
+
+```bash
+npm run test:<campo espesífico>
+
+```
+- Variedades de test:
+
+```bash
+npm run test:auth -> tests de login / registro / perfil
+npm run test:cart -> tests de carrito
+npm run test:order -> tests ordenes de compra
+npm run test:product -> tests de prodcutos
+npm run test:review -> tests de reseñas de usuarios
+
+```
+
+7. Esta Versión local tiene variables de ambiente:
+
+Se sugiere al usuario de este repositorio que cree sus propias 
+variables de ambiente en como lo indica el archivo ".env.example"
+
+## OBSERVACIONES INICIALES
 
 1. REPOSITORIO
 - Esta branch de repositorio es una muestra tipo *snapshot* del backend al momento de la entrega del hito 3, esto debido a que ya se comenzó la implementación con el frontend y la base de datos. Esta interacción ha dejeado en evidencia la existencia de situaciones que requieren de corrección y modificación. Por lo que, para poder realizar una entrega del trabajo dentro del plazo entregado (1 semana), se ha decidido que lo que se haya pactado en los días previos a la entrega, salvo que signifique un cambio simple, quedará comentado en el documento, para posterior corrección en otra rama que integre frontend y base de datos. Esto sucederá durante la próxima semana en el deploy del sitio.
 
--  Por ser un *snapshot*, hay ciertos elementos y detalles de edición al debe, los que serán completados, idealemente ante y hasta el momento de la entrega final del proyecto.
+-  Por ser un *snapshot*, hay ciertos elementos, detalles de edición y presentación al debe, los que serán completados, mejorados e implementados para estar listos al momento de la entrega final del proyecto.
 
 2. BASE DE DATOS
 - En la base de datos local, se han dejado inserts tipo dummy con informaciones simples para experimentar con la base de datos de forma manual. Para usarla es simplemente acceder a los SELECT del esquema y copiar la información deseada. En caso contrario, hay templates de payload de algunas rutas post en los tests de jest.

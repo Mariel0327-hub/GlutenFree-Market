@@ -1,6 +1,4 @@
 import orderModel from "../models/order.models.js";
-import jwt from "jsonwebtoken";
-import bycrpt from "bcryptjs";
 
 const readAllOrders = async (req, res) => {
   try {
@@ -39,7 +37,9 @@ const readOrdersbyCustomer = async (req, res) => {
     const result = await orderModel.findOrdersByCustomer(id);
 
     if (!result) {
-      return res.status(404).json({ message: "Orders from customer not Found or Invalid Id" });
+      return res
+        .status(404)
+        .json({ message: "Orders from customer not Found or Invalid Id" });
     }
     return res.status(200).json(result);
   } catch (error) {
@@ -71,7 +71,9 @@ const readOrderDetailsbyId = async (req, res) => {
     const result = await orderModel.findOrderDetailsbyId(id);
 
     if (!result) {
-      return res.status(404).json({ message: "Order-detail not Found or Invalid Id" });
+      return res
+        .status(404)
+        .json({ message: "Order-detail not Found or Invalid Id" });
     }
 
     return res.status(200).json(result);
@@ -85,11 +87,13 @@ const readOrderDetailsbyId = async (req, res) => {
 const readOrderDetailsbyCustomer = async (req, res) => {
   try {
     const { id } = req.user;
-    const {order_id} = req.params
+    const { order_id } = req.params;
     const result = await orderModel.findOrderDetailsbyCustomer(id, order_id);
 
     if (!result || result.length === 0) {
-      return res.status(404).json({ message: "Order-detail or customer Id not Found" });
+      return res
+        .status(404)
+        .json({ message: "Order-detail or customer Id not Found" });
     }
 
     return res.status(200).json(result);
@@ -98,7 +102,6 @@ const readOrderDetailsbyCustomer = async (req, res) => {
     return res.status(500).json({ message: "Internal Server Error" });
   }
 };
-
 
 //Crear orden de compra
 const createNewOrder = async (req, res) => {
@@ -119,14 +122,13 @@ const createNewOrder = async (req, res) => {
 
 // acutalizar orden de compra
 const updateNewOrder = async (req, res) => {
-  const {id} = req.params
+  const { id } = req.params;
   try {
     await orderModel.updateOrder(id);
 
-        if (!order) {
+    if (!order) {
       throw { code: 404, message: "Not order to update" };
     }
-
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "Internal Server Error" });
