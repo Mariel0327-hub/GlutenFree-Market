@@ -28,7 +28,7 @@ API REST para gestionar consultas a la base de datos de un e-commerce.
 
 - nodemon: Reinicio automático del servidor en desarrollo.
 
-- uuidv7: Generación de id.
+- uuidv7: Generación de id. * (se agrega por decisión grupal)
 
 ## Instalación y uso.
 
