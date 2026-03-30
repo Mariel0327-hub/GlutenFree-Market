@@ -19,31 +19,26 @@ c gluten_free_market;
 -- TABLE ORDER_TOTAL, column date -> order_date
 
 ------------------------------
+
+CREATE TABLE categories (
+    category_id VARCHAR PRIMARY KEY,
+    category_description VARCHAR NOT NULL
+);
+
+CREATE TABLE type_of_movements (
+    type_mov_id VARCHAR PRIMARY KEY,
+    type_mov_description VARCHAR NOT NULL
+);
+
+--|||ADAPTACIONES PARA IMPLEMENTAR EN FRONT hito4
 -- agregar  --name VARCHAR PRIMARY KEY,
---agregar   --imagen_url 
+--agregar   --imagen_url
 CREATE TABLE customer (
     customer_id VARCHAR PRIMARY KEY,
     email VARCHAR(255) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
     shipping_address VARCHAR NOT NULL,
     billing_address VARCHAR NOT NULL,
-    created_at TIMESTAMP,
-    updated_at TIMESTAMP
-);
-
-CREATE TABLE cart (
-    cart_id VARCHAR(255) PRIMARY KEY,
-    id_customer VARCHAR NOT NULL REFERENCES customer (customer_id),
-    is_active BOOLEAN,
-    created_at TIMESTAMP,
-    updated_at TIMESTAMP
-);
-
-CREATE TABLE cart_item (
-    cart_item_id VARCHAR PRIMARY KEY,
-    id_cart VARCHAR NOT NULL REFERENCES cart (cart_id) ON DELETE CASCADE,
-    id_product VARCHAR REFERENCES product (product_id),
-    quantity INT,
     created_at TIMESTAMP,
     updated_at TIMESTAMP
 );
@@ -62,9 +57,26 @@ CREATE TABLE product (
     updated_at TIMESTAMP
 );
 
+CREATE TABLE cart (
+    cart_id VARCHAR(255) PRIMARY KEY,
+    id_customer VARCHAR NOT NULL REFERENCES customer (customer_id) ON DELETE CASCADE,
+    is_active BOOLEAN,
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP
+);
+
+CREATE TABLE cart_item (
+    cart_item_id VARCHAR PRIMARY KEY,
+    id_cart VARCHAR NOT NULL REFERENCES cart (cart_id) ON DELETE CASCADE,
+    id_product VARCHAR REFERENCES product (product_id),
+    quantity INT,
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP
+);
+
 CREATE TABLE review (
     review_id VARCHAR PRIMARY KEY,
-    id_customer VARCHAR REFERENCES customer (customer_id),
+    id_customer VARCHAR REFERENCES customer (customer_id) ON DELETE CASCADE,
     id_product VARCHAR REFERENCES product (product_id),
     about_product VARCHAR,
     review_body VARCHAR,
@@ -73,19 +85,9 @@ CREATE TABLE review (
     updated_at TIMESTAMP
 );
 
-CREATE TABLE stock_mov (
-    mov_id SERIAL PRIMARY KEY,
-    id_order_item VARCHAR REFERENCES order_item (order_item_id),
-    id_product VARCHAR REFERENCES product (product_id),
-    id_type_mov VARCHAR REFERENCES type_of_movements (type_mov_id),
-    quantity VARCHAR,
-    created_at TIMESTAMP,
-    updated_at TIMESTAMP
-);
-
 CREATE TABLE order_total (
     order_total_id VARCHAR PRIMARY KEY,
-    id_customer VARCHAR REFERENCES customer (customer_id),
+    id_customer VARCHAR REFERENCES customer (customer_id) ON DELETE CASCADE,
     total INT NOT NULL,
     order_date VARCHAR,
     is_paid BOOLEAN,
@@ -104,20 +106,22 @@ CREATE TABLE order_item (
     updated_at TIMESTAMP
 );
 
-CREATE TABLE categories (
-    category_id VARCHAR PRIMARY KEY,
-    category_description VARCHAR NOT NULL
-);
-
-CREATE TABLE type_of_movements (
-    type_mov_id VARCHAR PRIMARY KEY,
-    type_mov_description VARCHAR NOT NULL
+CREATE TABLE stock_mov (
+    mov_id SERIAL PRIMARY KEY,
+    id_order_item VARCHAR REFERENCES order_item (order_item_id),
+    id_product VARCHAR REFERENCES product (product_id),
+    id_type_mov VARCHAR REFERENCES type_of_movements (type_mov_id),
+    quantity VARCHAR,
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP
 );
 
 --FAVORITOS
+-- añadir created_at
+--añadir updated_at
 CREATE TABLE favoritos (
     favoritos_id VARCHAR PRIMARY KEY,
-    id_customer VARCHAR REFERENCES customer (customer_id),
+    id_customer VARCHAR REFERENCES customer (customer_id) ON DELETE CASCADE,
     id_product VARCHAR REFERENCES product (product_id)
 );
 
@@ -406,6 +410,16 @@ VALUES (
         NOW()
     );
 
+    -- type_of_movments
+INSERT INTO
+    type_of_movements (
+        type_mov_id,
+        type_mov_description
+    )
+VALUES ('1', 'Entrada'),
+    ('2', 'Salida');
+
+
 -- stock_mov
 INSERT INTO
     stock_mov (
@@ -449,14 +463,6 @@ VALUES (
         NOW()
     );
 
--- type_of_movments
-INSERT INTO
-    type_of_movements (
-        type_mov_id,
-        type_mov_description
-    )
-VALUES ('1', 'Entrada'),
-    ('2', 'Salida');
 
 -- reviews
 INSERT INTO

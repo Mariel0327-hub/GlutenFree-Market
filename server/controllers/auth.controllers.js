@@ -67,9 +67,10 @@ const getUserProfile = async (req, res) => {
   }
 };
 
+//Eliminación de propio perfil por parte de cliente
 const deleteNewUser = async (req, res) => {
   try {
-    const { id } = req.params;
+    const { id } = req.user;
 
     await authModel.deleteUser(id);
 

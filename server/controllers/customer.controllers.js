@@ -36,7 +36,7 @@ const readCustomersbyId = async (req, res) => {
   }
 };
 
-/* const deleteNewCustomer = async (req, res) => {
+const deleteNewCustomer = async (req, res) => {
   try {
     const { id } = req.params;
 
@@ -51,7 +51,7 @@ const readCustomersbyId = async (req, res) => {
     return res.status(500).json({ message: "Internal Server Error" });
   }
 };
- */
+
 
 /////Favroritos
 const readAllFavorites = async (req, res) => {
@@ -80,18 +80,25 @@ const readFavoritesbyId = async (req, res) => {
   }
 };
 
-
+//Seleccionar y almacenar un producto favorito
 const createNewFavorite = async (req, res) => {
   const { email } = req.user;
+  const {favProduct} = req.body
   try {
-    const order = await customerModel.createFavorites(email);
-    res.status(201).json(order);
+    const result = await customerModel.createFavorites(email, favProduct);
+
+    if(!result){
+      return res.status(404).json({message: "Producto no encontrado"})
+    }
+
+    res.status(201).json(result);
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
+//Potenciales correcciones (ante errores e base de datos)
 const updateNewFavorite = async (req, res) => {
   try {
     await customerModel.updateFavorites();
@@ -100,7 +107,7 @@ const updateNewFavorite = async (req, res) => {
     return res.status(500).json({ message: "Internal Server Error" });
   }
 };
-
+//Eliminar una seleccion de favoritos
 const deleteNewFavorite = async (req, res) => {
   try {
     const { id } = req.params;
@@ -120,7 +127,7 @@ const deleteNewFavorite = async (req, res) => {
 const customerController = {
   readAllCustomers,
   readCustomersbyId,
-  //deleteNewCustomer,
+  deleteNewCustomer,
   readAllFavorites,
   readFavoritesbyId,
   createNewFavorite,

@@ -1,5 +1,6 @@
 import { pool } from "../db/db.js";
-import pkg from "pg-format";
+import { uuidv7 } from "uuidv7";
+
 //ver ordenes de compra  //ADMIN
 const findOrders = async () => {
   const query = "SELECT * FROM order_total";
@@ -18,29 +19,35 @@ const findOrdersById = async (id) => {
 const findOrdersByCustomer = async (id) => {
   const query = "SELECT * FROM order_total WHERE id_customer = $1";
   const { rows } = await pool.query(query, [id]);
-  return rows[0];
+  return rows;
 };
 
 ////////Ver detalle de compra
 
-const findOrderDetails = async () =>{
-    const query = "SELECT * FROM order_item";
+const findOrderDetails = async () => {
+  const query = "SELECT * FROM order_item";
   const { rows } = await pool.query(query);
   return rows;
-}
-const findOrderDetailsbyId = async (id) =>{
+};
+const findOrderDetailsbyId = async (id) => {
   const query = "SELECT * FROM order_item WHERE id_order_total = $1";
   const { rows } = await pool.query(query, [id]);
   return rows;
-}
+};
+const findOrderDetailsbyCustomer = async (id, order_total_id) => {
+  const values = [id, order_total_id];
+  const query =
+    "SELECT oi.* FROM order_item oi JOIN order_total ot ON ot.order_total_id = oi.id_order_total WHERE ot.id_customer = $1 AND oi.id_order_total  = $2";
+  const { rows } = await pool.query(query, values);
+  return rows;
+};
 
 //////////////////
 
-
 //Crear Compra
 const createOrders = async (id) => {
-  //dummy id
-  const order_total_id = `order-t-${Math.floor(Math.random() * 3000)}`;
+  const orderTotalIdBody = uuidv7();
+  const order_total_id = `order-t-${orderTotalIdBody}`;
 
   //id_customer:
   const { rows: customerRows, rowCount } = await pool.query(
@@ -51,7 +58,7 @@ const createOrders = async (id) => {
   if (rowCount === 0) {
     throw { code: 404, message: "Customer not found" };
   }
-  
+
   const id_customer = customerRows[0].customer_id;
 
   //subquery to calculate total
@@ -92,17 +99,17 @@ const createOrders = async (id) => {
   const newOrder = orderRows[0];
 
   for (const item of cartData) {
-
     //CREATE ORDER_ITEM
-    const order_item_id = `order-it-${Math.floor(Math.random() * 3000)}`;
-    const created_at = new Date()
+    const orderItemBody = uuidv7();
+    const order_item_id = `order-it-${orderItemBody}`;
+    const created_at = new Date();
     const itemValues = [
       order_item_id,
       newOrder.order_total_id,
       item.id_product,
       item.quantity,
       item.price,
-      created_at
+      created_at,
     ];
     await pool.query(
       "INSERT INTO order_item (order_item_id,id_order_total, id_product, quantity, unit_price, created_at) values($1, $2, $3, $4, $5, $6)",
@@ -110,19 +117,27 @@ const createOrders = async (id) => {
     );
 
     //CREATE STOCK MOVEMENT
-
     const stockResult = await pool.query(
       "UPDATE product SET stock = stock - $1 WHERE product_id = $2 AND stock >=  $1",
       [item.quantity, item.id_product],
     );
 
-    if(stockResult.rowCount === 0 ){
-      throw {code: 400, message: `No stock for product ${item.id_product}`}
+    if (stockResult.rowCount === 0) {
+      throw { code: 400, message: `No stock for product ${item.id_product}` };
     }
 
     //REGISTER THE MOVEMENT (stock_mov)
-    const stockMoveValues = [order_item_id, item.id_product, '2', item.quantity, new Date()]
-    await pool.query("INSERT INTO stock_mov (id_order_item, id_product, id_type_mov, quantity, created_at) VALUES ($1, $2, $3, $4, $5)", stockMoveValues)
+    const stockMoveValues = [
+      order_item_id,
+      item.id_product,
+      "2",
+      item.quantity,
+      new Date(),
+    ];
+    await pool.query(
+      "INSERT INTO stock_mov (id_order_item, id_product, id_type_mov, quantity, created_at) VALUES ($1, $2, $3, $4, $5)",
+      stockMoveValues,
+    );
   }
 
   //Eliminar carro(s) del cliente
@@ -166,9 +181,11 @@ const orderModel = {
   createOrders,
   updateOrder,
   deleteOrder,
+
   //order-detail
   findOrderDetails,
-  findOrderDetailsbyId
+  findOrderDetailsbyId,
+  findOrderDetailsbyCustomer,
 };
 
 export default orderModel;

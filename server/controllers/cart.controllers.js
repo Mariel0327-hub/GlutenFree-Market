@@ -95,7 +95,7 @@ const createNewCartInstance = async (req, res) => {
         .json({ message: "Cart Product not Found/Created" });
     }
 
-    return res.status(200).json(result);
+    return res.status(201).json(result);
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "Internal Server Error" });
@@ -114,7 +114,7 @@ const createNewCartProduct = async (req, res) => {
         .json({ message: "Cart Product not Found/Created" });
     }
 
-    return res.status(200).json(result);
+    return res.status(201).json(result);
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "Internal Server Error" });

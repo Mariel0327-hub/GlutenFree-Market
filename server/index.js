@@ -10,6 +10,7 @@ import customerRouter from './routes/customer.routes.js'
 import { getDbConnection } from './db/db.js'
 //import { getDbConnectionNeon } from './db/db_neon.js'
 
+//const apiRouter = express.Router()
 
 dotenv.config()
 
@@ -27,6 +28,9 @@ app.use('/order', orderRouter)
 app.use('/products', productRouter)
 app.use('/review', reviewRouter)
 app.use('/customer', customerRouter)
+
+//main Router
+//app.use('/api', apiRouter)
 
 app.listen(PORT, async ()=>{
     console.log(`Server running on http://localhost:${PORT}`)

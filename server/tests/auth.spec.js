@@ -1,4 +1,3 @@
-//TEMPLATE PARA RELLENAR/ MODFICAR
 import request from "supertest";
 import app from "../index.js";
 import "dotenv/config";
@@ -6,8 +5,6 @@ import "dotenv/config";
 ADMIN_USERNAME = process.env.ADMIN_USERNAME;
 ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
 ADMIN_ROLE = process.env.ADMIN_ROLE;
-
-///////REVISAR
 
 describe("Operaciones CRUD relacionadsa a registro e incio de sesión", () => {
   it("POST/auth/admin status code === 200 and token existence?", async () => {
@@ -29,8 +26,6 @@ describe("Operaciones CRUD relacionadsa a registro e incio de sesión", () => {
       billing_address: "calle js 14jest",
       password: "testjestpass",
     };
-
-    console.log("pero que es esto?");
 
     const { body: newUserBody, statusCode: registerStatus } = await request(app)
       .post("/auth/register")
@@ -60,7 +55,7 @@ describe("Operaciones CRUD relacionadsa a registro e incio de sesión", () => {
     expect(loginBody.token).toBeDefined();
   });
 
-  it("DELETE/auth/profiel status code === 201 and payLoad type = Object?", async () => {
+  it("DELETE/auth/profiel status code === 200", async () => {
     //DELETE REGISTERED USER WITHIN THE DESCRIBE
     //LOGIN
     const logInPayload = {
@@ -79,18 +74,11 @@ describe("Operaciones CRUD relacionadsa a registro e incio de sesión", () => {
 
     //console.log('cliente:', profileBody.customer_id)
     //console.log('cliente-token: ', loginBody.token)
-    //const customer_id = profileBody.customer_id;
-    //console.log("customer_id = ", customer_id);
 
-    //get admin permission:
-    const { body: adminBody } = await request(app)
-      .post("/auth/admin")
-      .send({ user: ADMIN_USERNAME, pass: ADMIN_PASSWORD });
-
-    //Delete after create to not overpopulate:
+    //Eliminar perfil
     const { body: deleteBody, statusCode: deleteStatus } = await request(app)
-      .delete(`/auth/profile/${profileBody.customer_id}`)
-      .set("Authorization", `Bearer ${adminBody.adminToken}`);
+      .delete(`/auth/profile`)
+      .set("Authorization", `Bearer ${loginBody.token}`);
 
     //console.log("delete body: ", deleteBody);
     //console.log("delete status:", deleteStatus.customer_id);

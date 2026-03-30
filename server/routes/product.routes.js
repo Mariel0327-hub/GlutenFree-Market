@@ -18,10 +18,10 @@ productRouter.get('/', productController.readAllProducts )
 
 
 //ADMIN ONLY (BackOffice)
-productRouter.post('/', tokenVerification, adminVerification,  productController.createNewProduct )
-productRouter.put('/:id', tokenVerification, adminVerification,  productController.updateNewProduct)
-productRouter.put('/restore/:id', tokenVerification, adminVerification, productController.restoreOldProduct) //recuperar producto eliminad (soft delete)
-productRouter.delete('/:id', tokenVerification, adminVerification,  productController.deleteNewProduct)  //usa soft delete (is_active = true -> is_active = false)
+productRouter.post('/', tokenVerification, adminVerification(ADMIN_ROLE),  productController.createNewProduct )
+productRouter.put('/:id', tokenVerification, adminVerification(ADMIN_ROLE),  productController.updateNewProduct)
+productRouter.put('/restore/:id', tokenVerification, adminVerification(ADMIN_ROLE), productController.restoreOldProduct) //recuperar producto eliminad (soft delete)
+productRouter.delete('/:id', tokenVerification, adminVerification(ADMIN_ROLE),  productController.deleteNewProduct)  //usa soft delete (is_active = true -> is_active = false)
 
 //!!!!GENERAR MIDDLEWARE DE AUTENTIFICACIÒN DE ADMIN (isAdminCheck())
 

@@ -6,19 +6,26 @@ const ADMIN_ROLE = process.env.ADMIN_ROLE
 
 const customerRouter = Router()
 //FAVORITES
-//Client  + ADMIN (token required)
-customerRouter.get('/favorites',tokenVerification, customerController.readAllFavorites)
-customerRouter.get('/favorites/:id',tokenVerification, customerController.readFavoritesbyId )
+
+//Cliente (a implementar proximamente) -> para que el cliente vea sus favoritos
+customerRouter.get('/:id/favorites',tokenVerification, adminVerification(ADMIN_ROLE), customerController.readAllFavorites)
+
+//ADMIN ONLY
+customerRouter.get('/favorites',tokenVerification, adminVerification(ADMIN_ROLE), customerController.readAllFavorites)
+customerRouter.get('/favorites/:id',tokenVerification, adminVerification(ADMIN_ROLE), customerController.readFavoritesbyId )
+
+//Cliente or ADMIN
 customerRouter.post('/favorites',tokenVerification, customerController.createNewFavorite )
 customerRouter.put('/favorites/:id',tokenVerification, customerController.updateNewFavorite )
 customerRouter.delete('/favorites/:id',tokenVerification, customerController.deleteNewFavorite)
 
-//CLIENTES
+
 //ADMIN ONLY
 customerRouter.get('/', tokenVerification, adminVerification(ADMIN_ROLE), customerController.readAllCustomers )
 customerRouter.get('/:id', tokenVerification, adminVerification, customerController.readCustomersbyId )
-//already exists in auth routes 
-//customerRouter.delete('/:id', tokenVerification, adminVerification, customerController.deleteNewCustomer )
+
+//ADMIN elimina cliente
+customerRouter.delete('/:id', tokenVerification, adminVerification, customerController.deleteNewCustomer )
 
 
 

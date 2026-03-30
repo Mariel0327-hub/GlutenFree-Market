@@ -2,6 +2,7 @@ import {Router} from 'express'
 import cartController from '../controllers/cart.controllers.js'
 import { adminVerification, tokenVerification } from "../lib/middlewares/lib.middlewares.js";
 
+const ADMIN_ROLE = process.env.ADMIN_ROLE
 
 const cartRouter = Router()
 //Detalles de orden de todos los clientes (ADMIN)
@@ -18,12 +19,12 @@ cartRouter.delete('/product', tokenVerification, cartController.deleteExistingCa
 
 //Funciones Genéricas / ADMIN
 // ver todos los carritos
-cartRouter.get('/', tokenVerification, adminVerification, cartController.readAllCart )
-cartRouter.get('/:id', tokenVerification, adminVerification, cartController.readCartById )
+cartRouter.get('/', tokenVerification, adminVerification(ADMIN_ROLE), cartController.readAllCart )
+cartRouter.get('/:id', tokenVerification, adminVerification(ADMIN_ROLE), cartController.readCartById )
 
+//eliminar un carrito antes de la orden compra, AMDMIN;
+cartRouter.delete('/:id', tokenVerification, adminVerification(ADMIN_ROLE), cartController.deleteNewCart)
 //crear un carrito cliente, admin? cuando se crea en específico?
 cartRouter.post('/', tokenVerification, cartController.createNewCartInstance )
-//eliminar un carrito antes de la orden compra, AMDMIN;
-cartRouter.delete('/:id', tokenVerification, adminVerification, cartController.deleteNewCart)
 
 export default cartRouter

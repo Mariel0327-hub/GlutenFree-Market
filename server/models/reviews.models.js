@@ -1,7 +1,7 @@
 import { pool } from "../db/db.js";
-import pkg from "pg-format";
+import { uuidv7 } from "uuidv7";
 
-//Ver todas la reseñas  (ADMIN)
+//Ver todas la reseñas  (ADMIN)  //posteriormente se puede implementar un filtro
 const findAllReviews = async () => {
   const query = "SELECT * FROM review";
   const { rows } = await pool.query(query);
@@ -50,7 +50,10 @@ const createReview = async (email, about_product = false, id_product, review_bod
   //lógica para identificar un producto
   id_product = about_product === true ? id_product : null;
 
-  const review_id = `rev-${Math.floor(Math.random() * 3000)}`;
+  //generación de id review:
+  const reviewIdBody = uuidv7() 
+
+  const review_id = `rev-${reviewIdBody}`;
   const created_at = new Date();
   const updated_at = null;
     const values = [

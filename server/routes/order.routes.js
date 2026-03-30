@@ -1,31 +1,76 @@
-import {Router} from 'express'
-import orderController from '../controllers/order.controllers.js'
-import { adminVerification, tokenVerification } from "../lib/middlewares/lib.middlewares.js";
+import { Router } from "express";
+import orderController from "../controllers/order.controllers.js";
+import {
+  adminVerification,
+  tokenVerification,
+} from "../lib/middlewares/lib.middlewares.js";
 
+const ADMIN_ROLE = process.env.ADMIN_ROLE;
 
-const orderRouter = Router()
-//DETALLES DE ORDEN
+const orderRouter = Router();
+//ORDENES DE COMPRA
+
 //PUBLICOS (CLIENTE + token)
-//por orden
-orderRouter.get('/items/:id', tokenVerification, orderController.readOrderDetailsbyId )
-//por cliente
-orderRouter.get('/customer/:id',tokenVerification, orderController.readOrdersbyCustomer)
-
+// Detalle de orden cliente
+orderRouter.get(
+  "/customer/:order_id/items",
+  tokenVerification,
+  orderController.readOrderDetailsbyCustomer,
+);
+//ordenes filtradas por orden
+orderRouter.get(
+  "/items/:id",
+  tokenVerification,
+  orderController.readOrderDetailsbyId,
+);
+//ordenes filtradas por cliente
+orderRouter.get(
+  "/customer",
+  tokenVerification,
+  orderController.readOrdersbyCustomer,
+);
 
 //ADMIN ONLY
 //todos
-orderRouter.get('/items', orderController.readAllOrderDetails )
-orderRouter.get('/', orderController.readAllOrders )
-orderRouter.get('/:id', orderController.readOrdersbyId )
 
+//detalle de todas las ordenes (ADMIN) (aplicar filtro para ver por cliente o por order)
+orderRouter.get("/items", orderController.readAllOrderDetails);
+//todas las ordenes (ADMIN)
+orderRouter.get(
+  "/",
+  tokenVerification,
+  adminVerification(ADMIN_ROLE),
+  orderController.readAllOrders,
+);
+//Orden por id específico (ADMIN)
+orderRouter.get(
+  "/:id",
+  tokenVerification,
+  adminVerification(ADMIN_ROLE),
+  orderController.readOrdersbyId,
+);
 
-//BOTH Cliente y ADMIN (token required)
-//crear orden de compra
-orderRouter.post('/', tokenVerification, orderController.createNewOrder )
-//modifica orden de compra (cambiar estado de pago, shipping)
-orderRouter.put('/:id', tokenVerification, orderController.updateNewOrder )  //pasar a patch e implementar
+//Cliente y/o ADMIN (token required)
+//crear orden de compra (al hacer checkout)
+orderRouter.post("/", tokenVerification, orderController.createNewOrder);
 
 //ADMIN ONLY
-orderRouter.delete('/:id', tokenVerification, adminVerification, orderController.deleteNewOrder)
 
-export default orderRouter
+//modifica orden de compra (cambiar estado de pago, shipping) (ADMIN)
+orderRouter.put(
+  "/:id",
+  tokenVerification,
+  adminVerification(ADMIN_ROLE),
+  orderController.updateNewOrder,
+); 
+
+//Se elimina una orden de compra
+orderRouter.delete(
+  "/:id",
+  tokenVerification,
+  adminVerification(ADMIN_ROLE),
+  adminVerification(ADMIN_ROLE),
+  orderController.deleteNewOrder,
+);
+
+export default orderRouter;

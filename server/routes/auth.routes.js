@@ -12,7 +12,7 @@ authRouter.post("/register", authController.registerUser);
 authRouter.post("/login", authController.authenticateUser);
 authRouter.put("/alter_profile/:id", authController.modifyUser);  //mdificar datos de usuario
 authRouter.get("/profile", tokenVerification, authController.getUserProfile);
-authRouter.delete('/profile/:id', tokenVerification, authController.deleteNewUser) //usuarios pueden borrar su perfil si lo desean
+authRouter.delete('/profile', tokenVerification, authController.deleteNewUser) //usuarios pueden borrar su perfil si lo desean
 
 //ADMIN
 authRouter.post("/admin", authenticateAdmin);

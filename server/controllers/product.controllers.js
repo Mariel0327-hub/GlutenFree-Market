@@ -19,8 +19,8 @@ const readAllProducts = async (req, res) => {
 
 //IMPLEMENTAR PG_FORMAT
 const readAllProductsFiltered = async (req, res) => {
-  const queryString = req.query
-  console.log(queryString)
+  const queryString = req.query;
+  console.log(queryString);
   try {
     const result = await productModel.findAllProductsFiltered(queryString);
 
@@ -85,9 +85,7 @@ const createNewProduct = async (req, res) => {
       return res.status(404).json({ message: "No Product Created " });
     }
 
-    return res
-      .status(201)
-      .json({ message: "Producto creado de manera exitosa" });
+    return res.status(201).json(newProduct);
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "Internal Server Error" });
@@ -113,7 +111,6 @@ const updateNewProduct = async (req, res) => {
       return res.status(404).json({ message: "No Product Updated " });
     }
 
-    console.log(result);
     return res
       .status(200)
       .json({ message: "Producto modificado de manera exitosa" });
@@ -128,7 +125,7 @@ const deleteNewProduct = async (req, res) => {
     const { id } = req.params;
     const result = await productModel.deleteProduct(id);
 
-    if (result.rowCount === 0) {
+    if (!result) {
       return res.status(404).json({ message: "No product deleted" });
     }
 
