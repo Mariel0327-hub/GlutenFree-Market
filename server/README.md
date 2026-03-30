@@ -102,7 +102,7 @@ variables de ambiente en como lo indica el archivo ".env.example"
 
 - Adicionalmente se puede explorar la conexión con el piloto de la base de datos alojada en la nube. (se requiere descomentar la base de datos online).
 
-- No obstante, se sugiere probar con la base de datos local, que fue la que se usó para desarrollar las rutas. 
+- No obstante, se sugiere probar con la base de datos local, que fue la que se usó para desarrollar la arquitectura y la que se está conectando con el frontend. 
 
 
 3. ELIMINADO DE DATOS
