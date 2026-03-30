@@ -10,8 +10,7 @@ import customerRouter from "./routes/customer.routes.js";
 import { getDbConnection } from "./db/db.js";
 //import { getDbConnectionNeon } from './db/db_neon.js' //DB online
 
-//const apiRouter = express.Router() -> para aplicar en la implementación (ya probaada)
-
+//const apiRouter = express.Router() - -> para aplicar en la implementación de BD NEON.
 dotenv.config();
 
 const app = express();
@@ -29,8 +28,9 @@ app.use("/products", productRouter);
 app.use("/review", reviewRouter);
 app.use("/customer", customerRouter);
 
+
 //main Router
-//app.use('/api', apiRouter)  -> para aplicar en la implementación (ya probada)
+//app.use('/api', apiRouter)  -> para aplicar en la implementación de BD NEON.
 
 app.listen(PORT, async () => {
   console.log(`Server running on http://localhost:${PORT}`);

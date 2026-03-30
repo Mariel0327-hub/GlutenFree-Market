@@ -94,19 +94,15 @@ variables de ambiente en como lo indica el archivo ".env.example"
 
 2. BASE DE DATOS
 
-- En la base de datos local, se han dejado inserts tipo dummy con informaciones simples para experimentar con la base de datos de forma manual. Para usarla es simplemente acceder a los SELECT del esquema y copiar la información deseada. En caso contrario, hay templates de payload de algunas rutas post en los tests de jest.
+- En la base de datos local, se han dejado inserts tipo dummy con informaciones simples para experimentar de forma manual. Para usarla se debe acceder a los SELECT del esquema y copiar la información deseada. En caso contrario, hay templates de *payload* de algunas rutas post en los tests de jest.
 
-- Posteriormente, los inserts serán modelados para estar incorporados homogéneamente a la base de datos.
-
-- Adicionalmente se puede explorar la conexión con el piloto de la base de datos alojada en la nube. (se requiere descomentar la base de datos online).
-
-- No obstante, se sugiere probar con la base de datos local, que fue la que se usó para desarrollar la arquitectura y la que se está conectando con el frontend.
+- Posteriormente, los inserts serán modelados para estar incorporados homogéneamente a la base de datos, tanto de forma local como en su versión *deployed* en NEON.
 
 3. ELIMINADO DE DATOS
 
 - Para efectos prácticos de control de rutas, se trabajará el cliente sin _soft-delete_, esto para mantener un orden mínimo durante la implementación. Para versiones posteriores, para efectos de métrica y seguimiento se podrían implementar métodos de soft delete para datos realcionadoos a clientes que ya no estén registrados en la plataforma.
 
-- Por el contrario los productos si se almacenan con _soft-delete_ para manterner históricos de ordenes en caso de variación de precios.
+- Por el contrario los productos si se almacenan y "borran" vía _soft-delete_ para manterner históricos de ordenes en caso de variación de precios.
 
 4. VISUALIZACIÓN DE DATOS
 
