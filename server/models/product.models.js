@@ -1,5 +1,5 @@
 import { uuidv7 } from "uuidv7";
-import { pool } from "../db/db.js";
+import { pool } from "../db/dbSwitch.js";
 import format from "pg-format";
 
 //ver todos los productos (Se podría implementar un filtro para omitir productos no activos)

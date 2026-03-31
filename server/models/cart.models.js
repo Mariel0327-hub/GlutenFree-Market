@@ -1,4 +1,4 @@
-import { pool } from "../db/db.js";
+import { pool } from "../db/dbSwitch.js";
 import { uuidv7 } from "uuidv7";
 
 //Leer todos carritos  (ADMIN)
