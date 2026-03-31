@@ -1,7 +1,6 @@
 import { NavLink, Link } from "react-router-dom";
 import {
   FaShoppingCart,
-  FaUserCircle,
   FaHeart,
   FaClipboardList,
 } from "react-icons/fa";
@@ -38,8 +37,6 @@ const Navbar = () => {
       setIsNavExpanded(false);
     }
   };
-  
-  console.log("Datos del usuario en Navbar:", user);
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-white shadow-sm py-3 sticky-top">
       <div className="container">
@@ -111,11 +108,6 @@ const Navbar = () => {
                   to="/favoritos"
                   className="nav-icon-link text-decoration-none"
                 >
-                  <FaHeart
-                    size={22}
-                    title="Mis Favoritos"
-                    onClick={() => setIsNavExpanded(false)}
-                  />
                   <span className="d-none d-xl-inline small fw-bold p-1">
                     Favoritos
                   </span>
@@ -126,11 +118,6 @@ const Navbar = () => {
                   to="/mis-pedidos"
                   className="nav-icon-link text-decoration-none"
                 >
-                  <FaClipboardList
-                    size={22}
-                    title="Mis Pedidos"
-                    onClick={() => setIsNavExpanded(false)}
-                  />
                   <span className="d-none d-xl-inline small fw-bold">
                     Mis pedidos
                   </span>

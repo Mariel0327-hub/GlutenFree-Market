@@ -57,8 +57,6 @@ export const UserProvider = ({ children }) => {
     try {
       const token = localStorage.getItem("token");
 
-      // [CORRECCIÓN] Declaramos la variable extrayéndola del estado 'user'
-      // Revisa si en tu objeto se llama 'customer_id' o solo 'id'
       const userId =
         user?.customer_id || user?.id || user?.id_customer || user?.uid;
 
@@ -67,7 +65,6 @@ export const UserProvider = ({ children }) => {
         return { success: false, message: "Error de identidad" };
       }
 
-      console.log(`Petición a: http://localhost:3000/auth/profile/${userId}`);
 
       const response = await axios.put(
         `http://localhost:3000/auth/profile/${userId}`,

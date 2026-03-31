@@ -8,7 +8,10 @@ const ProductProvider = ({ children }) => {
   const [products, setProducts] = useState(productsData);
   const [lastAdded, setLastAdded] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
-  const [favorites, setFavorites] = useState([]);
+  const [favorites, setFavorites] = useState(() => {
+    const savedFavorites = localStorage.getItem("favorites");
+    return savedFavorites ? JSON.parse(savedFavorites) : [];
+  });
 
   const [filters, setFilters] = useState({
     category: "All",
@@ -22,22 +25,6 @@ const ProductProvider = ({ children }) => {
       .normalize("NFD")
       .replace(/[\u0300-\u036f]/g, "");
 
-  // Lógica de filtrado dinámico
-  const filteredProducts = products
-    .filter((p) => {
-      // Normalizamos ambos para comparar "panaderia" con "panaderia"
-      const categoryProduct = normalize(p.category || "");
-      const categoryFilter = normalize(filters.category);
-
-      return categoryFilter === "all" || categoryProduct === categoryFilter;
-    })
-    .filter((p) => normalize(p.title).includes(normalize(filters.searchTerm)))
-    .sort((a, b) => {
-      if (filters.sortBy === "low") return a.price - b.price;
-      if (filters.sortBy === "high") return b.price - a.price;
-      return 0;
-    });
-
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -50,7 +37,23 @@ const ProductProvider = ({ children }) => {
       }
     };
     fetchData();
-  }, []);
+  }, []); 
+
+  const filteredProducts = products
+    .filter((p) => {
+      const categoryFilter = filters.category.toLowerCase(); // "all", "cat-001", etc.
+      const productCategory = (p.category || "").toLowerCase();
+
+      // Si el filtro es "all", pasan todos. 
+      // Si no, deben coincidir exactamente (ej: "cat-001" === "cat-001")
+      return categoryFilter === "all" || productCategory === categoryFilter;
+    })
+    .filter((p) => normalize(p.title).includes(normalize(filters.searchTerm)))
+    .sort((a, b) => {
+      if (filters.sortBy === "low") return a.price - b.price;
+      if (filters.sortBy === "high") return b.price - a.price;
+      return 0;
+    });
 
   // Función para agregar/quitar favoritos
   const toggleFavorite = (product) => {
@@ -69,6 +72,26 @@ const ProductProvider = ({ children }) => {
       setFavorites([...favorites, product]);
     }
   };
+
+  useEffect(() => {
+    if (favorites.length > 0) {
+      localStorage.setItem("favorites", JSON.stringify(favorites));
+    } else {
+      localStorage.removeItem("favorites");
+    }
+  }, [favorites]);
+
+  useEffect(() => {
+    const handleStorage = (event) => {
+      if (event.key === "favorites") {
+        const parsed = event.newValue ? JSON.parse(event.newValue) : [];
+        setFavorites(Array.isArray(parsed) ? parsed : []);
+      }
+    };
+
+    window.addEventListener("storage", handleStorage);
+    return () => window.removeEventListener("storage", handleStorage);
+  }, []);
 
   return (
     <ProductContext.Provider

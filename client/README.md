@@ -1,16 +1,63 @@
-# React + Vite
+## 🥯 GlutenFree Market - Frontend
+¡Bienvenido al repositorio del Frontend de GlutenFree Market! Esta es una aplicación de comercio electrónico diseñada para personas que buscan productos certificados sin gluten, ofreciendo una experiencia de usuario fluida, segura y reactiva.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## 🚀 Tecnologías Utilizadas
+El proyecto fue construido utilizando un stack moderno para garantizar escalabilidad y rendimiento:
 
-Currently, two official plugins are available:
+React.js: Biblioteca principal para la interfaz de usuario.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+Vite: Herramienta de construcción para un desarrollo ultra rápido.
 
-## React Compiler
+React Router Dom: Gestión de navegación y rutas protegidas.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Context API: Manejo de estado global (Carrito de compras, Autenticación).
 
-## Expanding the ESLint configuration
+Axios: Cliente HTTP para el consumo de la API REST.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+SweetAlert2: Notificaciones interactivas y elegantes para el usuario.
+
+CSS / Bootstrap: Estilizado responsivo y moderno.
+
+## 🛠️ Características Principales
+Gestión de Carrito: Persistencia de datos mediante localStorage para evitar pérdida de productos al recargar.
+
+Autenticación: Sistema de Login y Registro vinculado al Backend.
+
+Rutas Protegidas: Acceso restringido a secciones de usuario (Perfil, Historial de pedidos).
+
+Sincronización con Backend: Integración completa con API REST para la gestión de productos y pedidos.
+
+Diseño Responsivo: Adaptable a dispositivos móviles y escritorio.
+
+## 📦 Instalación y Configuración
+Sigue estos pasos para levantar el proyecto en tu entorno local:
+
+1- Clona el repositorio:
+git clone https://github.com/tu-usuario/GlutenFree-Market.git
+
+2- Entra a la carpeta del cliente:
+cd client
+
+3- Instala las dependencias:
+npm install
+
+4- Configura las variables de entorno:
+Crea un archivo .env en la raíz de la carpeta client y añade la URL de tu backend:
+
+API_URL=http://localhost:3000
+
+5- Inicia el servidor de desarrollo:
+npm run dev
+
+## 📂 Estructura de Carpetas
+
+client/
+├── src/
+│   ├── components/  # Componentes reutilizables (Navbar, Cards, Footer)
+│   ├── context/     # Proveedores de estado global (CartContext, UserContext)
+│   ├── views/       # Páginas principales (Home, Checkout, Login)
+│   ├── assets/      # Imágenes y estilos globales
+│   └── App.jsx      # Configuración de rutas
+└── .env             # Configuración de API
+
+

@@ -27,9 +27,15 @@ export default function Login() {
       const data = await loginUserDB({ email, password });
 
       if (data.token) {
-        // aqui ya se guardan los datos REALES que vienen del servidor
-        const loggedUser = data.user || data.customer || { email };
+        //datos REALES que vienen del servidor
+        const rawUser = data.user || data.customer || {};
 
+        const loggedUser = {
+          id: rawUser.customer_id,
+          name: rawUser.customer_name,
+          email: rawUser.email || email,
+        };
+        
         setUser(loggedUser);
         setToken(data.token);
 
@@ -99,7 +105,7 @@ export default function Login() {
           <p className="small text-muted mt-3">
             ¿No tienes cuenta?{" "}
             <Link
-              to="/register"
+              to="/registro"
               className="text-decoration-none fw-bold"
               style={{ color: "#7c5c4c" }}
             >

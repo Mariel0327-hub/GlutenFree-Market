@@ -1,4 +1,4 @@
-import { createContext, useState } from "react";
+import { createContext, useState, useEffect } from "react";
 
 export const CartContext = createContext();
 
@@ -9,6 +9,25 @@ export const CartProvider = ({ children }) => {
   });
   const [showToast, setShowToast] = useState(false);
   const [lastAdded, setLastAdded] = useState(null);
+
+  useEffect(() => {
+    if (cart.length > 0) {
+      localStorage.setItem("cart", JSON.stringify(cart));
+    } else {
+      localStorage.removeItem("cart");
+    }
+  }, [cart]);
+
+  useEffect(() => {
+    const handleStorage = (event) => {
+      if (event.key === "cart") {
+        const parsed = event.newValue ? JSON.parse(event.newValue) : [];
+        setCart(Array.isArray(parsed) ? parsed : []);
+      }
+    };
+    window.addEventListener("storage", handleStorage);
+    return () => window.removeEventListener("storage", handleStorage);
+  }, []);
 
   // Función para vaciar el carrito (la que necesitabas para el bug)
   const clearCart = () => setCart([]);

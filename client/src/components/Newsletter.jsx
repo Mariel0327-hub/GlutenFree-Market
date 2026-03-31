@@ -15,9 +15,6 @@ export default function Newsletter() {
       return;
     }
 
-    // Lógica de simulación para el Hito 2
-    // alert(`¡Gracias! El correo ${email} ha sido suscrito correctamente.`);
-
     Swal.fire({
       title: "¡Suscrito!",
       text: "Recibirás nuestras novedades muy pronto.",
