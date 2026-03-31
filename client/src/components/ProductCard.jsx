@@ -71,8 +71,8 @@ const ProductCard = ({ product }) => {
         <div className="text-center flex-grow-1">
           <p className="text-muted mb-3 text-start" style={{ fontSize: "0.8rem" }}>
             {product.category
-              ? product.category.charAt(0).toUpperCase() +
-                product.category.slice(1)
+              ? String(product.category).charAt(0).toUpperCase() +
+                String(product.category).slice(1)
               : ""}
           </p>
           <Card.Title className="card-title fw-bold mb-1 fs-6">
@@ -83,9 +83,15 @@ const ProductCard = ({ product }) => {
             className="text-muted small mb-3"
             style={{ fontSize: "0.8rem" }}
           >
-            {product.description.length > 60
-              ? product.description.substring(0, 57) + "..."
-              : product.description}
+            {(() => {
+              const description =
+                product.product_description ||
+                product.description ||
+                "Sin descripción disponible";
+              return description.length > 60
+                ? description.substring(0, 57) + "..."
+                : description;
+            })()}
           </Card.Text>
         </div>
 

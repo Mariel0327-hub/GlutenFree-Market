@@ -7,7 +7,7 @@ import { UserContext } from "../context/UserContext";
 import Swal from "sweetalert2";
 
 export default function Checkout() {
-  const { cart, cartTotal, clearCart } = useContext(CartContext);
+  const { cart, cartTotal, shippingCost, FREE_SHIPPING_THRESHOLD, clearCart } = useContext(CartContext);
   const navigate = useNavigate();
  // const { addOrder } = useContext(OrderContext);
   const { user, setUser } = useContext(UserContext);
@@ -71,8 +71,10 @@ export default function Checkout() {
     // 1. Creamos el objeto de la nueva orden
     const newOrder = {
       order_id: `ORD-00${(user?.orders?.length || 0) + 1}`, // Genera ORD-004, ORD-005...
-      date: new Date().toISOString().split("T")[0], // Fecha de hoy: 2026-03-22
-      total: cartTotal,
+      date: new Date().toISOString().split("T")[0], // Fecha de hoy
+      subtotal: cartTotal,
+      shipping_cost: shippingCost,
+      total: cartTotal + shippingCost,
       status: "En proceso", // Estado inicial
       items: cart.map((item) => ({
         product_id: item.product_id,
@@ -198,9 +200,22 @@ export default function Checkout() {
               ))}
             </div>
             <hr />
+            <div className="d-flex justify-content-between small mb-1">
+              <span>Subtotal:</span>
+              <span>${cartTotal.toLocaleString("es-CL")}</span>
+            </div>
+            <div className="d-flex justify-content-between small mb-2">
+              <span>Envío:</span>
+              <span>{shippingCost === 0 ? "Gratis" : `$${shippingCost.toLocaleString("es-CL")}`}</span>
+            </div>
+            {cartTotal < FREE_SHIPPING_THRESHOLD && (
+              <div className="text-success small mb-2">
+                Te faltan ${Math.max(FREE_SHIPPING_THRESHOLD - cartTotal, 0).toLocaleString("es-CL")} para envío gratis.
+              </div>
+            )}
             <div className="d-flex justify-content-between fw-bold fs-5">
               <span>Total:</span>
-              <span>${cartTotal.toLocaleString("es-CL")}</span>
+              <span>${(cartTotal + shippingCost).toLocaleString("es-CL")}</span>
             </div>
             <Button
               variant="dark"

@@ -74,7 +74,7 @@ export default function Register() {
     };
 
     // 4. PERSISTENCIA: Mandamos al contexto
-    login(newUser);
+    login(newUser, "local-auth-token");
 
     Swal.fire({
       icon: "success",

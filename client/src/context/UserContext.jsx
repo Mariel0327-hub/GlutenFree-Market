@@ -34,15 +34,17 @@ export const UserProvider = ({ children }) => {
     // para que coincida con tu base de datos Neon.
     const correctedUser = {
       ...userData,
-      customer_id: userData.customer_id || userData.id, // Usa el que venga disponible
+      customer_id: userData.customer_id || userData.id || userData.id_customer,
     };
+
+    const authToken = token || "local-auth-token"; // token para modo offline-local
 
     console.log("Usuario guardado en el Contexto:", correctedUser);
 
-    setToken(token);
+    setToken(authToken);
     setUser(correctedUser);
 
-    localStorage.setItem("token", token);
+    localStorage.setItem("token", authToken);
     localStorage.setItem("user", JSON.stringify(correctedUser));
   };
 
