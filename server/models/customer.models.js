@@ -1,6 +1,6 @@
 import { pool } from "../db/db.js";
-import pkg from "pg-format";
-
+import { uuidv7 } from "uuidv7";
+//import pkg from "pg-format"; (para potenciales filtros en el futuro)
 
 //CUSTOMERS
 //ver clientes  //ADMIN
@@ -26,29 +26,30 @@ const deleteCustomer = async (id) => {
 
 //FAVORITOS
 
-//ver clientes  //ADMIN
+//ver favoritos  //ADMIN
 const findFavorites = async () => {
   const query = "SELECT * FROM favoritos";
   const { rows } = await pool.query(query);
   return rows;
 };
 
-//Ver cliente en específico  //ADMIN
+//Ver favorito en específico  //ADMIN
 const findFavoritesById = async (id) => {
   const query = "SELECT * FROM favoritos WHERE favoritos_id = $1";
   const { rows } = await pool.query(query, [id]);
   return rows[0];
 };
 
-//Crear Favorito
+//Crear Favorito (obtener id directo del token)
 const createFavorites = async (email, favProduct) => {
   //dummy id
-  const favoritos_id = `fav-${Math.floor(Math.random() * 3000)}`;
+  const favIdBody = uuidv7();
+  const favoritos_id = `fav-${favIdBody}`;
 
   //id_customer:
-    const { rows: customerRows, rowCount } = await pool.query(
+  const { rows: customerRows, rowCount } = await pool.query(
     "SELECT customer_id FROM customer WHERE email = $1",
-    [email]
+    [email],
   );
 
   if (rowCount === 0) {
@@ -56,30 +57,27 @@ const createFavorites = async (email, favProduct) => {
   }
 
   const id_customer = customerRows[0].customer_id;
-  favProduct = id_product
-  const created_at = new Date();
+  //const created_at = new Date();  a implementar proximamente
 
-  const values = [
-    favoritos_id,
-    id_customer,
-    favProduct,
-    created_at
-  ];
+  const values = [favoritos_id, id_customer, favProduct.id_product];
 
-  const { rows: favRows } = await pool.query("INSERT INTO favorites (favoritos_id, id_customer, id_product, created_at) values($1, $2, $3, $4) RETURNING *", values);
+  const { rows: favRows } = await pool.query(
+    "INSERT INTO favoritos (favoritos_id, id_customer, id_product) values($1, $2, $3) RETURNING *",
+    values,
+  );
 
-  return favRows
+  return favRows;
 };
 
-//Editar Compra  /////////////////REVISAR!!!!!
+//Editar FAVORITOS
 const updateFavorites = async (id) => {
   //dummy id
   const favoritos_id = `fav-${Math.floor(Math.random() * 3000)}`;
 
   //id_customer:
-    const { rows: customerRows, rowCount } = await pool.query(
+  const { rows: customerRows, rowCount } = await pool.query(
     "SELECT customer_id FROM customer WHERE email = $1",
-    [email]
+    [email],
   );
 
   if (rowCount === 0) {
@@ -87,31 +85,32 @@ const updateFavorites = async (id) => {
   }
 
   const id_customer = customerRows[0].customer_id;
-  const favProduct = id_product
+  const favProduct = id_product;
   const updated_at = new Date();
 
-  const values = [
-    favoritos_id,
-    id_customer,
-    favProduct,
-    updated_at
-  ];
+  const values = [favoritos_id, id_customer, favProduct, updated_at];
 
-  const { rows: favRows } = await pool.query("UPDATE favorites SET (favoritos_id = COALESCE($1, favoritos_id), id_customer = COALESCE($2, id_customer), id_product = COALESCE($3, id_product),updated_at) values($1, $2, $3, $4) RETURNING *", values);
+  const { rows: favRows } = await pool.query(
+    "UPDATE favorites SET (favoritos_id = COALESCE($1, favoritos_id), id_customer = COALESCE($2, id_customer), id_product = COALESCE($3, id_product),updated_at) values($1, $2, $3, $4) RETURNING *",
+    values,
+  );
 
-  return favRows[0]
+  return favRows[0];
 };
 
-//Eliminar orden de compra (ADMIN)
-const deleteFavorite = async(id)=>{
+//Eliminar favorito
+const deleteFavorite = async (id) => {
   const query = "DELETE FROM favoritos WHERE favoritos_id = $1";
   const { rows } = await pool.query(query, [id]);
   return rows[0];
-}
+};
 const customerModel = {
+  //view customers (rutas sobre clientes no relacionadas con clientes para uso de ADMIN)
   findCustomers,
   findCustomerById,
   deleteCustomer,
+
+  //favoritos
   findFavorites,
   findFavoritesById,
   createFavorites,

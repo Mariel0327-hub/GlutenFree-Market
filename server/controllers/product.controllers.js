@@ -1,10 +1,26 @@
 import productModel from "../models/product.models.js";
-import jwt from "jsonwebtoken";
-import bycrpt from "bcryptjs";
 
 const readAllProducts = async (req, res) => {
   try {
     const result = await productModel.findAllProducts();
+
+    if (!result) {
+      return res.status(404).json({ message: "No Products Found" });
+    }
+
+    return res.status(200).json(result);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+//IMPLEMENTAR PG_FORMAT
+const readAllProductsFiltered = async (req, res) => {
+  const queryString = req.query;
+  console.log(queryString);
+  try {
+    const result = await productModel.findAllProductsFiltered(queryString);
 
     if (!result) {
       return res.status(404).json({ message: "No Products Found" });
@@ -49,16 +65,6 @@ const readProductsByCategory = async (req, res) => {
   }
 };
 
-//no será usado (favoritos instead)
-/* const readProductsByUserId = async (req, res) => {
-  const { id } = req.params;
-  try {
-    await productModel.findProductByUSer(id);
-  } catch (error) {
-    return res.status(500).json({ message: "Internal Server Error" });
-  }
-}; */
-
 const createNewProduct = async (req, res) => {
   const { title, product_description, price, image_url, stock, sku, category } =
     req.body;
@@ -77,9 +83,7 @@ const createNewProduct = async (req, res) => {
       return res.status(404).json({ message: "No Product Created " });
     }
 
-    return res
-      .status(201)
-      .json({ message: "Producto creado de manera exitosa" });
+    return res.status(201).json(newProduct);
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "Internal Server Error" });
@@ -105,7 +109,6 @@ const updateNewProduct = async (req, res) => {
       return res.status(404).json({ message: "No Product Updated " });
     }
 
-    console.log(result);
     return res
       .status(200)
       .json({ message: "Producto modificado de manera exitosa" });
@@ -120,7 +123,7 @@ const deleteNewProduct = async (req, res) => {
     const { id } = req.params;
     const result = await productModel.deleteProduct(id);
 
-    if (result.rowCount === 0) {
+    if (!result) {
       return res.status(404).json({ message: "No product deleted" });
     }
 
@@ -148,7 +151,7 @@ const restoreOldProduct = async (req, res) => {
 
 const productController = {
   readAllProducts,
-  //readProductsByUserId,
+  readAllProductsFiltered,
   readProductsByCategory,
   readProductsById,
   createNewProduct,

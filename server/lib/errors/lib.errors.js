@@ -1,3 +1,5 @@
+//PENDIENTE DE IMPLEMENTAR
+
 const databaseError = {
   23505: {
     code: 409,

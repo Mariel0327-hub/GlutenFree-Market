@@ -21,8 +21,9 @@ export const getDbConnection = async () => {
   } catch (error) {
     console.error(error);
     console.log("error");
+
     /*
-        Managing error with code from lib.errors
-        */
+    Managing error with code from lib.errors
+    */
   }
 };

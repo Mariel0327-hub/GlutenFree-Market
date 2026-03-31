@@ -1,6 +1,5 @@
 import customerModel from "../models/customer.models.js";
-import jwt from "jsonwebtoken";
-import bycrpt from "bcryptjs";
+
 
 /* 
 DE MOMENTO, CLIENTES Y FAVORITOS ESTÁN JUNTOS EN LA MEDIDA QUE HAY UNA RELACIÓN DIRECTA ENTRE AMBAS TABLAS Y LAS RTAS NO SON LO SUFICIENTEMENTE COMPLEJAS COMO PARA SEPARARLAS. PARA VERSIONES POSTERIORES, DE CRECER MÁS DE LO CONTROLABLE EN ESTA FORMA, SE SEPARARÁN LAS RUTAS EN /customers ; /favorites. 
@@ -52,7 +51,6 @@ const deleteNewCustomer = async (req, res) => {
   }
 };
 
-
 /////Favroritos
 const readAllFavorites = async (req, res) => {
   try {
@@ -80,18 +78,25 @@ const readFavoritesbyId = async (req, res) => {
   }
 };
 
-
+//Seleccionar y almacenar un producto favorito
 const createNewFavorite = async (req, res) => {
   const { email } = req.user;
+  const { favProduct } = req.body;
   try {
-    const order = await customerModel.createFavorites(email);
-    res.status(201).json(order);
+    const result = await customerModel.createFavorites(email, favProduct);
+
+    if (!result) {
+      return res.status(404).json({ message: "Producto no encontrado" });
+    }
+
+    res.status(201).json(result);
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
+//Potenciales correcciones (ante errores e base de datos)
 const updateNewFavorite = async (req, res) => {
   try {
     await customerModel.updateFavorites();
@@ -100,7 +105,7 @@ const updateNewFavorite = async (req, res) => {
     return res.status(500).json({ message: "Internal Server Error" });
   }
 };
-
+//Eliminar una seleccion de favoritos
 const deleteNewFavorite = async (req, res) => {
   try {
     const { id } = req.params;

@@ -8,7 +8,8 @@
     "jsonwebtoken": "^9.0.3",
     "pg": "^8.20.0",
     "pg-format": "^1.0.4",
-    "supertest": "^7.2.2"
+    "supertest": "^7.2.2",
+    "uuidv7": "^1.2.1"
   },
   "devDependencies": {
     "nodemon": "^3.1.14"
@@ -24,9 +25,10 @@
   "scripts": {
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --forceExit",
     "test:product": "node --experimental-vm-modules node_modules/jest/bin/jest.js product.spec.js --forceExit",
-    "test:carts": "node --experimental-vm-modules node_modules/jest/bin/jest.js cart.spec.js --forceExit",
-    "test:orders": "node --experimental-vm-modules node_modules/jest/bin/jest.js order.spec.js --forceExit",
+    "test:cart": "node --experimental-vm-modules node_modules/jest/bin/jest.js cart.spec.js --forceExit",
+    "test:order": "node --experimental-vm-modules node_modules/jest/bin/jest.js order.spec.js --forceExit",
     "test:reviews": "node --experimental-vm-modules node_modules/jest/bin/jest.js reviews.spec.js --forceExit",
+    "test:auth": "node --experimental-vm-modules node_modules/jest/bin/jest.js auth.spec.js --forceExit --verbose",
     "dev": "nodemon index.js"
   },
   "keywords": [],

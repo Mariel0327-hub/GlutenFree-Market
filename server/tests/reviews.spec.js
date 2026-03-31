@@ -1,42 +1,27 @@
-//TEMPLATE PARA RELLENAR/ MODFICAR
-
 import request from "supertest";
 import app from "../index.js";
-
-// formula genérica:
-// const {variables deseadas} = await request(server).get('/ruta).send("payload if needed")
-
-// Relacionadas a tipo de instancia (Array, tipos primtivos, etc..)
 
 describe("Operaciones CRUD relacionadsa a registro e incio de sesión", () => {
   it("GET/review status code === 200?", async () => {
     //Request:
-    const { body, statusCode } = await request(app).get("/review").send();
-    //Status code:
-    const status = statusCode;
-    //elemento dentro del request
-    const reviews = body;
-    //tamaño del Array:
-    //const cantidadCafes = cafe.length;
+    const { body: reviewBody, statusCode: reviewStatus } = await request(app)
+      .get("/review")
+      .send();
 
-    //revisar statusCode
-    expect(status).toBe(200);
+    expect(reviewStatus).toBe(200);
 
     //Doble revisión: es una instancia de tipo array?
-    expect(reviews).toBeInstanceOf(Array);
-    // Exclusivamente un array? (Object también pasa el test, por tanto aquí se filtra))
-    expect(Array.isArray(reviews)).toBe(true);
-
-/*     //Desde que el length no sea 0, el test pasa.
-    expect(cantidadCafes).not.toBe(0); */
+    expect(reviewBody).toBeInstanceOf(Array);
+    expect(Array.isArray(reviewBody)).toBe(true);
   });
 
-/*   //si se usa id que no existe
-  it("GET/products/:id status wrong id gives error?", async () => {
-    "...";
-  });
+  it("GET/review status code === 200?", async () => {
+    const wrongId = "this is not an id";
 
-  it("GET/products status code === 200?", async () => {
-    "...";
-  }); */
+    const { body: reviewBody, statusCode: reviewStatus } = await request(app)
+      .get(`/review/${wrongId}`)
+      .send();
+
+    expect(reviewStatus).toBe(404);
+  });
 });

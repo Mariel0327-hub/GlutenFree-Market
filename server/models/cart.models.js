@@ -1,5 +1,5 @@
 import { pool } from "../db/db.js";
-import pkg from "pg-format";
+import { uuidv7 } from "uuidv7";
 
 //Leer todos carritos  (ADMIN)
 const findallCarts = async () => {
@@ -37,12 +37,12 @@ const findCartDetailsbyId = async (id) => {
   return rows;
 };
 
-///PRODUCT MANAGING  //PARA GESTIONAR CAMBIOS POR PRODUCTO REVISAR!!!!!
+///PRODUCT MANAGING
 
 const createCartInstance = async (id) => {
   const id_customer = id;
 
-  // borrar carritos previos
+  //Borrar carritos previos
   await pool.query(
     "DELETE FROM cart_item WHERE id_cart IN (SELECT cart_id FROM cart WHERE id_customer = $1)",
     [id_customer],
@@ -50,7 +50,8 @@ const createCartInstance = async (id) => {
   await pool.query("DELETE FROM cart WHERE id_customer = $1", [id_customer]);
 
   //Crear una instancia de carrito
-  const cart_id = `cart-${Math.floor(Math.random() * 3000)}`;
+  const cartIdBody = uuidv7();
+  const cart_id = `cart-${cartIdBody}`;
   const created_at = new Date();
   const is_active = true;
   const { rows: cartToCheck } = await pool.query(
@@ -73,7 +74,8 @@ const addProductToCart = async (id, newCartProduct) => {
   const cart_id = cartResult[0].cart_id;
 
   //generate cart_item id
-  let cart_item_id = `cart-item-${Math.floor(Math.random() * 9000)}`;
+  const cartItemIdBody = uuidv7();
+  let cart_item_id = `cart-item-${cartItemIdBody}`;
 
   const created_at = new Date();
 

@@ -1,7 +1,6 @@
 import dotenv from "dotenv";
 import authModel from "../models/auth.models.js";
 import jwt from "jsonwebtoken";
-import bycrpt from "bcryptjs";
 dotenv.config();
 
 const SECRET = process.env.JWT_SECRET;
@@ -28,7 +27,7 @@ const modifyUser = async (req, res) => {
     jwt.verify(token, `${SECRET}`); */
     const result = await authModel.updateUser(id, customer);
 
-        if (!result) {
+    if (!result) {
       return res.status(404).json({ message: "No Customer Found" });
     }
 
@@ -55,12 +54,26 @@ const authenticateUser = async (req, res) => {
 //profile
 const getUserProfile = async (req, res) => {
   try {
-    /*     const Authorization = req.header("Authorization");
-    const token = Authorization.split("Bearer ")[1];
-    jwt.verify(token, `${SECRET}`); */
-    const { email } = req.user;
-    const result = await authModel.getUserData(email);
+    const customer = req.user;
+    const result = await authModel.getUserData(customer);
     return res.status(200).json(result);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+//Eliminación de propio perfil por parte de cliente
+const deleteNewUser = async (req, res) => {
+  try {
+    const { id } = req.user;
+
+    await authModel.deleteUser(id);
+
+    console.log(`Cliente ${id}, eliminadx exitosamente`);
+    return res
+      .status(200)
+      .json({ message: `Cliente ${id}, eliminadx exitosamente` });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "Internal Server Error" });
@@ -69,9 +82,10 @@ const getUserProfile = async (req, res) => {
 
 const authController = {
   registerUser,
-  modifyUser, // ruta nueva?
+  modifyUser,
   authenticateUser,
   getUserProfile,
+  deleteNewUser,
 };
 
 export default authController;

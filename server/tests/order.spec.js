@@ -1,61 +1,35 @@
-//TEMPLATE PARA RELLENAR/ MODFICAR
-
 import request from "supertest";
 import app from "../index.js";
 
-// formula genérica:
-// const {variables deseadas} = await request(server).get('/ruta).send("payload if needed")
-
-// Relacionadas a tipo de instancia (Array, tipos primtivos, etc..)
+ADMIN_USERNAME = process.env.ADMIN_USERNAME;
+ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
+ADMIN_ROLE = process.env.ADMIN_ROLE;
 
 describe("Operaciones CRUD relacionadsa a registro e incio de sesión", () => {
   it("GET/order status code === 200?", async () => {
-    //Request:
+    //Request sin verificación de administrador
     const { body, statusCode } = await request(app).get("/order").send();
-    //Status code:
-    const status = statusCode;
-    //elemento dentro del request
-    const orders = body;
-    //tamaño del Array:
-    //const cantidadCafes = cafe.length;
 
-    //revisar statusCode
-    expect(status).toBe(200);
-
-    //Doble revisión: es una instancia de tipo array?
-    expect(orders).toBeInstanceOf(Array);
-    // Exclusivamente un array? (Object también pasa el test, por tanto aquí se filtra))
-    expect(Array.isArray(orders)).toBe(true);
-
-/*     //Desde que el length no sea 0, el test pasa.
-    expect(cantidadCafes).not.toBe(0); */
+    expect(statusCode).toBe(401);
   });
 
+  //si se usa id que no existe
+  it("GET/order/:id status wrong id gives error even when verified?", async () => {
+    const wrongId = "cust-99999999999999999999999999999";
 
-   //si se usa id que no existe
-  it("GET/order/:id status wrong id gives error?", async () => {
-    const wrongId = "cust-99999999999999999999999999999"    
+    //Admin verification:
+    //get admin permission:
+    const { body: adminBody } = await request(app)
+      .post("/auth/admin")
+      .send({ user: ADMIN_USERNAME, pass: ADMIN_PASSWORD });
+
     //Request:
-    const { body, statusCode } = await request(app).get(`/order/${wrongId}`).send();
-    //Status code:
-    const status = statusCode;
-    //elemento dentro del request
-    const cart = body;
-    //tamaño del Array:
-    //const cantidadCafes = cafe.length;
+    const { body, statusCode } = await request(app)
+      .get(`/order/${wrongId}`)
+      .set("Authorization", `Bearer ${adminBody.adminToken}`)
+      .send();
 
     //revisar statusCode
-    expect(status).toBe(404);
-
-    //Doble revisión: es una instancia de tipo array?
-    //expect(cart).toBeInstanceOf(Object);
-    // Exclusivamente un array? (Object también pasa el test, por tanto aquí se filtra))
-    //expect(Array.isArray(cart)).toBe(true);
-    //Desde que el length no sea 0, el test pasa.
-    //expect(cantidadCafes).not.toBe(0);
+    expect(statusCode).toBe(404);
   });
-/*
-  it("GET/products status code === 200?", async () => {
-    "...";
-  }); */
 });
