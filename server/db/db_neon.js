@@ -10,16 +10,17 @@ export const pool = new Pool({
   allowExitOnIdle: true,
 });
 
-export const getDbConnectionNeon = async () => {
+/* export const getDbConnectionNeon = async () => {
   try {
     const { rows } = await pool.query("SELECT NOW()");
+    //console.log("DB URL:", process.env.CONNECTION_STRING);
     console.log(`Database NEON running; date: ${rows[0].now}`);
   } catch (error) {
     console.error(error);
     console.log("error");
   }
 };
-
+ */
 /* Se facilitará un string de 
 conexión para la base de datos 
 online por vía privada */
