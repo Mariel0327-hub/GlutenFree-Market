@@ -1,4 +1,4 @@
-## Gluten-Free-Market: Apartado Backend
+## Gluten-Free-Market: Apartado Backend (DESPLIEGUE)
 
 API REST para gestionar consultas a la base de datos de un e-commerce.
 
