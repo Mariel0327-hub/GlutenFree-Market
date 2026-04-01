@@ -7,7 +7,7 @@ CREATE DATABASE gluten_free_market;
 DROP DATABASE gluten_free_market;
 
 --connect to DB
-/  
+/
 --c gluten_free_market;
 
 -- PK id shape <entity>_id
@@ -34,11 +34,11 @@ CREATE TABLE customer (
     customer_id VARCHAR PRIMARY KEY,
     customer_name VARCHAR(255),
     email VARCHAR(255) NOT NULL UNIQUE,
-    phone VARCHAR(30),  
+    phone VARCHAR(30),
     customer_password VARCHAR(255) NOT NULL UNIQUE,
-    shipping_address  VARCHAR(255) NOT NULL,
-    billing_address  VARCHAR(255) NOT NULL,
-    img_url_customer  VARCHAR(255),
+    shipping_address VARCHAR(255) NOT NULL,
+    billing_address VARCHAR(255) NOT NULL,
+    img_url_customer VARCHAR(255),
     created_at TIMESTAMP,
     updated_at TIMESTAMP
 );
@@ -122,28 +122,64 @@ CREATE TABLE stock_mov (
 CREATE TABLE favoritos (
     favoritos_id VARCHAR PRIMARY KEY,
     id_customer VARCHAR REFERENCES customer (customer_id) ON DELETE CASCADE,
-    id_product VARCHAR REFERENCES product (product_id)
+    id_product VARCHAR REFERENCES product (product_id),
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP
 );
 
 ---------------------------
 --DATASETS:
 
 -- customers
-INSERT INTO customer (
-    customer_id,
-    customer_name,
-    email,
-    phone,
-    customer_password,
-    shipping_address,
-    billing_address,
-    img_url_customer,
-    created_at,
-    updated_at
-) VALUES
-    ('cust-001', 'Alice',  'alice@email.com', NULL, 'hashed_pw_1', '123 Main St, Lisbon', '123 Main St, Lisbon', NULL, NOW(), NOW()),
-    ('cust-002', 'Bob',    'bob@email.com',   NULL, 'hashed_pw_2', '456 Oak Ave, Porto',  '456 Oak Ave, Porto',  NULL, NOW(), NOW()),
-    ('cust-003', 'Carol',  'carol@email.com', NULL, 'hashed_pw_3', '789 Pine Rd, Faro',   '789 Pine Rd, Faro',   NULL, NOW(), NOW());
+INSERT INTO
+    customer (
+        customer_id,
+        customer_name,
+        email,
+        phone,
+        customer_password,
+        shipping_address,
+        billing_address,
+        img_url_customer,
+        created_at,
+        updated_at
+    )
+VALUES (
+        'cust-001',
+        'Alice',
+        'alice@email.com',
+        NULL,
+        'hashed_pw_1',
+        '123 Main St, Lisbon',
+        '123 Main St, Lisbon',
+        NULL,
+        NOW(),
+        NOW()
+    ),
+    (
+        'cust-002',
+        'Bob',
+        'bob@email.com',
+        NULL,
+        'hashed_pw_2',
+        '456 Oak Ave, Porto',
+        '456 Oak Ave, Porto',
+        NULL,
+        NOW(),
+        NOW()
+    ),
+    (
+        'cust-003',
+        'Carol',
+        'carol@email.com',
+        NULL,
+        'hashed_pw_3',
+        '789 Pine Rd, Faro',
+        '789 Pine Rd, Faro',
+        NULL,
+        NOW(),
+        NOW()
+    );
 
 -- categories
 INSERT INTO

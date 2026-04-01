@@ -34,11 +34,13 @@ const deleteCustomer = async (id) => {
 };
 
 const findFavoritesFiltered = async ({ limit = 10, order_by }) => {
-  //se crean alias para procesar las columnas
+  //Se crean alias para procesar las columnas (para obviar underscore)
   const FIELD_ALIAS = {
     favoritosid : 'favoritos_id',
     idcustomer : 'id_customer',
-    idproduct: 'id_product'
+    idproduct: 'id_product',
+    createdat : 'created_at',
+    updatedat :'updated_at'
   } 
   
   const [alias, dir] = order_by.split("_");
