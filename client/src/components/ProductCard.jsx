@@ -1,5 +1,5 @@
 import { Card, CardBody, Button } from "react-bootstrap";
-import { FaStar, FaHeart } from "react-icons/fa";
+import { FaStar, FaHeart, FaRegHeart } from "react-icons/fa";
 import "../assets/css/ProductCard.css";
 import { Link } from "react-router-dom";
 import { useContext, navigate } from "react";
@@ -7,14 +7,12 @@ import { ProductContext } from "../context/ProductContext";
 import { UserContext } from "../context/UserContext";
 import Swal from "sweetalert2";
 import { CartContext } from "../context/CartContext";
-import { useNavigate } from "react-router-dom";
 
 const ProductCard = ({ product }) => {
   const { favorites, toggleFavorite } = useContext(ProductContext);
-  const isFav = favorites?.some((fav) => fav.product_id === product.product_id);
+  const isFav = favorites.some((fav) => fav.product_id === product.product_id);
   const { token } = useContext(UserContext);
   const { addToCart } = useContext(CartContext);
-  const navigate = useNavigate();
 
   if (!product) return null;
 
@@ -45,9 +43,6 @@ const ProductCard = ({ product }) => {
       >
         <Card.Img
           src={product.image_url}
-          onError={(e) => {
-            e.target.src = "https://images.unsplash.com/photo-1723910065922-67b84af65b23?q=80&w=1173&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D";
-          }}
           className="card-img-top"
           alt={product.title}
           style={{ height: "200px", objectFit: "cover", cursor: "pointer" }}
@@ -74,11 +69,11 @@ const ProductCard = ({ product }) => {
           />
         </div>
         <div className="text-center flex-grow-1">
-          <p
-            className="text-muted mb-3 text-start"
-            style={{ fontSize: "0.8rem" }}
-          >
-            {product.category || "General"}
+          <p className="text-muted mb-3 text-start" style={{ fontSize: "0.8rem" }}>
+            {product.category
+              ? String(product.category).charAt(0).toUpperCase() +
+                String(product.category).slice(1)
+              : ""}
           </p>
           <Card.Title className="card-title fw-bold mb-1 fs-6">
             {product.title}

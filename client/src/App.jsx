@@ -4,6 +4,7 @@ import Footer from "./components/Footer";
 import Home from "./views/Home";
 import Login from "./views/Login";
 import Register from "./views/Register";
+//import Profile from "./views/Profile";
 import ProductDetail from "./components/ProductDetail";
 import ProductosView from "./components/ProductosView";
 import Cart from "./views/Cart";

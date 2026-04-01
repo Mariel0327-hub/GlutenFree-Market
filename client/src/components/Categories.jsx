@@ -36,7 +36,7 @@ const Categories = () => {
     // 2. Actualizamos el estado global ANTES de navegar
     setFilters((prev) => ({
       ...prev,
-      category: categorySlug,
+      category: categorySlug, // Ej: "harinas"
       searchTerm: "", // Limpiamos búsquedas previas por UX
     }));
 

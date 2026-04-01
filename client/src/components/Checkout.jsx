@@ -9,8 +9,27 @@ import Swal from "sweetalert2";
 export default function Checkout() {
   const { cart, cartTotal, shippingCost, FREE_SHIPPING_THRESHOLD, clearCart } = useContext(CartContext);
   const navigate = useNavigate();
+ // const { addOrder } = useContext(OrderContext);
   const { user, setUser } = useContext(UserContext);
 
+  /*const handlePayment = () => {
+    // 1. Creamos el objeto de la orden con los datos actuales
+    const newOrder = {
+      order_id: Math.floor(Math.random() * 10000), // ID aleatorio para el simulacro
+      date: new Date().toLocaleDateString("es-CL"),
+      total: cartTotal,
+      status: "Pendiente",
+      items: [...cart], //  Guardamos una copia de los productos actuales del carrito
+      shippingData: formData, // También podrías guardar los datos de envío
+    };
+
+    // 2. Guardamos la orden en el estado global de órdenes
+    addOrder(newOrder);
+
+    // 3. Limpiamos el carrito y navegamos
+    clearCart();
+    navigate("/success");
+  };*/
   const [formData, setFormData] = useState({
     nombre: "",
     telefono: "",

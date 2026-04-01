@@ -5,10 +5,9 @@ import { FaApple, FaFacebook } from "react-icons/fa";
 import { UserContext } from "../context/UserContext";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
-import axios from "axios";
 
 export default function Register() {
-  //const { login } = useContext(UserContext);
+  const { login } = useContext(UserContext);
   const navigate = useNavigate();
 
   // 1. Centralizamos todo en formData para no tener estados sueltos
@@ -22,12 +21,12 @@ export default function Register() {
     avatar_url: "",
   });
 
-  const handleChange = async (e) => {
+  const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
 
     // 1 Regex para validar datos
@@ -64,40 +63,30 @@ export default function Register() {
     }
 
     // 3. Si todo está OK, creamos el usuario
-    try {
-      // 2. Preparamos el objeto con los nombres de tu TABLA
-      const newUserForDB = {
-        customer_id: Date.now().toString(),
-        customer_name: formData.name,
-        email: formData.email,
-        phone: formData.phone || "No provisto",
-        customer_password: formData.password,
-        shipping_address: formData.shipping_address,
-        billing_address: formData.billing_address,
-        img_url_customer: formData.avatar_url,
-      };
+    const newUser = {
+      id: Date.now(),
+      name: formData.name,
+      email: formData.email,
+      shipping_address: formData.shipping_address,
+      billing_address: formData.billing_address,
+      avatar_url: formData.avatar_url || "https://via.placeholder.com/150", // Fallback
+      role: "user",
+    };
 
-      // 3. LA LLAMADA AL SERVIDOR
-      const response = await axios.post(
-        "http://localhost:3000/api/auth/register",
-        newUserForDB,
-      );
+    // 4. PERSISTENCIA: Mandamos al contexto
+    login(newUser, "local-auth-token");
 
-      if (response.status === 201 || response.status === 200) {
-        Swal.fire({
-          icon: "success",
-          title: "¡Guardado en Neon!",
-          text: `Bienvenido/a, ${formData.name}`,
-          showConfirmButton: false,
-          timer: 1500,
-        });
+    Swal.fire({
+      icon: "success",
+      title: "¡Cuenta creada!",
+      text: `Bienvenido/a, ${formData.name}`,
+      showConfirmButton: false,
+      timer: 1500,
+    });
 
-        setTimeout(() => navigate("/login"), 1500);
-      }
-    } catch (error) {
-      console.error("Error al registrar:", error);
-      Swal.fire("Error", "La base de datos rechazó el registro", "error");
-    }
+    setTimeout(() => {
+      navigate("/perfil");
+    }, 1500);
   };
   return (
     <Container className="my-5 pt-4">
@@ -147,19 +136,6 @@ export default function Register() {
                 className="auth-input"
                 name="email"
                 value={formData.email}
-                onChange={handleChange}
-                required
-              />
-            </Form.Group>
-
-            <Form.Group className="mb-3">
-              <Form.Label className="small fw-bold">Telefono</Form.Label>
-              <Form.Control
-                type="tel"
-                placeholder="Tu número de teléfono"
-                className="auth-input"
-                name="phone"
-                value={formData.phone}
                 onChange={handleChange}
                 required
               />
