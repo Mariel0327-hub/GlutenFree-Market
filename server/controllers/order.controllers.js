@@ -1,5 +1,7 @@
 import orderModel from "../models/order.models.js";
 
+//ORDENES 
+//ADMIN
 const readAllOrders = async (req, res) => {
   try {
     const result = await orderModel.findOrders();
@@ -30,7 +32,7 @@ const readOrdersbyId = async (req, res) => {
     return res.status(500).json({ message: "Internal Server Error" });
   }
 };
-
+//CLIENTE (restringido a validación de token)
 const readOrdersbyCustomer = async (req, res) => {
   const { id } = req.user;
   try {
@@ -48,7 +50,8 @@ const readOrdersbyCustomer = async (req, res) => {
   }
 };
 
-//ORDER DETAILS:
+
+//DETALLES DE ORDEN:
 const readAllOrderDetails = async (req, res) => {
   try {
     const result = await orderModel.findOrderDetails();
@@ -64,9 +67,11 @@ const readAllOrderDetails = async (req, res) => {
   }
 };
 
-//Para encontrar detalles en específico
+//ADMIN
+//Para encontrar detalles en específico // se agrega filtro de usuario para evitar acceso a ordenes agenas.
 const readOrderDetailsbyId = async (req, res) => {
   try {
+
     const { id } = req.params;
     const result = await orderModel.findOrderDetailsbyId(id);
 
@@ -83,7 +88,7 @@ const readOrderDetailsbyId = async (req, res) => {
   }
 };
 
-////Para encontrar detalles de compra de un cliente
+////Para encontrar detalles de compra de un cliente (restringido a cliente)
 const readOrderDetailsbyCustomer = async (req, res) => {
   try {
     const { id } = req.user;
