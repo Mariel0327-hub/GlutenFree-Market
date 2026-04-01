@@ -1,4 +1,4 @@
-import { pool } from "../db/db.js";
+import { pool } from "../db/dbSwitch.js";
 import { uuidv7 } from "uuidv7";
 
 //Ver todas la reseñas  (ADMIN)  //posteriormente se puede implementar un filtro

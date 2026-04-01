@@ -14,7 +14,7 @@ export const pool = new Pool({
   allowExitOnIdle: true,
 });
 
-export const getDbConnection = async () => {
+/* export const getDbConnection = async () => {
   try {
     const { rows } = await pool.query("SELECT NOW()");
     console.log(`Database running; date: ${rows[0].now}`);
@@ -22,8 +22,8 @@ export const getDbConnection = async () => {
     console.error(error);
     console.log("error");
 
-    /*
-    Managing error with code from lib.errors
-    */
+   
+    //Managing error with code from lib.errors
+   
   }
-};
+}; */
