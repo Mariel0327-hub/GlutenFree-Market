@@ -15,7 +15,6 @@ const readAllProducts = async (req, res) => {
   }
 };
 
-//IMPLEMENTAR PG_FORMAT
 const readAllProductsFiltered = async (req, res) => {
   const queryString = req.query;
   console.log(queryString);

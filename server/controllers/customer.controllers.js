@@ -51,10 +51,28 @@ const deleteNewCustomer = async (req, res) => {
   }
 };
 
-/////Favroritos
+/////FAVORITOS
+
 const readAllFavorites = async (req, res) => {
   try {
     const result = await customerModel.findFavorites();
+    return res.status(200).json(result);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+}; 
+
+const readAllFavoritesFiltered = async (req, res) => {
+  const queryString = req.query;
+  console.log(queryString);
+  try {
+    const result = await customerModel.findFavoritesFiltered(queryString);
+
+    if (!result) {
+      return res.status(404).json({ message: "No Products Found" });
+    }
+
     return res.status(200).json(result);
   } catch (error) {
     console.error(error);
@@ -76,7 +94,7 @@ const readFavoritesbyId = async (req, res) => {
     console.error(error);
     return res.status(500).json({ message: "Internal Server Error" });
   }
-};
+}; 
 
 //Seleccionar y almacenar un producto favorito
 const createNewFavorite = async (req, res) => {
@@ -127,6 +145,7 @@ const customerController = {
   readCustomersbyId,
   deleteNewCustomer,
   readAllFavorites,
+  readAllFavoritesFiltered,
   readFavoritesbyId,
   createNewFavorite,
   updateNewFavorite,
