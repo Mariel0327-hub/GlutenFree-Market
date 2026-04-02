@@ -30,16 +30,13 @@ export const UserProvider = ({ children }) => {
   }, [user]);
 
   const login = (userData, token) => {
-    // [ESTRATEGIA] Si Pablo te lo manda como 'id', lo renombramos a 'customer_id'
-    // para que coincida con tu base de datos Neon.
+    // Simplificamos: Si Neon devuelve customer_id, usamos ese.
     const correctedUser = {
       ...userData,
       customer_id: userData.customer_id || userData.id || userData.id_customer,
     };
 
-    const authToken = token || "local-auth-token"; // token para modo offline-local
-
-    console.log("Usuario guardado en el Contexto:", correctedUser);
+    const authToken = token;
 
     setToken(authToken);
     setUser(correctedUser);
@@ -51,26 +48,23 @@ export const UserProvider = ({ children }) => {
   const logout = () => {
     setToken(null);
     setUser(null);
+    
   };
 
   const updateUser = async (newData) => {
     try {
       const token = localStorage.getItem("token");
-
-      // [CORRECCIÓN] Declaramos la variable extrayéndola del estado 'user'
-      // Revisa si en tu objeto se llama 'customer_id' o solo 'id'
-      const userId =
-        user?.customer_id || user?.id || user?.id_customer || user?.uid;
+      // Usamos el nombre exacto de tu tabla de Neon
+      const userId = user?.customer_id;
 
       if (!userId) {
-        console.error("No se encontró el ID del usuario en el estado");
+        console.error("No se encontró customer_id");
         return { success: false, message: "Error de identidad" };
       }
 
-      console.log(`Petición a: http://localhost:3000/auth/profile/${userId}`);
-
+      // AGREGAMOS /api A LA RUTA
       const response = await axios.put(
-        `http://localhost:3000/auth/profile/${userId}`,
+        `http://localhost:3000/api/auth/alter_profile/${userId}`, // <--- /api agregado
         newData,
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -84,11 +78,7 @@ export const UserProvider = ({ children }) => {
         return { success: true };
       }
     } catch (error) {
-      // Si vuelve a dar 404, es que la ruta NO lleva el ID al final
-      console.error(
-        "Error en la petición:",
-        error.response?.status || error.message,
-      );
+      console.error("Error en update:", error.response?.status);
       return { success: false };
     }
   };

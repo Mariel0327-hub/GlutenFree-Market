@@ -1,9 +1,11 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { Container, Card, Button, Row, Col, Form } from "react-bootstrap";
 import { UserContext } from "../context/UserContext";
 import { useNavigate } from "react-router-dom";
 //import { getInitials } from "../utils/helpers";
-import { FaCamera, FaLock } from "react-icons/fa";
+import { FaCamera, FaLock, FaPhone } from "react-icons/fa";
+import axios from "axios";
+
 
 import {
   FaEnvelope,
@@ -14,22 +16,51 @@ import {
 import Swal from "sweetalert2";
 
 export default function Profile() {
-  const { user, logout, updateUser } = useContext(UserContext);
+  const { user, logout, updateUser, setUser } = useContext(UserContext);
   const navigate = useNavigate();
 
   // Estado para controlar si estamos editando
   const [isEditing, setIsEditing] = useState(false);
   // Estado local para los inputs del formulario
   const [formData, setFormData] = useState({ name: "", shipping_address: "" });
+
+  // Este efecto corre apenas entras a la página de Perfil
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        if (token) {
+          // Llamamos a la ruta de perfil que tienes en el Back
+          const response = await axios.get(
+            "http://localhost:3000/api/auth/profile",
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            },
+          );
+
+          // Al hacer setUser con la respuesta de Neon,
+          // ahora 'user' tendrá su customer_id real (ej: cust-019d...)
+          setUser(response.data);
+        }
+      } catch (error) {
+        console.error("Error al cargar datos desde Neon:", error);
+      }
+    };
+
+    fetchUserData();
+  }, []); // [] significa que solo corre una vez al cargar la página
+
   const handleEditClick = () => {
     if (user) {
       setFormData({
-        name: user.name || "",
+        // Mapeamos los nombres de la BD (izquierda) a tus estados del Form (derecha)
+        name: user.customer_name || "", // Antes: user.name
         email: user.email || "",
         shipping_address: user.shipping_address || "",
         billing_address: user.billing_address || "",
-        profile_image: user?.profile_image || "",
-        password: "",
+        profile_image: user.img_url_customer || "", // Antes: user.profile_image
+        phone: user.phone || "", // Agregamos phone si lo necesitas
+        password: "", // La contraseña siempre inicia vacía por seguridad
         customer_id: user.customer_id,
       });
       setIsEditing(true);
@@ -44,15 +75,35 @@ export default function Profile() {
   const handleSave = async () => {
     try {
       const cleanData = {
-        ...formData,
-        password:
+        // 🚩 IMPORTANTE: Usamos el ID que ya tiene el usuario, no uno nuevo
+        customer_id: user.customer_id,
+
+        // Mapeo de variables: React -> SQL
+        customer_name: formData.name,
+        email: formData.email,
+        phone: formData.phone || user.phone,
+
+        // Solo enviamos la contraseña si el usuario escribió una nueva
+        customer_password:
           formData.password && formData.password.trim() !== ""
             ? formData.password
-            : null,
+            : undefined,
+
+        shipping_address: formData.shipping_address,
+        billing_address: formData.billing_address,
+
+        // Usamos el nombre de columna de tu SQL
+        img_url_customer:
+          formData.img_url_customer||
+          user.img_url_customer ||
+          "https://via.placeholder.com/150",
       };
+
+      console.log("Enviando actualización con estos nombres:", cleanData);
       const result = await updateUser(cleanData);
 
-      if (result.success) {
+      if (result) {
+        // Asumiendo que updateUser devuelve el objeto actualizado o true
         setIsEditing(false);
         setFormData((prev) => ({ ...prev, password: "" }));
 
@@ -66,7 +117,7 @@ export default function Profile() {
       }
     } catch (error) {
       console.error("Error al guardar:", error);
-      Swal.fire("Error", "No se pudo conectar con el servidor", "error");
+      Swal.fire("Error", "No se pudo actualizar el perfil", "error");
     }
   };
   return (
@@ -85,28 +136,29 @@ export default function Profile() {
               fontSize: "32px",
             }}
           >
-            {user.profile_image ? (
-              // ✅ Si hay URL, mostramos la imagen
+            {/* ✅ Cambio a img_url_customer */}
+            {user?.img_url_customer ? (
               <img
-                src={user.profile_image}
-                alt={user.name}
+                src={user.img_url_customer}
+                alt={user.customer_name}
                 className="w-100 h-100 object-fit-cover"
               />
             ) : (
-              // Fallback: Si no hay URL, mostramos las iniciales
-              user.name
+              (user?.customer_name || "U")
                 .split(" ")
                 .map((n) => n[0])
                 .join("")
+                .toUpperCase()
             )}
           </div>
 
           <h2 className="fw-bold mt-3 text-center" style={{ color: "#3e2723" }}>
             {isEditing ? "Editar Perfil" : "Mi Perfil"}
           </h2>
+
           <Form>
             <Row className="g-4 mb-4">
-              {/* Campo Nombre (Editable) */}
+              {/* Campo Nombre */}
               <Col xs={12} className="d-flex align-items-start gap-3">
                 <FaUserEdit className="text-muted mt-2" />
                 <div className="flex-grow-1">
@@ -119,16 +171,43 @@ export default function Profile() {
                       onChange={(e) =>
                         setFormData({ ...formData, name: e.target.value })
                       }
-                      disabled={!isEditing}
                     />
                   ) : (
                     <span className="fw-medium">
-                      {user?.name || "No registrado"}
+                      {/* ✅ Cambio a customer_name */}
+                      {user?.customer_name || "No registrado"}
                     </span>
                   )}
                 </div>
               </Col>
-              {/* Campo URL de Imagen (Solo aparece al editar) */}
+
+              {/* Campo Teléfono (NUEVO) */}
+              <Col xs={12} className="d-flex align-items-start gap-3">
+                <FaPhone className="text-muted mt-2" />{" "}
+                {/* Asegúrate de importar FaPhone de react-icons/fa */}
+                <div className="flex-grow-1">
+                  <small className="d-block text-muted fw-bold text-uppercase">
+                    Teléfono
+                  </small>
+                  {isEditing ? (
+                    <Form.Control
+                      type="text"
+                      placeholder="+569..."
+                      value={formData.phone}
+                      onChange={(e) =>
+                        setFormData({ ...formData, phone: e.target.value })
+                      }
+                    />
+                  ) : (
+                    <span className="fw-medium">
+                      {/* ✅ Cambio a phone */}
+                      {user?.phone || "Sin teléfono registrado"}
+                    </span>
+                  )}
+                </div>
+              </Col>
+
+              {/* Campo URL de Imagen (Solo en edición) */}
               {isEditing && (
                 <Col xs={12} className="d-flex align-items-start gap-3 mt-3">
                   <FaCamera className="text-muted mt-2" />
@@ -147,17 +226,11 @@ export default function Profile() {
                         })
                       }
                     />
-                    <Form.Text
-                      className="text-muted"
-                      style={{ fontSize: "12px" }}
-                    >
-                      Pega el enlace de una imagen externa (JPG, PNG o SVG).
-                    </Form.Text>
                   </div>
                 </Col>
               )}
 
-              {/* Campo Email (Solo lectura por seguridad) */}
+              {/* Campo Email */}
               <Col xs={12} className="d-flex align-items-start gap-3">
                 <FaEnvelope className="text-muted mt-2" />
                 <div className="flex-grow-1">
@@ -168,7 +241,7 @@ export default function Profile() {
                 </div>
               </Col>
 
-              {/* Campo Dirección (Editable) */}
+              {/* Campo Dirección */}
               <Col xs={12} className="d-flex align-items-start gap-3">
                 <FaMapMarkerAlt className="text-muted mt-2" />
                 <div className="flex-grow-1">
@@ -189,6 +262,7 @@ export default function Profile() {
                     />
                   ) : (
                     <span className="fw-medium">
+                      {/* ✅ Cambio a shipping_address */}
                       {user?.shipping_address || "Sin dirección registrada"}
                     </span>
                   )}

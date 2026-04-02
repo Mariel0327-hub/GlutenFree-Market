@@ -16,7 +16,7 @@ import { CartContext } from "../context/CartContext";
 import { getInitials } from "../utils/helpers";
 
 const Navbar = () => {
-  const { cart } = useContext(CartContext);
+  const { cart, setCart } = useContext(CartContext);
   const totalItems = cart.reduce((acc, item) => acc + item.quantity, 0);
   const { token, logout, user } = useContext(UserContext);
 
@@ -27,6 +27,7 @@ const Navbar = () => {
 
   const handleLogout = () => {
     logout(); // Limpia el estado global
+    setCart([]);
     navigate("/"); // Lo mandas al inicio (o "/login")
   };
 
@@ -38,7 +39,7 @@ const Navbar = () => {
       setIsNavExpanded(false);
     }
   };
-  
+
   console.log("Datos del usuario en Navbar:", user);
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-white shadow-sm py-3 sticky-top">
@@ -93,7 +94,10 @@ const Navbar = () => {
             </li>
           </ul>
 
-          <Form className="d-flex" onSubmit={handleSearchSubmit}>
+          <Form
+            className="d-flex me-lg-3 my-3 my-lg-0"
+            onSubmit={handleSearchSubmit}
+          >
             <Form.Control
               type="search"
               placeholder="Buscar pan, pasteles..."
@@ -103,51 +107,46 @@ const Navbar = () => {
             />
           </Form>
 
-          <div className="d-flex align-items-center gap-3">
+          <div className="d-flex align-items-center justify-content-between justify-content-lg-end gap-3 pb-3 pb-lg-0">
             {token ? (
-              <div className="d-flex align-items-center gap-3">
-                {/* Favoritos */}
+              <div className="d-flex align-items-center gap-2 gap-md-3 flex-wrap justify-content-between">
+                {/* Favoritos: Icono en móvil, Texto en Desktop */}
                 <NavLink
                   to="/favoritos"
-                  className="nav-icon-link text-decoration-none"
+                  className="nav-icon-link text-decoration-none d-flex align-items-center gap-1"
+                  onClick={() => setIsNavExpanded(false)}
                 >
-                  <FaHeart
-                    size={22}
-                    title="Mis Favoritos"
-                    onClick={() => setIsNavExpanded(false)}
-                  />
+                  <FaHeart className="d-xl-none text-danger" size={24} />
                   <span className="d-none d-xl-inline small fw-bold p-1">
                     Favoritos
                   </span>
                 </NavLink>
 
-                {/* Mis Pedidos */}
+                {/* Mis Pedidos: Icono en móvil, Texto en Desktop */}
                 <NavLink
                   to="/mis-pedidos"
-                  className="nav-icon-link text-decoration-none"
+                  className="nav-icon-link text-decoration-none d-flex align-items-center gap-1"
+                  onClick={() => setIsNavExpanded(false)}
                 >
-                  <FaClipboardList
-                    size={22}
-                    title="Mis Pedidos"
-                    onClick={() => setIsNavExpanded(false)}
-                  />
+                  <FaClipboardList className="d-xl-none text-dark" size={24} />
                   <span className="d-none d-xl-inline small fw-bold">
                     Mis pedidos
                   </span>
                 </NavLink>
 
-                {/* Perfil */}
+                {/* Perfil / Avatar */}
                 <NavLink
                   to="/perfil"
                   className="nav-link d-flex align-items-center gap-2 py-0"
+                  onClick={() => setIsNavExpanded(false)}
                 >
-                  {/* Lógica Condicional: ¿Hay avatar real o usamos iniciales? */}
-                  {user?.avatar_url &&
-                  !user.avatar_url.includes("placeholder") ? (
+                  {/* Imagen o Iniciales */}
+                  {user?.img_url_customer &&
+                  !user.img_url_customer.includes("placeholder") ? (
                     <img
-                      src={user.avatar_url}
+                      src={user.img_url_customer}
                       alt="Profile"
-                      className="rounded-circle border"
+                      className="rounded-circle border shadow-sm"
                       style={{
                         width: "35px",
                         height: "35px",
@@ -157,23 +156,26 @@ const Navbar = () => {
                   ) : (
                     <div
                       className="icon-logo-nav rounded-circle d-flex align-items-center justify-content-center fw-bold text-white shadow-sm"
+                      style={{
+                        width: "35px",
+                        height: "35px",
+                        minWidth: "35px",
+                      }}
                     >
                       {getInitials(user?.name)}
                     </div>
                   )}
-
-                  <div
-                    className="d-none d-md-block text-start"
-                    style={{ lineHeight: "1" }}
-                  >
+                  <div className="text-start" style={{ lineHeight: "1" }}>
                     <span
-                      className="d-block small text-muted"
+                      className="d-block text-muted"
                       style={{ fontSize: "0.65rem" }}
                     >
                       Bienvenido
                     </span>
-                    <span className="fw-bold" style={{ fontSize: "0.9rem" }}>
-                      {user?.name ? user.name.split(" ")[0] : "Invitado"}
+                    <span className="fw-bold" style={{ fontSize: "0.85rem" }}>
+                      {user?.customer_name || user?.nombre
+                        ? (user.customer_name || user.nombre).split(" ")[0]
+                        : "Usuario"}
                     </span>
                   </div>
                 </NavLink>
@@ -181,10 +183,10 @@ const Navbar = () => {
                 {/* Botón Salir */}
                 <button
                   onClick={handleLogout}
-                  className="btn btn-outline-danger btn-sm rounded-pill px-3 ms-2"
+                  className="btn btn-outline-danger btn-sm rounded-pill px-3"
                   style={{ fontSize: "0.75rem" }}
                 >
-                  Cerrar Sesión
+                  Salir
                 </button>
               </div>
             ) : (
@@ -207,16 +209,15 @@ const Navbar = () => {
               </div>
             )}
 
+            {/* Carrito: Siempre al final */}
             <Link
               to="/carrito"
               className="nav-icon-link position-relative ms-2"
+              onClick={() => setIsNavExpanded(false)}
             >
               <FaShoppingCart size={24} />
               {totalItems > 0 && (
-                <span
-                  key={totalItems}
-                  className="position-absolute top-0 start-100 translate-middle badge rounded-pill cart-badge-custom"
-                >
+                <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill cart-badge-custom">
                   {totalItems}
                 </span>
               )}

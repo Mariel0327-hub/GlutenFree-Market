@@ -1,29 +1,45 @@
-import React, { useContext, useState } from "react";
-import { Container, Row, Col, Card, Modal, Button } from "react-bootstrap";
+import React, { useContext, useState, useEffect } from "react";
+import { Container, Row, Col, Card, Modal, Button} from "react-bootstrap";
 import { ReviewContext } from "../context/ReviewContext";
 import { FaStar, FaQuoteLeft, FaTimes } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
-export default function AllTestimonials() {
+export default function AllTestimonials({ limit = false }) {
   const { reviews } = useContext(ReviewContext); // Consumimos TODO el array
 
   // Estados para el Modal de Vista Detallada
   const [showDetail, setShowDetail] = useState(false);
   const [selectedReview, setSelectedReview] = useState(null);
+  const [displayReviews, setDisplayReviews] = useState([]);
 
   const handleOpenDetail = (review) => {
     setSelectedReview(review);
     setShowDetail(true);
   };
 
+  useEffect(() => {
+    if (reviews && reviews.length > 0) {
+      if (limit) {
+        // Desordenamos y cortamos a 3
+        const shuffled = [...reviews]
+          .sort(() => Math.random() - 0.5)
+          .slice(0, 3);
+        setDisplayReviews(shuffled);
+      } else {
+        // Si no hay límite, mostramos todos
+        setDisplayReviews(reviews);
+      }
+    }
+  }, [reviews, limit]);
+
   return (
     <>
-      <div className="banner-divider-card"></div>
       <Container className="py-5 mt-5">
         <h2 className="text-center titles-font fw-bold mb-5">
           Nuestra Comunidad
         </h2>
         <Row className="g-4">
-          {reviews.map((t) => (
+          {displayReviews.map((t) => (
             <Col key={t.review_id} xs={12} md={6} lg={4}>
               <Card
                 className="h-100 border-0 shadow-elegant rounded-4"
@@ -129,6 +145,17 @@ export default function AllTestimonials() {
             )}
           </Modal.Body>
         </Modal>
+        {/* El botón solo aparece si estamos usando el límite (Home) */}
+        {limit && (
+          <div className="text-center mt-5">
+            <Link
+              to="/todos-los-testimonios"
+              className="btn btn-dark rounded-pill px-5 shadow-sm py-2"
+            >
+              Ver todas las reseñas
+            </Link>
+          </div>
+        )}
       </Container>
     </>
   );

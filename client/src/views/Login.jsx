@@ -23,26 +23,36 @@ export default function Login() {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      //llamamos al Backend en Neon
-      const data = await loginUserDB({ email, password });
+      // 1. AJUSTE CRÍTICO: Renombramos la llave para que el Back la reconozca
+      const data = await loginUserDB({
+        email: email,
+        customer_password: password, // Aquí enviamos el estado 'password' con el nombre que pide el Back
+      });
 
       if (data.token) {
-        // aqui ya se guardan los datos REALES que vienen del servidor
-        const loggedUser = data.user || data.customer || { email };
+        // 2. AJUSTE DE DATOS:
+        // Como tu Backend actual NO devuelve el objeto 'user' (solo el token),
+        // creamos un objeto con lo que tenemos para que la App no falle.
+        const loggedUser = data.user || {
+          email: email,
+          customer_name: "Usuario", // Valor temporal hasta que cargue el perfil
+        };
 
         setUser(loggedUser);
         setToken(data.token);
 
-        // 2. Persistencia en LocalStorage
+        // 3. Persistencia
         localStorage.setItem("user", JSON.stringify(loggedUser));
         localStorage.setItem("token", data.token);
 
+        // 4. Redirección
         const params = new URLSearchParams(window.location.search);
         const redirect = params.get("redirect") || "/perfil";
         navigate(redirect);
       }
     } catch (error) {
-      // manejamos los errores
+      // Si el error persiste, revisa la consola para ver qué dice el servidor
+      console.error("Error detallado:", error.response?.data);
       alert(
         "Error al iniciar sesión: " +
           (error.response?.data?.message || "Credenciales inválidas"),

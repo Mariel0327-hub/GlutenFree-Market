@@ -64,7 +64,7 @@ export default function MyReviews() {
         <div className="d-flex align-items-center mb-4">
           <Button
             variant="link"
-            className="text-dark p-0 me-3"
+            className="text-dark p-0 me-3 bg-transparent border-0"
             onClick={() => navigate(-1)}
           >
             <FaArrowLeft size={20} />

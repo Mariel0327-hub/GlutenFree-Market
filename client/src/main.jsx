@@ -13,15 +13,15 @@ import { CartProvider } from "./context/CartContext.jsx";
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <UserProvider>
-      <CartProvider>
-        <ProductProvider>
+      <ProductProvider>
+        <CartProvider>
           <ReviewProvider>
             <OrderProvider>
               <App />
             </OrderProvider>
           </ReviewProvider>
-        </ProductProvider>
-      </CartProvider>
+        </CartProvider>{" "}
+      </ProductProvider>
     </UserProvider>
   </StrictMode>,
 );

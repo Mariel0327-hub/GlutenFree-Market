@@ -1,58 +1,128 @@
-import React, { createContext, useState, useContext } from "react";
+import React, { createContext, useState, useContext, useEffect } from "react";
 import { UserContext } from "./UserContext";
 import { testimonials as initialData } from "../data/testimonials";
+import axios from "axios";
+import Swal from "sweetalert2";
 
 export const ReviewContext = createContext();
 
 export const ReviewProvider = ({ children }) => {
-  const { user } = useContext(UserContext);
-  const [reviews, setReviews] = useState(initialData);
+  const { user, token } = useContext(UserContext);
+  const [reviews, setReviews] = useState([]);
 
-  //  Eliminar: Filtra por ID
-  const deleteReview = (id) => {
-    setReviews(reviews.filter((r) => r.review_id !== id));
-  };
+  const myReviews = reviews.filter((r) => {
+    // 1. Buscamos el ID del usuario logueado en sus dos posibles nombres
+    const currentUserId = user?.customer_id || user?.id;
 
-  //Editar: Actualiza el cuerpo de la reseña
-  const updateReview = (id, updatedBody, updatedRating) => {
-    setReviews(
-      reviews.map((r) =>
-        r.review_id === id
-          ? { ...r, review_body: updatedBody, rating: updatedRating }
-          : r,
+    // 2. Buscamos el ID del autor en la reseña
+    const reviewAuthorId = r.id_customer;
+
+    // 3. Comparamos transformando ambos a String para evitar errores
+    return (
+      reviewAuthorId &&
+      currentUserId &&
+      String(reviewAuthorId) === String(currentUserId)
+    );
+  });
+  const canUserReview = (userId, productId, userOrders) => {
+    if (!userId || !userOrders) return false;
+
+    // 1. ¿El usuario compró este producto alguna vez?
+    const hasBought = userOrders.some((order) =>
+      order.items?.some(
+        (item) => String(item.product_id) === String(productId),
       ),
     );
-  };
 
-  //  Filtrar: Solo las reseñas del usuario actual
-  // Usamos el email o el nombre para el mock
-  const myReviews = reviews.filter(
-    (r) => r.author === user?.name || r.customer_id === user?.id,
-  );
-
-  // Supongamos que tienes acceso a los pedidos (orders) desde otro contexto o un mock
-  const canUserReview = (userId, productId, userOrders) => {
-    if (!userId) return false; // Si no está logueado, no puede
-
-    // Verificamos si existe algún pedido que contenga este producto y esté pagado/entregado
-    return userOrders.some(
-      (order) =>
-        order.customer_id === userId &&
-        order.items.some((item) => item.product_id === productId),
+    // 2. ¿El usuario YA calificó este producto?
+    // Buscamos en el estado global de 'reviews'
+    const alreadyReviewed = reviews.some(
+      (r) =>
+        String(r.id_customer) === String(userId) &&
+        String(r.id_product) === String(productId),
     );
-  };
 
-  const addReview = (newReview) => {
-    // Generamos un ID único simple para la nueva reseña
-    const reviewWithId = {
-      ...newReview,
-      review_id: Date.now(),
-      review_body: newReview.comment,
+    // Puede reseñar SI lo compró Y NO lo ha reseñado
+    return hasBought && !alreadyReviewed;
+  };
+  const addReview = async (newReview, token) => {
+    try {
+      const config = { headers: { Authorization: `Bearer ${token}` } };
+      const res = await axios.post(
+        "http://localhost:3000/api/review",
+        newReview,
+        config,
+      );
+
+      if (res.status === 201 || res.status === 200) {
+        const savedReview = {
+          ...res.data,
+          id_customer: user?.customer_id || user?.id,
+        };
+
+        setReviews((prev) => [...prev, savedReview]);
+        return { success: true };
+      }
+    } catch (error) {
+      console.error("Error al guardar review en DB:", error);
+      return { success: false, error };
+    }
+  };
+  useEffect(() => {
+    const loadReviews = async () => {
+      try {
+        const res = await axios.get("http://localhost:3000/api/review"); // Tu ruta de GET
+        setReviews(res.data);
+      } catch (error) {
+        console.error("Error cargando reseñas desde Neon:", error);
+      }
     };
+    loadReviews();
+  }, []);
 
-    setReviews((prevReviews) => [reviewWithId, ...prevReviews]);
+  const deleteReview = async (reviewId, token) => {
+    console.log("Intentando eliminar la reseña con ID:", reviewId);
+
+    try {
+      const config = { headers: { Authorization: `Bearer ${token}` } };
+      const res = await axios.delete(
+        `http://localhost:3000/api/review/${reviewId}`,
+        config,
+      );
+
+      if (res.status === 200 || res.status === 204) {
+        setReviews((prev) => prev.filter((r) => r.review_id !== reviewId));
+        return { success: true };
+      }
+    } catch (error) {
+      console.error(
+        "Error al eliminar en el servidor:",
+        error.response?.data || error.message,
+      );
+      return { success: false };
+    }
   };
 
+  const updateReview = async (reviewId, updatedData, token) => {
+    try {
+      const config = { headers: { Authorization: `Bearer ${token}` } };
+      // La URL según tu backend es /api/review/reviews/:id
+      const res = await axios.put(
+        `http://localhost:3000/api/review/reviews/${reviewId}`,
+        updatedData,
+        config,
+      );
+      if (res.status === 200) {
+        setReviews((prev) =>
+          prev.map((r) =>
+            r.review_id === reviewId ? { ...r, ...updatedData } : r,
+          ),
+        );
+      }
+    } catch (error) {
+      console.error("Error al editar:", error);
+    }
+  };
   return (
     <ReviewContext.Provider
       value={{

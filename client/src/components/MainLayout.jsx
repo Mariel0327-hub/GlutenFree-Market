@@ -8,9 +8,18 @@ import { CartContext } from "../context/CartContext";
 export default function MainLayout() {
   const { showToast, setShowToast, lastAdded } = useContext(CartContext);
 
+  // Definimos la imagen de respaldo una sola vez
+  const fallbackImage =
+    "https://images.unsplash.com/photo-1551024601-bec78aea704b?w=100&h=100&fit=crop";
+
   return (
-    <ToastContainer position="bottom-end" className="p-3" style={{ zIndex: 9999 }}>
+    <ToastContainer
+      position="bottom-end"
+      className="p-3"
+      style={{ zIndex: 9999 }}
+    >
       <Toast
+        key={lastAdded?.product_id || lastAdded?.title || "empty"}
         onClose={() => setShowToast(false)}
         show={showToast}
         delay={3000}
@@ -23,19 +32,38 @@ export default function MainLayout() {
         >
           <strong className="me-auto">🛒 ¡Añadido!</strong>
         </Toast.Header>
+
         <Toast.Body className="bg-white rounded-bottom-4 p-3">
-          {lastAdded && (
-            <div className="d-flex align-items-center">
+          {lastAdded ? ( 
+            <div className="d-flex align-items-center gap-3">
               <img
-                src={lastAdded.image_url}
-                width="50"
-                className="rounded-3 me-3"
-                alt=""
+                src={lastAdded.image_url || fallbackImage}
+                alt={lastAdded.title || "Producto"}
+                className="rounded-3 shadow-sm"
+                style={{
+                  width: "50px",
+                  height: "50px",
+                  objectFit: "cover",
+                  flexShrink: 0,
+                }}
               />
-              <div>
-                <div className="fw-bold text-dark">{lastAdded.title}</div>
-                <small className="text-muted">Se agregó correctamente</small>
+              <div className="overflow-hidden">
+                <div
+                  className="fw-bold text-dark text-truncate"
+                  style={{ maxWidth: "180px" }}
+                >
+                  {lastAdded.title || "Sin título"}
+                </div>
+                <small className="text-muted d-block">Añadido al carrito</small>
               </div>
+            </div>
+          ) : (
+            <div className="d-flex align-items-center gap-2">
+              <div
+                className="spinner-border spinner-border-sm text-brown"
+                role="status"
+              ></div>
+              <span className="small text-muted">Cargando producto...</span>
             </div>
           )}
         </Toast.Body>

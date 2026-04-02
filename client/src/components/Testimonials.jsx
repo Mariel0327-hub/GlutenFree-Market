@@ -1,76 +1,118 @@
-import React from "react";
-import { Container, Row, Col, Card } from "react-bootstrap";
-import { Link } from "react-router-dom";
-import { FaStar, FaQuoteLeft } from "react-icons/fa";
-import "../assets/css/Testimonials.css";
+// 1. Importa el ProductContext (o como se llame donde guardas tus productos)
+import { ProductContext } from "../context/ProductContext";
+import React, { useContext } from "react";
+import { Container, Row, Col, Card, Button } from "react-bootstrap";
 import { ReviewContext } from "../context/ReviewContext";
-import { useContext } from "react";
+import Swal from "sweetalert2";
 
 export default function Testimonials() {
-  const { reviews } = useContext(ReviewContext);
-  return (
-    <section className="testimonials-wrapper py-5">
-      <Container>
-        <div className="text-center mb-5">
-          <h2 className="titles-font fw-bold">Testimonios</h2>
-          <h2 className="titles-font fw-bold">¿Qué dice nuestros clientes?</h2>
-          <div className="title-underline mx-auto"></div>
-        </div>
+  const { myReviews, deleteReview, updateReview } = useContext(ReviewContext);
+  const { products } = useContext(ProductContext);
 
-        <Row className="g-4">
-          {reviews.slice(0, 3).map((t) => (
-            <Col key={t.review_id} xs={12} md={4}>
-              <Card className="h-100 border-0 shadow-elegant rounded-4">
-                <Card.Body className="p-4 d-flex flex-column">
-                  <FaQuoteLeft
-                    className="text-warning mb-3 opacity-50"
-                    size={24}
-                  />
-                  <h6 className="fw-bold">{t.about_product}</h6>
-
-                  <Card.Text className="body-font text-muted fst-italic mb-4 flex-grow-1">
-                    "{t.review_body}"
-                  </Card.Text>
-
-                  <div className="d-flex align-items-center mt-3">
-                    <img
-                      src={t.avatar}
-                      alt={t.author}
-                      className="rounded-circle me-3 shadow-sm"
-                      style={{
-                        width: "50px",
-                        height: "50px",
-                        objectFit: "cover",
-                        border: "2px solid #fff",
-                      }}
-                    />
-                    <div>
-                      <Card.Title className="fs-6 fw-bold mb-0">
-                        {t.author}{" "}
-                        {/* En el futuro será t.customer_name si hacemos un JOIN */}
-                      </Card.Title>
-                      <div className="text-warning small">
-                        {[...Array(Number(t.rating) || 0)].map((_, i) => (
-                          <FaStar key={i} />
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </Card.Body>
-              </Card>
-            </Col>
-          ))}
-        </Row>
-        {/* 🆕 BOTÓN PARA VER TODO */}
-        <div className="text-center mt-5">
-          <Link
-            to="/todos-los-testimonios"
-            className="btn btn-outline-dark px-5 rounded-pill fw-bold shadow-sm"
-          >
-            Ver todas las reseñas
-          </Link>
-        </div>
+  // Cargando catálogo
+  if (!products || products.length === 0) {
+    return (
+      <Container className="py-5">
+        <p>Cargando catálogo...</p>
       </Container>
-    </section>
+    );
+  }
+
+  // Función para manejar la edición
+  const handleEdit = async (rev) => {
+    const { value: text } = await Swal.fire({
+      title: "Editar comentario",
+      input: "textarea",
+      inputLabel: "Edita tu opinión",
+      inputValue: rev.review_body,
+      showCancelButton: true,
+    });
+
+    if (text !== undefined && text !== rev.review_body) {
+      // 🚩 PASAMOS LOS DATOS QUE TU BACKEND ESPERA
+      // Enviamos el ID de la reseña y el objeto con los campos a actualizar
+      await updateReview(rev.review_id, {
+        review_body: text,
+        rating: rev.rating,
+        about_product: rev.about_product,
+        id_product: rev.id_product,
+      });
+    }
+  };
+
+  // Función para manejar la eliminación
+  const handleDelete = (reviewId) => {
+    Swal.fire({
+      title: "¿Eliminar reseña?",
+      text: "Esta acción no se puede deshacer",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      confirmButtonText: "Sí, borrar",
+      cancelButtonText: "Cancelar",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        deleteReview(reviewId);
+      }
+    });
+  };
+
+  return (
+    <Container className="py-5">
+      <h2 className="fw-bold mb-4">Mis Testimonios</h2>
+      {myReviews.length === 0 ? (
+        <p>Aún no tienes reseñas publicadas.</p>
+      ) : (
+        <Row className="g-4">
+          {myReviews.map((rev) => {
+            const productData = products.find(
+              (p) =>
+                String(p.product_id).trim().toLowerCase() ===
+                String(rev.id_product).trim().toLowerCase(),
+            );
+
+            return (
+              <Col key={rev.review_id} xs={12} md={6}>
+                <Card className="shadow-sm border-0 rounded-4 p-3 h-100">
+                  <Card.Body className="d-flex flex-column">
+                    <div className="mb-2 text-warning">
+                      {"★".repeat(rev.rating)}
+                    </div>
+
+                    <h6 className="text-muted fw-bold mb-2">
+                      Sobre:{" "}
+                      {productData
+                        ? productData.title
+                        : "Producto de la tienda"}
+                    </h6>
+
+                    <p className="text-muted fst-italic mt-2 flex-grow-1">
+                      "{rev.review_body}"
+                    </p>
+
+                    <div className="d-flex justify-content-end mt-3">
+                      <Button
+                        variant="link"
+                        className="text-primary p-0 me-3 text-decoration-none"
+                        onClick={() => handleEdit(rev)}
+                      >
+                        Editar
+                      </Button>
+                      <Button
+                        variant="link"
+                        className="text-danger p-0 text-decoration-none"
+                        onClick={() => handleDelete(rev.review_id)}
+                      >
+                        Eliminar
+                      </Button>
+                    </div>
+                  </Card.Body>
+                </Card>
+              </Col>
+            );
+          })}
+        </Row>
+      )}
+    </Container>
   );
 }

@@ -4,16 +4,13 @@ import { ProductContext } from "../context/ProductContext";
 import ProductCard from "../components/ProductCard";
 
 export default function Favorites() {
-  // 1. Consumimos el array de favoritos del contexto
   const { favorites } = useContext(ProductContext);
 
   return (
     <>
       <div className="banner-divider-card"></div>
       <Container className="py-5">
-        <h2 className="fw-bold mb-4">
-          Mis Favoritos
-        </h2>
+        <h2 className="fw-bold mb-4">Mis Favoritos</h2>
 
         <hr className="mb-5 opacity-25" />
 

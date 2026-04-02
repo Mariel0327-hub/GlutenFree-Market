@@ -5,19 +5,21 @@ import { FaApple, FaFacebook } from "react-icons/fa";
 import { UserContext } from "../context/UserContext";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
+import { registerUserDB } from "../data/connection";
+//import axios from "axios";
 
 export default function Register() {
-  const { login } = useContext(UserContext);
+  const { setUser, setToken } = useContext(UserContext); // Usamos el contexto real
   const navigate = useNavigate();
 
-  // 1. Centralizamos todo en formData para no tener estados sueltos
   const [formData, setFormData] = useState({
     name: "",
     email: "",
+    phone: "", // <--- Campo nuevo
     shipping_address: "",
     billing_address: "",
     password: "",
-    confirmPassword: "", // validacion para confirmar password
+    confirmPassword: "",
     avatar_url: "",
   });
 
@@ -26,67 +28,85 @@ export default function Register() {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // 1 Regex para validar datos
-    const passwordRegex = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
-
-    // 2. Validaciones usando formData
-    if (!formData.email || !formData.password || !formData.name) {
-      return Swal.fire(
-        "Campos vacíos",
-        "Por favor, completa los datos obligatorios.",
-        "warning",
-      );
-    }
-
+    // 1. Validaciones básicas
     if (formData.password !== formData.confirmPassword) {
       return Swal.fire("Error", "Las contraseñas no coinciden", "error");
     }
 
-    if (!passwordRegex.test(formData.password)) {
-      return Swal.fire({
-        icon: "error",
-        title: "Contraseña poco segura",
-        html: `
-            <div class="text-start small">
-              <p>Requisitos de seguridad:</p>
-              <ul>
-                <li>Mínimo 8 caracteres</li>
-                <li>Al menos una letra mayúscula</li>
-                <li>Al menos un número</li>
-              </ul>
-            </div>
-          `,
-      });
-    }
-
-    // 3. Si todo está OK, creamos el usuario
-    const newUser = {
-      id: Date.now(),
-      name: formData.name,
+    // 2. Preparamos el objeto con los nombres exactos de tu tabla SQL
+    const newUserForDB = {
+      customer_name: formData.name, // Cambia 'nombre' por tu variable de estado
       email: formData.email,
-      shipping_address: formData.shipping_address,
-      billing_address: formData.billing_address,
-      avatar_url: formData.avatar_url || "https://via.placeholder.com/150", // Fallback
-      role: "user",
+      phone: formData.phone,
+      customer_password: formData.password, // 🚩 ¡Ojo con el nombre aquí!
+      shipping_address:
+        formData.shipping_address || "Dirección no especificada",
+      billing_address: formData.billing_address || "Dirección no especificada",
+      img_url_customer:
+        "https://images.unsplash.com/photo-1534528741775-53994a69daeb", // Valor por defecto si no tienes input
+      created_at: new Date(),
+      updated_at: new Date(),
     };
 
-    // 4. PERSISTENCIA: Mandamos al contexto
-    login(newUser, "local-auth-token");
+    try {
+      // 3. Llamada REAL al Backend
+      const data = await registerUserDB(newUserForDB);
+      console.log("Respuesta completa del servidor:", data);
 
-    Swal.fire({
-      icon: "success",
-      title: "¡Cuenta creada!",
-      text: `Bienvenido/a, ${formData.name}`,
-      showConfirmButton: false,
-      timer: 1500,
-    });
+      if (
+        data &&
+        (data.token || data.message === "Usuario registrado exitosamente")
+      ) {
+        // Si el servidor mandara token, lo guardamos (por si acaso en el futuro cambia)
+        if (data.token) {
+          setUser(data.user);
+          setToken(data.token);
+          localStorage.setItem("user", JSON.stringify(data.user));
+          localStorage.setItem("token", data.token);
+        }
 
-    setTimeout(() => {
-      navigate("/perfil");
-    }, 1500);
+        Swal.fire({
+          icon: "success",
+          title: "¡Registro Exitoso!",
+          text: data.message || "Ya puedes iniciar sesión",
+          timer: 1500,
+          showConfirmButton: false,
+        });
+
+        // 🚩 COMO NO HAY TOKEN, LO MANDAMOS AL LOGIN SIEMPRE
+        setTimeout(() => navigate("/login"), 2000);
+      }
+    } catch (error) {
+      Swal.fire(
+        "Error",
+        error.response?.data?.message || "No se pudo crear la cuenta",
+        "error",
+      );
+      // 🚩 CASO ESPECIAL: Si el error es 500, pero el email ya se guardó
+      if (
+        error.response?.status === 500 ||
+        error.response?.data?.code === "23505"
+      ) {
+        Swal.fire({
+          icon: "info",
+          title: "Cuenta detectada",
+          text: "Tu cuenta se creó correctamente, pero hubo un pequeño error al iniciar sesión automáticamente. Por favor, ingresa manualmente.",
+        });
+
+        // Lo mandamos al login porque sabemos que en la DB ya está (por eso el error de duplicado)
+        navigate("/login");
+      } else {
+        // Error real (ej. falta un campo o servidor caído)
+        Swal.fire(
+          "Error",
+          error.response?.data?.message || "No se pudo completar el registro",
+          "error",
+        );
+      }
+    }
   };
   return (
     <Container className="my-5 pt-4">
@@ -137,6 +157,18 @@ export default function Register() {
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
+                required
+              />
+            </Form.Group>
+
+            <Form.Group className="mb-3">
+              <Form.Label className="small fw-bold">Telefono</Form.Label>
+              <Form.Control
+                type="tel"
+                name="phone"
+                className="form-control"
+                onChange={handleChange}
+                value={formData.phone}
                 required
               />
             </Form.Group>

@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Container, Row, Col, Button, Form } from "react-bootstrap";
+import { Container, Row, Col, Button, Card } from "react-bootstrap";
 import { ProductContext } from "../context/ProductContext";
 import { FaStar, FaMinus, FaPlus } from "react-icons/fa";
 import "../assets/css/ProductDetail.css";
@@ -8,6 +8,7 @@ import TestimonialsSection from "./TestimonialsSection";
 import { UserContext } from "../context/UserContext";
 //import { OrderContext } from "../context/OrderContext";
 import { CartContext } from "../context/CartContext";
+import { ReviewContext } from "../context/ReviewContext";
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -16,6 +17,7 @@ const ProductDetail = () => {
   const [cantidad, setCantidad] = useState(1);
   const { user } = useContext(UserContext);
   const navigate = useNavigate();
+  const { reviews } = useContext(ReviewContext);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -43,16 +45,10 @@ const ProductDetail = () => {
     );
   }
 
-  // 3. Si llegamos aquí, ES SEGURO que el producto existe
-  const canReview =
-    user &&
-    user.orders?.some(
-      (order) =>
-        order.status === "Entregado" &&
-        order.items?.some(
-          (item) => String(item.product_id) === String(product?.product_id),
-        ),
-    );
+  // Buscamos las reseñas específicas de este producto
+  const productReviews = reviews.filter(
+    (r) => String(r.id_product) === String(id),
+  );
 
   return (
     <div className="product-detail-container">
@@ -60,12 +56,27 @@ const ProductDetail = () => {
         <Row className="align-items-center gy-5">
           {/* Imagen del Producto */}
           <Col md={6} className="text-center">
-            <div className="product-image-container p-4 shadow-sm rounded-4 bg-white">
+            <div className="product-image-container p-4 shadow-sm rounded-4 bg-white h-100 d-flex align-items-center justify-content-center">
               <img
-                src={product.image_url}
+                // 1. Verificamos si existe la URL antes de intentar cargarla
+                src={
+                  product.image_url && product.image_url.length > 10
+                    ? product.image_url
+                    : "https://images.unsplash.com/photo-1578985543062-bc3b01620c4d?w=800&q=80"
+                }
                 alt={product.title}
-                className="img-fluid rounded-4"
-                style={{ maxHeight: "350px" }}
+                className="img-fluid rounded-4 shadow-sm"
+                style={{
+                  maxHeight: "450px", // Le damos un poco más de aire en el detalle
+                  width: "auto",
+                  objectFit: "contain",
+                }}
+                // 2. Si la URL del back existe pero el link está caído, entra el fallback
+                onError={(e) => {
+                  e.currentTarget.onerror = null;
+                  e.currentTarget.src =
+                    "https://images.unsplash.com/photo-1551024601-bec78aea704b?w=800&q=80";
+                }}
               />
             </div>
           </Col>
@@ -144,10 +155,51 @@ const ProductDetail = () => {
           </Col>
         </Row>
 
-        <TestimonialsSection
-          productId={product.product_id}
-          canReview={canReview}
-        />
+        <div className="mt-5 pt-5 border-top">
+          <h3 className="titles-font fw-bold mb-4 text-center">
+            Lo que dicen nuestros clientes
+          </h3>
+
+          {productReviews.length > 0 ? (
+            <Row className="g-4">
+              {productReviews.map((rev) => (
+                <Col md={6} key={rev.review_id}>
+                  <Card className="border-0 shadow-sm rounded-4 h-100 bg-light p-4">
+                    <Card.Body>
+                      <div className="d-flex justify-content-between align-items-center mb-3">
+                        <div className="d-flex align-items-center gap-2">
+                          {/* Un icono de usuario le da más vida */}
+                          <div className="bg-white rounded-circle p-2 shadow-sm">
+                            <FaStar
+                              className="text-warning"
+                              style={{ fontSize: "0.8rem" }}
+                            />
+                          </div>
+                          <span className="fw-bold text-secondary">
+                            {rev.user_name || "Cliente Satisfecho"}
+                          </span>
+                        </div>
+                        <div className="text-warning small">
+                          {"⭐".repeat(rev.rating)}
+                        </div>
+                      </div>
+                      <p className="text-muted mb-0 fst-italic">
+                        "{rev.review_body}"
+                      </p>
+                    </Card.Body>
+                  </Card>
+                </Col>
+              ))}
+            </Row>
+          ) : (
+            <div className="text-center py-5 bg-light rounded-4 border border-dashed">
+              <p className="text-muted mb-0">
+                Aún no hay reseñas para este producto. ¡Sé el primero en
+                calificar!
+              </p>
+            </div>
+          )}
+        </div>
       </Container>
     </div>
   );

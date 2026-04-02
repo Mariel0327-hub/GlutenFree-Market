@@ -70,20 +70,20 @@ export default function ProductosView() {
   return (
     <>
       <div className="banner-divider-card"></div>
-      <Container className="my-5">
+      <Container className="my-5 ">
         <div className="text-center mb-5">
           <h2 className="titles-font fw-bold">{displayTitle}</h2>
         </div>
 
         {/* FILTROS EN BARRA SUPERIOR */}
-        <Row className="mb-4 justify-content-center">
+        <Row className="mb-4 justify-content-center g-4" xs={1} sm={1} md={1} lg={4} >
           <Col lg={11}>
             <ProductFilters />
           </Col>
         </Row>
 
         {/* GRILLA DE PRODUCTOS ANCHO COMPLETO */}
-        <Row className="gy-4">
+        <Row  className="mb-4 justify-content-center g-4 " xs={1} sm={2} md={2} lg={3} >
           {productsToShow.length > 0 ? (
             productsToShow.map((product) => (
               <Col key={product.product_id} sm={12} md={6} lg={3}>
