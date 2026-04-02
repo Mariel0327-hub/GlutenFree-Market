@@ -104,7 +104,7 @@ const updateReview = async (
 
 // Eliminar review (PUBLIC + ADMIN)
 const deleteReview = async (id) => {
-  const query = "DELETE FROM review WHERE review_id = $1";
+  const query = "DELETE FROM review WHERE review_id = $1 RETURNING *";
   const { rows } = await pool.query(query, [id]);
   return rows[0];
 };

@@ -127,7 +127,7 @@ const updateRegisteredReview = async (req, res) => {
 const deleteRegisteredReview = async (req, res) => {
   const { id } = req.params;
   try {
-    await reviewModel.deleteReview(id);
+    const result = await reviewModel.deleteReview(id);
 
     if (!result) {
       return res
