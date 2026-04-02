@@ -1,10 +1,10 @@
 -- Active: 1769730037726@@127.0.0.1@5432@gluten_free_market
 
-CREATE DATABASE gluten_free_market;
+/* CREATE DATABASE gluten_free_market;
 
 --drop databse in case of need:
 
-DROP DATABASE gluten_free_market;
+DROP DATABASE gluten_free_market; */
 
 --connect to DB
 /
@@ -78,7 +78,7 @@ CREATE TABLE review (
     review_id VARCHAR PRIMARY KEY,
     id_customer VARCHAR REFERENCES customer (customer_id) ON DELETE CASCADE,
     id_product VARCHAR REFERENCES product (product_id),
-    about_product VARCHAR,
+    about_product BOOLEAN,
     review_body VARCHAR,
     rating INT,
     created_at TIMESTAMP,
@@ -492,7 +492,7 @@ VALUES (
         'rev-001',
         'cust-001',
         'prod-001',
-        'Wireless Mouse',
+        TRUE,
         'Works great, very smooth.',
         5,
         NOW(),
@@ -502,7 +502,7 @@ VALUES (
         'rev-002',
         'cust-001',
         'prod-002',
-        'Mechanical Keyboard',
+        TRUE,
         'Loud but satisfying to type on.',
         4,
         NOW(),
@@ -512,9 +512,9 @@ VALUES (
         'rev-003',
         'cust-002',
         'prod-003',
-        'Cotton T-Shirt',
-        'Good quality, true to size.',
-        4,
+        FALSE,
+        'Delivery took too long, not happy.',
+        2,
         NOW(),
         NOW()
     ),
@@ -522,7 +522,7 @@ VALUES (
         'rev-004',
         'cust-003',
         'prod-004',
-        'Clean Code Book',
+        TRUE,
         'Must read for every developer.',
         5,
         NOW(),

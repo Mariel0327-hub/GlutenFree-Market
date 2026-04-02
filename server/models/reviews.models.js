@@ -85,11 +85,30 @@ const updateReview = async (
 ) => {
   const updated_at = new Date();
 
-  //lógica para identificar un producto
-  id_product = about_product === true ? id_product : null;
+  //Lógica para identificar un producto
+  id_product = about_product === false ? null: id_product ;
+
+  // Si se actualiza about_product a true pero no hay id en el payload.
+  if (about_product === true && !id_product) {
+    throw { code: 400, message: "id_product required to review a product" };
+  }
+
+  //Si no hay about_product en el payload y no hay id. Se revisa si antes había product_id (si era true antes)
+  if (about_product === undefined && !id_product) {
+    const { rows: idProdRows } = await pool.query(
+      "SELECT id_product FROM review WHERE review_id = $1",
+      [id],
+    );
+      //Si era false y el review existe, se devolverá null
+      if (!idProdRows[0]) {
+    throw { code: 404, message: "Review not found" };
+  }
+  // se obtiene el id
+   id_product = idProdRows[0]?.id_product
+  }
 
   const query =
-    "UPDATE review SET about_product =COALESCE($1, about_product), id_product = COALESCE($2, id_product), review_body =COALESCE($3, review_body), rating =COALESCE($4, rating), updated_at =COALESCE($5, updated_at)WHERE review_id = $6 RETURNING *";
+    "UPDATE review SET about_product =COALESCE($1, about_product), id_product = $2, review_body =COALESCE($3, review_body), rating =COALESCE($4, rating), updated_at =$5 WHERE review_id = $6 RETURNING *";
   const values = [
     about_product,
     id_product,
