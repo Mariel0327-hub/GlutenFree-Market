@@ -22,7 +22,7 @@ export const authenticateAdmin = async (req, res) => {
       return res.status(401).json({ message: "Invalid credentials" });
     }
 
-    //create Admin Token
+    //Create Admin Token
     const adminToken = jwt.sign(
       { user: ADM_USER, role: process.env.ADMIN_ROLE },
       SECRET,

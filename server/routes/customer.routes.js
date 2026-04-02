@@ -12,10 +12,9 @@ const customerRouter = Router();
 
 //Cliente (a implementar proximamente) -> para que el cliente vea sus favoritos
 customerRouter.get(
-  "/:id/favorites",
+  "/favorites/filter",
   tokenVerification,
-  adminVerification(ADMIN_ROLE),
-  customerController.readAllFavorites,
+  customerController.readAllFavoritesFiltered,
 );
 
 //ADMIN ONLY

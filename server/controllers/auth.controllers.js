@@ -40,9 +40,9 @@ const modifyUser = async (req, res) => {
 
 //login
 const authenticateUser = async (req, res) => {
-  const { email, password } = req.body;
+  const { email, customer_password } = req.body;
   try {
-    const customer = await authModel.verifyUser(email, password);
+    const customer = await authModel.verifyUser(email, customer_password);
     const token = jwt.sign({ id: customer.customer_id, email }, `${SECRET}`);
     return res.status(200).json({ token });
   } catch (error) {

@@ -1,13 +1,13 @@
 -- Active: 1769730037726@@127.0.0.1@5432@gluten_free_market
 
-/*  CREATE DATABASE gluten_free_market;
+/* CREATE DATABASE gluten_free_market;
 
 --drop databse in case of need:
 
-DROP DATABASE gluten_free_market;
+DROP DATABASE gluten_free_market; */
 
 --connect to DB
-/  */
+/
 --c gluten_free_market;
 
 -- PK id shape <entity>_id
@@ -34,11 +34,11 @@ CREATE TABLE customer (
     customer_id VARCHAR PRIMARY KEY,
     customer_name VARCHAR(255),
     email VARCHAR(255) NOT NULL UNIQUE,
-    phone VARCHAR(30),  
+    phone VARCHAR(30),
     customer_password VARCHAR(255) NOT NULL UNIQUE,
-    shipping_address  VARCHAR(255) NOT NULL,
-    billing_address  VARCHAR(255) NOT NULL,
-    img_url_customer  VARCHAR(255),
+    shipping_address VARCHAR(255) NOT NULL,
+    billing_address VARCHAR(255) NOT NULL,
+    img_url_customer VARCHAR(255),
     created_at TIMESTAMP,
     updated_at TIMESTAMP
 );
@@ -78,7 +78,8 @@ CREATE TABLE review (
     review_id VARCHAR PRIMARY KEY,
     id_customer VARCHAR REFERENCES customer (customer_id) ON DELETE CASCADE,
     id_product VARCHAR REFERENCES product (product_id),
-    about_product VARCHAR,
+    about_product BOOLEAN,
+    review_title VARCHAR,
     review_body VARCHAR,
     rating INT,
     created_at TIMESTAMP,
@@ -122,28 +123,64 @@ CREATE TABLE stock_mov (
 CREATE TABLE favoritos (
     favoritos_id VARCHAR PRIMARY KEY,
     id_customer VARCHAR REFERENCES customer (customer_id) ON DELETE CASCADE,
-    id_product VARCHAR REFERENCES product (product_id)
+    id_product VARCHAR REFERENCES product (product_id),
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP
 );
 
 ---------------------------
 --DATASETS:
 
 -- customers
-INSERT INTO customer (
-    customer_id,
-    customer_name,
-    email,
-    phone,
-    customer_password,
-    shipping_address,
-    billing_address,
-    img_url_customer,
-    created_at,
-    updated_at
-) VALUES
-    ('cust-001', 'Alice',  'alice@email.com', NULL, 'hashed_pw_1', '123 Main St, Lisbon', '123 Main St, Lisbon', NULL, NOW(), NOW()),
-    ('cust-002', 'Bob',    'bob@email.com',   NULL, 'hashed_pw_2', '456 Oak Ave, Porto',  '456 Oak Ave, Porto',  NULL, NOW(), NOW()),
-    ('cust-003', 'Carol',  'carol@email.com', NULL, 'hashed_pw_3', '789 Pine Rd, Faro',   '789 Pine Rd, Faro',   NULL, NOW(), NOW());
+INSERT INTO
+    customer (
+        customer_id,
+        customer_name,
+        email,
+        phone,
+        customer_password,
+        shipping_address,
+        billing_address,
+        img_url_customer,
+        created_at,
+        updated_at
+    )
+VALUES (
+        'cust-001',
+        'Alice',
+        'alice@email.com',
+        NULL,
+        'hashed_pw_1',
+        '123 Main St, Lisbon',
+        '123 Main St, Lisbon',
+        NULL,
+        NOW(),
+        NOW()
+    ),
+    (
+        'cust-002',
+        'Bob',
+        'bob@email.com',
+        NULL,
+        'hashed_pw_2',
+        '456 Oak Ave, Porto',
+        '456 Oak Ave, Porto',
+        NULL,
+        NOW(),
+        NOW()
+    ),
+    (
+        'cust-003',
+        'Carol',
+        'carol@email.com',
+        NULL,
+        'hashed_pw_3',
+        '789 Pine Rd, Faro',
+        '789 Pine Rd, Faro',
+        NULL,
+        NOW(),
+        NOW()
+    );
 
 -- categories
 INSERT INTO
@@ -402,7 +439,7 @@ INSERT INTO
     stock_mov (
         id_order_item,
         id_product,
-        id_type_mov, -- Using your parameter table FK
+        id_type_mov, 
         quantity,
         created_at,
         updated_at
@@ -447,6 +484,7 @@ INSERT INTO
         id_customer,
         id_product,
         about_product,
+        review_title,
         review_body,
         rating,
         created_at,
@@ -456,41 +494,45 @@ VALUES (
         'rev-001',
         'cust-001',
         'prod-001',
+        true,
         'Wireless Mouse',
         'Works great, very smooth.',
         5,
         NOW(),
-        NOW()
+        null
     ),
     (
         'rev-002',
         'cust-001',
         'prod-002',
+        true,
         'Mechanical Keyboard',
         'Loud but satisfying to type on.',
         4,
         NOW(),
-        NOW()
+        null
     ),
     (
         'rev-003',
         'cust-002',
         'prod-003',
+        true,
         'Cotton T-Shirt',
         'Good quality, true to size.',
         4,
         NOW(),
-        NOW()
+        null
     ),
     (
         'rev-004',
         'cust-003',
-        'prod-004',
-        'Clean Code Book',
-        'Must read for every developer.',
+        null,
+        false,
+        'Me gustan los colores',
+        'El sitio tiene colores divertidos.',
         5,
         NOW(),
-        NOW()
+        null
     );
 
 --favoritos

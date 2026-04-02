@@ -13,7 +13,7 @@ const authRouter = Router();
 //CUSTOMER
 authRouter.post("/register", authController.registerUser);
 authRouter.post("/login", authController.authenticateUser);
-authRouter.put("/alter_profile/:id", authController.modifyUser); //mdificar datos de usuario
+authRouter.put("/alter_profile/:id", tokenVerification, authController.modifyUser); //mdificar datos de usuario
 authRouter.get("/profile", tokenVerification, authController.getUserProfile);
 authRouter.delete("/profile", tokenVerification, authController.deleteNewUser); //usuarios pueden borrar su perfil si lo desean
 

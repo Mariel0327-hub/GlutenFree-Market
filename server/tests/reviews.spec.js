@@ -5,7 +5,7 @@ describe("Operaciones CRUD relacionadsa a registro e incio de sesión", () => {
   it("GET/review status code === 200?", async () => {
     //Request:
     const { body: reviewBody, statusCode: reviewStatus } = await request(app)
-      .get("/review")
+      .get("/api/review")
       .send();
 
     expect(reviewStatus).toBe(200);
@@ -19,7 +19,7 @@ describe("Operaciones CRUD relacionadsa a registro e incio de sesión", () => {
     const wrongId = "this is not an id";
 
     const { body: reviewBody, statusCode: reviewStatus } = await request(app)
-      .get(`/review/${wrongId}`)
+      .get(`/api/review/${wrongId}`)
       .send();
 
     expect(reviewStatus).toBe(404);

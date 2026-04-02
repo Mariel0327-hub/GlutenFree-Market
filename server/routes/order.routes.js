@@ -11,19 +11,23 @@ const orderRouter = Router();
 //ORDENES DE COMPRA
 
 //PUBLICOS (CLIENTE + token)
-// Detalle de orden cliente
+// Detalle de orden resitringidos a cliente, posibilidad de ver orden del histórico.
 orderRouter.get(
   "/customer/:order_id/items",
   tokenVerification,
   orderController.readOrderDetailsbyCustomer,
 );
-//ordenes filtradas por orden
+
+//ADMIN
+//ordenes filtradas por id orden (posteriormente se pueden agregar filtros ordenar clientes, precios, etc...)
 orderRouter.get(
-  "/items/:id",
-  tokenVerification,
+  "/:id/items/",
+  tokenVerification, adminVerification(ADMIN_ROLE),
   orderController.readOrderDetailsbyId,
 );
-//ordenes filtradas por cliente
+
+//CLIENTE
+//Histórico de ordenes restringidas al ciente
 orderRouter.get(
   "/customer",
   tokenVerification,
@@ -31,18 +35,16 @@ orderRouter.get(
 );
 
 //ADMIN ONLY
-//todos
-
-//detalle de todas las ordenes (ADMIN) (aplicar filtro para ver por cliente o por order)
+//Detalle de todas las ordenes (ADMIN) (aplicar filtro para ver por cliente o por order)
 orderRouter.get("/items", orderController.readAllOrderDetails);
-//todas las ordenes (ADMIN)
+//todas las ordenes (sin detalle) (ADMIN)
 orderRouter.get(
   "/",
   tokenVerification,
   adminVerification(ADMIN_ROLE),
   orderController.readAllOrders,
 );
-//Orden por id específico (ADMIN)
+//Orden por id específico (sin detalle) (ADMIN)
 orderRouter.get(
   "/:id",
   tokenVerification,

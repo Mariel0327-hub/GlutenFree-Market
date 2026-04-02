@@ -14,7 +14,7 @@ const productRouter = Router();
 productRouter.get("/category/:id", productController.readProductsByCategory); //implementar para ver productos por categoría
 //Ruta para filtrar todos los productos por precio, categoría, relevancia**, stock, etc...
 productRouter.get("/filter", productController.readAllProductsFiltered);
-// Rutas generales para revisar productos (inventario) público
+// Rutas generales para revisar productos (inventario) público?
 productRouter.get("/:id", productController.readProductsById);
 productRouter.get("/", productController.readAllProducts);
 

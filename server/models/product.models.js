@@ -1,5 +1,5 @@
 import { uuidv7 } from "uuidv7";
-import { pool } from "../db/db.js";
+import { pool } from "../db/dbSwitch.js";
 import format from "pg-format";
 
 //ver todos los productos (Se podría implementar un filtro para omitir productos no activos)
@@ -9,7 +9,6 @@ const findAllProducts = async () => {
   return rows;
 };
 
-//IMPLEMENTAR PG_FORMAT
 //ver todos los productos (paginacion a implementar)
 const findAllProductsFiltered = async ({ limit = 10, order_by }) => {
   const [campo, dir] = order_by.split("_");
@@ -47,9 +46,10 @@ const createProduct = async ({
   sku,
   category,
 }) => {
-  const productIdBody = uuidv7();
 
+  const productIdBody = uuidv7();
   const product_id = `prod-${productIdBody}`;
+
   const is_active = true;
   const created_at = new Date();
   const query =

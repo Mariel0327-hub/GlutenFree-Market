@@ -1,4 +1,4 @@
-## Gluten-Free-Market: Apartado Backend
+## Gluten-Free-Market: Apartado Backend (DESPLIEGUE)
 
 API REST para gestionar consultas a la base de datos de un e-commerce.
 
@@ -113,3 +113,8 @@ variables de ambiente en como lo indica el archivo ".env.example"
 - Es Importante mencionar que se han agregado algunas tablas y relaciones en concordancia con requerimientos mínimos para cumplir con lo realizado en el hito 2 (front-end). Por ello, las rutas y por lo tanto el contrato api también han sido modificados, lo que será reportado próximamente en un segundo contrato.
 
 - En próximas versiones (en un futuro cercano o no), se podría considerar una tabal de usuarios internos (admins, users, employees,etc.) para crear otros roles con menos privilegios que _admin_ pero con más que los clientes, para gestionar la aplicación en la medida que esta vaya creciendo.
+
+
+## ABOUT NEON:
+
+1. ID es modificable, se aplicará el ID usado en la apliación vía uiidv7.

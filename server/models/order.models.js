@@ -1,4 +1,4 @@
-import { pool } from "../db/db.js";
+import { pool } from "../db/dbSwitch.js";
 import { uuidv7 } from "uuidv7";
 
 //ver ordenes de compra  //ADMIN
@@ -24,20 +24,22 @@ const findOrdersByCustomer = async (id) => {
 
 ////////Ver detalle de compra
 
+//ADMIN
 const findOrderDetails = async () => {
   const query = "SELECT * FROM order_item";
   const { rows } = await pool.query(query);
   return rows;
 };
 const findOrderDetailsbyId = async (id) => {
-  const query = "SELECT * FROM order_item WHERE id_order_total = $1";
+  const query = "SELECT oi*, p.title FROM order_item JOIN product p ON p.product_id = oi.id_product oi WHERE id_order_total = $1 ";
   const { rows } = await pool.query(query, [id]);
   return rows;
 };
+
+//CLIENTE (restringido via id_customer obtenido en token)
 const findOrderDetailsbyCustomer = async (id, order_total_id) => {
-  const values = [id, order_total_id];
-  const query =
-    "SELECT oi.* FROM order_item oi JOIN order_total ot ON ot.order_total_id = oi.id_order_total WHERE ot.id_customer = $1 AND oi.id_order_total  = $2";
+  const values = [order_total_id, id]
+  const query = "SELECT oi.*, p.title FROM order_item oi JOIN product p ON p.product_id = oi.id_product JOIN order_total ot ON ot.order_total_id = oi.id_order_total WHERE oi.id_order_total = $1 AND ot.id_customer = $2" ;
   const { rows } = await pool.query(query, values);
   return rows;
 };
