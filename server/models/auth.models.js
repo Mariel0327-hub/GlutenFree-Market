@@ -7,7 +7,7 @@ import { uuidv7 } from "uuidv7";
 const addUser = async (customer) => {
   let {
     customer_name,
-    email, 
+    email,
     phone,
     shipping_address,
     billing_address,
@@ -27,7 +27,7 @@ const addUser = async (customer) => {
   const values = [
     customer_id,
     customer_name || null,
-    email, 
+    email,
     phone,
     encryptedPass,
     shipping_address,
@@ -41,9 +41,6 @@ const addUser = async (customer) => {
   return rows;
 };
 
-//falta udptade user
-//si se cambia el password se debe cambiar el hash.
-//agregar nombre
 const updateUser = async (id, customer) => {
   let {
     customer_name,
@@ -55,11 +52,12 @@ const updateUser = async (id, customer) => {
     img_url_customer,
   } = customer;
 
+  const encryptedPass = "";
+
   if (customer_password) {
-    const encryptedPass = bcrypt.hashSync(customer_password);
+    encryptedPass = bcrypt.hashSync(customer_password);
   }
 
-  //hash PASS
   const updated_at = new Date();
   const values = [
     customer_name || null,
@@ -74,7 +72,7 @@ const updateUser = async (id, customer) => {
   ];
   //agregar
   const query =
-    "UPDATE customer SET name = COALESCE($1, customer_name), email = COALESCE($2,email), phone = ($3, phone) customer_password = COALESCE($4,customer_password), shipping_address = COALESCE($5,shipping_address), billing_address = COALESCE($6, billing_address), COALESCE($7, img_customer_url),updated_at = ($8) WHERE customer_id = $9 RETURNING *";
+    "UPDATE customer SET customer_name = COALESCE($1, customer_name), email = COALESCE($2,email), phone = ($3, phone) customer_password = COALESCE($4,customer_password), shipping_address = COALESCE($5,shipping_address), billing_address = COALESCE($6, billing_address), COALESCE($7, img_customer_url),updated_at = ($8) WHERE customer_id = $9 RETURNING *";
   const { rows } = await pool.query(query, values);
   return rows[0];
 };

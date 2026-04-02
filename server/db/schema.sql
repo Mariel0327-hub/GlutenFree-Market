@@ -79,6 +79,7 @@ CREATE TABLE review (
     id_customer VARCHAR REFERENCES customer (customer_id) ON DELETE CASCADE,
     id_product VARCHAR REFERENCES product (product_id),
     about_product BOOLEAN,
+    review_title VARCHAR,
     review_body VARCHAR,
     rating INT,
     created_at TIMESTAMP,
@@ -438,7 +439,7 @@ INSERT INTO
     stock_mov (
         id_order_item,
         id_product,
-        id_type_mov, -- Using your parameter table FK
+        id_type_mov, 
         quantity,
         created_at,
         updated_at
@@ -483,6 +484,7 @@ INSERT INTO
         id_customer,
         id_product,
         about_product,
+        review_title,
         review_body,
         rating,
         created_at,
@@ -492,41 +494,45 @@ VALUES (
         'rev-001',
         'cust-001',
         'prod-001',
-        TRUE,
+        true,
+        'Wireless Mouse',
         'Works great, very smooth.',
         5,
         NOW(),
-        NOW()
+        null
     ),
     (
         'rev-002',
         'cust-001',
         'prod-002',
-        TRUE,
+        true,
+        'Mechanical Keyboard',
         'Loud but satisfying to type on.',
         4,
         NOW(),
-        NOW()
+        null
     ),
     (
         'rev-003',
         'cust-002',
         'prod-003',
-        FALSE,
-        'Delivery took too long, not happy.',
-        2,
+        true,
+        'Cotton T-Shirt',
+        'Good quality, true to size.',
+        4,
         NOW(),
-        NOW()
+        null
     ),
     (
         'rev-004',
         'cust-003',
-        'prod-004',
-        TRUE,
-        'Must read for every developer.',
+        null,
+        false,
+        'Me gustan los colores',
+        'El sitio tiene colores divertidos.',
         5,
         NOW(),
-        NOW()
+        null
     );
 
 --favoritos

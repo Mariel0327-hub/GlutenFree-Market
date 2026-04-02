@@ -3,8 +3,7 @@ import app from "../index.js";
 
 describe("Operaciones CRUD relacionadsa a registro e incio de sesión", () => {
   it("GET/products status code === 200?", async () => {
-    
-    const { body, statusCode } = await request(app).get("/products").send();
+    const { body, statusCode } = await request(app).get("/api/products").send();
 
     expect(statusCode).toBe(200);
 
@@ -16,7 +15,7 @@ describe("Operaciones CRUD relacionadsa a registro e incio de sesión", () => {
     const queryString = "?limit=10&order_by=price_ASC";
 
     const { body, statusCode } = await request(app)
-      .get("/products/filter")
+      .get("/api/products/filter")
       .query(queryString);
 
     expect(statusCode).toBe(200);

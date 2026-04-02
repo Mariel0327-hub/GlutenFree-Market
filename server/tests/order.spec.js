@@ -8,7 +8,7 @@ ADMIN_ROLE = process.env.ADMIN_ROLE;
 describe("Operaciones CRUD relacionadsa a registro e incio de sesión", () => {
   it("GET/order status code === 200?", async () => {
     //Request sin verificación de administrador
-    const { body, statusCode } = await request(app).get("/order").send();
+    const { body, statusCode } = await request(app).get("/api/order").send();
 
     expect(statusCode).toBe(401);
   });
@@ -20,12 +20,12 @@ describe("Operaciones CRUD relacionadsa a registro e incio de sesión", () => {
     //Admin verification:
     //get admin permission:
     const { body: adminBody } = await request(app)
-      .post("/auth/admin")
+      .post("/api/auth/admin")
       .send({ user: ADMIN_USERNAME, pass: ADMIN_PASSWORD });
 
     //Request:
     const { body, statusCode } = await request(app)
-      .get(`/order/${wrongId}`)
+      .get(`/api/order/${wrongId}`)
       .set("Authorization", `Bearer ${adminBody.adminToken}`)
       .send();
 
