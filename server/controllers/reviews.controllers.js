@@ -75,12 +75,13 @@ const readReviewsById = async (req, res) => {
 //cambiar email para id
 const createNewReview = async (req, res) => {
   const { email } = req.user;
-  const { about_product, id_product, review_body, rating } = req.body;
+  const { about_product, id_product, review_title, review_body, rating } = req.body;
   try {
     const result = await reviewModel.createReview(
       email,
       about_product,
       id_product,
+      review_title,
       review_body,
       rating,
     );
@@ -101,12 +102,13 @@ const createNewReview = async (req, res) => {
 const updateRegisteredReview = async (req, res) => {
   //id del review (que ya fue creado)
   const { id } = req.params;
-  const { about_product, id_product, review_body, rating } = req.body;
+  const { about_product, id_product, review_title, review_body, rating } = req.body;
   try {
     const result = await reviewModel.updateReview(
       id,
       about_product,
       id_product,
+      review_title,
       review_body,
       rating,
     );
