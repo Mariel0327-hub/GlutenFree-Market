@@ -131,7 +131,8 @@ const updateExistingCartProduct = async (req, res) => {
         .status(404)
         .json({ message: "Cart Product not Found/Updated" });
     }
-
+    console.log(product)
+    console.log(result)
     return res.status(200).json(result);
   } catch (error) {
     console.error(error);
