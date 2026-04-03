@@ -5,6 +5,7 @@ import { UserContext } from "../context/UserContext";
 import Swal from "sweetalert2";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { baseURL } from "../utils/baseUrl.js";
 
 export default function Checkout() {
   const { cart, cartTotal, shippingCost, setCart } = useContext(CartContext);
@@ -26,6 +27,8 @@ export default function Checkout() {
       const res = await axios.post(
         "http://localhost:3000/api/order",
         orderData,
+        `${baseURL}/api/order`,
+        {},
         config,
       );
 

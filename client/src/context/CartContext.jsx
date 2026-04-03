@@ -2,6 +2,7 @@ import { createContext, useState, useEffect, useContext } from "react";
 import axios from "axios";
 import { UserContext } from "./UserContext";
 import { ProductContext } from "./ProductContext";
+import { baseURL } from "../utils/baseUrl.js";
 
 export const CartContext = createContext();
 
@@ -23,12 +24,12 @@ export const CartProvider = ({ children }) => {
           let resCart;
           try {
             resCart = await axios.get(
-              `http://localhost:3000/api/cart/customer/${user.customer_id}`,
+              `${baseURL}/api/cart/customer/${user.customer_id}`,
               config,
             );
           } catch (err) {
             // Si falla el GET, intentamos CREAR la instancia por si es usuario nuevo
-            await axios.post("http://localhost:3000/api/cart/", {}, config);
+            await axios.post(`${baseURL}/api/cart/`, {}, config);
             setCart([]);
             return;
           }
@@ -84,9 +85,10 @@ export const CartProvider = ({ children }) => {
     setLastAdded(toastProduct);
     setShowToast(true);
 
-    const exists = cart.find((i) => String(i.product_id) === pId);
+     const exists = cart.find((i) => String(i.product_id) === pId);
 
     setCart((prev) => {
+     
       if (exists)
         return prev.map((i) =>
           String(i.product_id) === pId ? { ...i, quantity: i.quantity + 1 } : i,
@@ -97,25 +99,27 @@ export const CartProvider = ({ children }) => {
     if (token) {
       const config = { headers: { Authorization: `Bearer ${token}` } };
       try {
-        if (exists) {
-          await axios.put(
-            "http://localhost:3000/api/cart/product",
-            { product: { id_product: pId, quantity: exists.quantity + 1 } },
-            config,
-          );
-        } else {
-          await axios.post(
-            "http://localhost:3000/api/cart/product",
-            { newCartProduct: { id_product: pId, quantity: 1 } },
-            config,
-          );
+        if(exists){
+                  await axios.put(
+          `${baseURL}/api/cart/product`,
+          { product: { id_product: pId, quantity : exists.quantity + 1 } },
+          config,
+        );
+
+        }else{
+        await axios.post(
+          `${baseURL}/api/cart/product`,
+          { newCartProduct: { id_product: pId, quantity: 1 } },
+          config,
+        );
         }
+
       } catch (e) {
         // Si falla por falta de instancia, creamos carrito y reintentamos una vez
         if (e.response?.status === 500) {
-          await axios.post("http://localhost:3000/api/cart/", {}, config);
+          await axios.post(`${baseURL}/api/cart/`, {}, config);
           await axios.post(
-            "http://localhost:3000/api/cart/product",
+            `${baseURL}/api/cart/product`,
             { newCartProduct: { id_product: pId, quantity: 1 } },
             config,
           );
@@ -145,14 +149,14 @@ export const CartProvider = ({ children }) => {
       try {
         if (item.quantity === 1) {
           // DELETE
-          await axios.delete("http://localhost:3000/api/cart/product", {
+          await axios.delete(`${baseURL}/api/cart/product`, {
             ...config,
-            data: { productToDelete: { id_product: pId } },
+            data: {  productToDelete : {id_product: pId} },
           });
         } else {
           // PUT para actualizar cantidad
           await axios.put(
-            "http://localhost:3000/api/cart/product",
+            `${baseURL}/api/cart/product`,
             {
               product: { id_product: pId, quantity: item.quantity - 1 },
             },

@@ -1,7 +1,8 @@
 import axios from "axios";
+import { baseURL } from "../utils/baseUrl.js";
 
 // 1. Agregamos el /api a la URL base
-const API_URL = "http://localhost:3000/api";
+const API_URL = `${baseURL}/api`;
 
 // obtenemos los productos
 export const getProductsDB = async () => {
@@ -56,7 +57,7 @@ export const getFavoritesDB = async () => {
 // Función para registrar usuario en la DB
 export const registerUserDB = async (userData) => {
   try {
-    const response = await axios.post("http://localhost:3000/api/auth/register", userData);
+    const response = await axios.post(`${baseURL}/api/auth/register`, userData);
     return response.data;
   } catch (error) {
     console.error("Error en el registro:", error.response?.data || error.message);

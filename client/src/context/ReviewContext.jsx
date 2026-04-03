@@ -1,6 +1,8 @@
 import React, { createContext, useState, useContext, useEffect } from "react";
 import { UserContext } from "./UserContext";
 import axios from "axios";
+import Swal from "sweetalert2";
+import { baseURL } from "../utils/baseUrl.js";
 
 export const ReviewContext = createContext();
 
@@ -45,7 +47,7 @@ export const ReviewProvider = ({ children }) => {
     try {
       const config = { headers: { Authorization: `Bearer ${token}` } };
       const res = await axios.post(
-        "http://localhost:3000/api/review",
+        `${baseURL}/api/review`,
         newReview,
         config,
       );
@@ -69,7 +71,7 @@ export const ReviewProvider = ({ children }) => {
   useEffect(() => {
     const loadReviews = async () => {
       try {
-        const res = await axios.get("http://localhost:3000/api/review");
+        const res = await axios.get(`${baseURL}/api/review`); // Tu ruta de GET
         setReviews(res.data);
       } catch (error) {
         console.error("Error cargando reseñas desde Neon:", error);
@@ -84,7 +86,7 @@ export const ReviewProvider = ({ children }) => {
     try {
       const config = { headers: { Authorization: `Bearer ${token}` } };
       const res = await axios.delete(
-        `http://localhost:3000/api/review/${reviewId}`,
+        `${baseURL}/api/review${reviewId}`,
         config,
       );
 
@@ -105,14 +107,8 @@ export const ReviewProvider = ({ children }) => {
       const config = { headers: { Authorization: `Bearer ${token}` } };
 
       const res = await axios.put(
-        `http://localhost:3000/api/review/${reviewId}`,
-        {
-          about_product: updatedData.about_product,
-          id_product: updatedData.id_product,
-          review_title: updatedData.review_title || "Reseña actualizada",
-          review_body: updatedData.review_body,
-          rating: updatedData.rating,
-        },
+        `${baseURL}/api/reviewreviews/${reviewId}`,
+        updatedData,
         config,
       );
 

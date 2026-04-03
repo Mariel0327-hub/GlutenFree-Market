@@ -117,9 +117,7 @@ CREATE TABLE stock_mov (
     updated_at TIMESTAMP
 );
 
---FAVORITOS
--- añadir created_at
---añadir updated_at
+
 CREATE TABLE favoritos (
     favoritos_id VARCHAR PRIMARY KEY,
     id_customer VARCHAR REFERENCES customer (customer_id) ON DELETE CASCADE,
