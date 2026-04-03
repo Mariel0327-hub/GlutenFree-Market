@@ -147,7 +147,6 @@ export default function MyOrders() {
       </Container>
     );
   }
-  console.log(reviews);
 
   return (
     <>

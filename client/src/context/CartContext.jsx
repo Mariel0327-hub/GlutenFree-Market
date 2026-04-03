@@ -15,7 +15,7 @@ export const CartProvider = ({ children }) => {
   // 1. CARGA INICIAL(Nombres/Precios)
   useEffect(() => {
     const fetchCartAndDetails = async () => {
-      if (token && user?.customer_id) {
+      if (token && user?.customer_id && products.length > 0) {
         try {
           const config = { headers: { Authorization: `Bearer ${token}` } };
 
@@ -84,8 +84,9 @@ export const CartProvider = ({ children }) => {
     setLastAdded(toastProduct);
     setShowToast(true);
 
+    const exists = cart.find((i) => String(i.product_id) === pId);
+
     setCart((prev) => {
-      const exists = prev.find((i) => String(i.product_id) === pId);
       if (exists)
         return prev.map((i) =>
           String(i.product_id) === pId ? { ...i, quantity: i.quantity + 1 } : i,
@@ -96,11 +97,19 @@ export const CartProvider = ({ children }) => {
     if (token) {
       const config = { headers: { Authorization: `Bearer ${token}` } };
       try {
-        await axios.post(
-          "http://localhost:3000/api/cart/product",
-          { newCartProduct: { id_product: pId, quantity: 1 } },
-          config,
-        );
+        if (exists) {
+          await axios.put(
+            "http://localhost:3000/api/cart/product",
+            { product: { id_product: pId, quantity: exists.quantity + 1 } },
+            config,
+          );
+        } else {
+          await axios.post(
+            "http://localhost:3000/api/cart/product",
+            { newCartProduct: { id_product: pId, quantity: 1 } },
+            config,
+          );
+        }
       } catch (e) {
         // Si falla por falta de instancia, creamos carrito y reintentamos una vez
         if (e.response?.status === 500) {
@@ -155,7 +164,6 @@ export const CartProvider = ({ children }) => {
       }
     }
   };
-
   const cartTotal = cart.reduce(
     (acc, i) => acc + Number(i.price) * i.quantity,
     0,

@@ -6,16 +6,16 @@ import { UserContext } from "../context/UserContext";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { registerUserDB } from "../data/connection";
-//import axios from "axios";
+
 
 export default function Register() {
-  const { setUser, setToken } = useContext(UserContext); // Usamos el contexto real
+  const { setUser, setToken } = useContext(UserContext);
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     name: "",
     email: "",
-    phone: "", // <--- Campo nuevo
+    phone: "",
     shipping_address: "",
     billing_address: "",
     password: "",
@@ -31,22 +31,21 @@ export default function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // 1. Validaciones básicas
+   
     if (formData.password !== formData.confirmPassword) {
       return Swal.fire("Error", "Las contraseñas no coinciden", "error");
     }
 
-    // 2. Preparamos el objeto con los nombres exactos de tu tabla SQL
     const newUserForDB = {
-      customer_name: formData.name, // Cambia 'nombre' por tu variable de estado
+      customer_name: formData.name,
       email: formData.email,
       phone: formData.phone,
-      customer_password: formData.password, // 🚩 ¡Ojo con el nombre aquí!
+      customer_password: formData.password,
       shipping_address:
         formData.shipping_address || "Dirección no especificada",
       billing_address: formData.billing_address || "Dirección no especificada",
       img_url_customer:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb", // Valor por defecto si no tienes input
+        "https://images.unsplash.com/photo-1534528741775-53994a69daeb",
       created_at: new Date(),
       updated_at: new Date(),
     };
@@ -76,7 +75,7 @@ export default function Register() {
           showConfirmButton: false,
         });
 
-        // 🚩 COMO NO HAY TOKEN, LO MANDAMOS AL LOGIN SIEMPRE
+        //  COMO NO HAY TOKEN, LO MANDAMOS AL LOGIN SIEMPRE
         setTimeout(() => navigate("/login"), 2000);
       }
     } catch (error) {
@@ -85,7 +84,7 @@ export default function Register() {
         error.response?.data?.message || "No se pudo crear la cuenta",
         "error",
       );
-      // 🚩 CASO ESPECIAL: Si el error es 500, pero el email ya se guardó
+      // Si el error es 500, pero el email ya se guardó
       if (
         error.response?.status === 500 ||
         error.response?.data?.code === "23505"
@@ -96,10 +95,9 @@ export default function Register() {
           text: "Tu cuenta se creó correctamente, pero hubo un pequeño error al iniciar sesión automáticamente. Por favor, ingresa manualmente.",
         });
 
-        // Lo mandamos al login porque sabemos que en la DB ya está (por eso el error de duplicado)
+     
         navigate("/login");
       } else {
-        // Error real (ej. falta un campo o servidor caído)
         Swal.fire(
           "Error",
           error.response?.data?.message || "No se pudo completar el registro",

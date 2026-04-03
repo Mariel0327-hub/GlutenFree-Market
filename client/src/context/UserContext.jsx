@@ -30,7 +30,6 @@ export const UserProvider = ({ children }) => {
   }, [user]);
 
   const login = (userData, token) => {
-    // Simplificamos: Si Neon devuelve customer_id, usamos ese.
     const correctedUser = {
       ...userData,
       customer_id: userData.customer_id || userData.id || userData.id_customer,
@@ -54,7 +53,6 @@ export const UserProvider = ({ children }) => {
   const updateUser = async (newData) => {
     try {
       const token = localStorage.getItem("token");
-      // Usamos el nombre exacto de tu tabla de Neon
       const userId = user?.customer_id;
 
       if (!userId) {
@@ -64,7 +62,7 @@ export const UserProvider = ({ children }) => {
 
       // AGREGAMOS /api A LA RUTA
       const response = await axios.put(
-        `http://localhost:3000/api/auth/alter_profile/${userId}`, // <--- /api agregado
+        `http://localhost:3000/api/auth/alter_profile/${userId}`,
         newData,
         {
           headers: { Authorization: `Bearer ${token}` },

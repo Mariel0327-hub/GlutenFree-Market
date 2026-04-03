@@ -1,6 +1,6 @@
 import { createContext, useState, useEffect } from "react";
-import { productsData } from "../data/products"; // Importación directa de tu simulación de DB
-import { getProductsDB } from "../data/connection"; // Tu nuevo puente a la API real (aunque no lo usaremos en este ejemplo)
+import { productsData } from "../data/products";
+import { getProductsDB } from "../data/connection";
 import { useContext } from "react";
 import { UserContext } from "./UserContext";
 import axios from "axios";
@@ -9,6 +9,7 @@ export const ProductContext = createContext();
 
 const ProductProvider = ({ children }) => {
   const [products, setProducts] = useState(productsData);
+  const [categories, setCategories] = useState([]);
   const [lastAdded, setLastAdded] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [favorites, setFavorites] = useState(() => {
@@ -52,6 +53,9 @@ const ProductProvider = ({ children }) => {
         if (data && data.length > 0) {
           setProducts(data);
         }
+        const resCat = await fetch("http://localhost:3000/api/categories");
+        const dataCat = await resCat.json();
+        setCategories(dataCat);
       } catch (error) {
         console.error("Backend no disponible, usando local.", error);
       }
@@ -110,6 +114,12 @@ const ProductProvider = ({ children }) => {
     localStorage.setItem("user_favorites", JSON.stringify(favorites));
   }, [favorites]);
 
+  const getCategoryName = (catId) => {
+    const found = categories.find((c) => c.category_id === catId);
+    return found ? found.category_description : "Cargando...";
+  };
+  console.log("Mostrando las categorias:", categories);
+
   return (
     <ProductContext.Provider
       value={{
@@ -123,6 +133,7 @@ const ProductProvider = ({ children }) => {
         setFilters,
         filters,
         //fetchFavorites,
+        getCategoryName,
       }}
     >
       {children}

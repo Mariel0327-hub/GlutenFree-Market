@@ -29,18 +29,16 @@ const categoryIcons = {
 };
 
 const Categories = () => {
-  const { setFilters } = useContext(ProductContext); //lista actualizada
+  const { setFilters } = useContext(ProductContext);
   const navigate = useNavigate();
 
   const handleCategoryClick = (categorySlug) => {
-    // 2. Actualizamos el estado global ANTES de navegar
     setFilters((prev) => ({
       ...prev,
-      category: categorySlug, // Ej: "harinas"
-      searchTerm: "", // Limpiamos búsquedas previas por UX
+      category: categorySlug,
+      searchTerm: "", 
     }));
 
-    // 3. Navegamos a la vista de productos
     navigate("/productos");
   };
   return (

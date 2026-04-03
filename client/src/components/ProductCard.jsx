@@ -14,6 +14,7 @@ const ProductCard = ({ product }) => {
   const { token } = useContext(UserContext);
   const { addToCart } = useContext(CartContext);
   const navigate = useNavigate();
+  const { getCategoryName } = useContext(ProductContext);
 
   if (!product) return null;
 
@@ -35,7 +36,6 @@ const ProductCard = ({ product }) => {
     }
     toggleFavorite(product);
   };
-  console.log(product);
   return (
     <Card className="product-card h-100 shadow-sm border-0">
       <Link
@@ -80,13 +80,10 @@ const ProductCard = ({ product }) => {
         </div>
         <div className="text-center flex-grow-1">
           <p
-            className="text-muted mb-1 text-start"
-            style={{ fontSize: "0.8rem", fontWeight: "500" }}
+            className="text-muted small mb-1"
+            style={{ textTransform: "capitalize" }}
           >
-            {product.category_description
-              ? product.category_description.charAt(0).toUpperCase() +
-                product.category_description.slice(1)
-              : "Sin categoría"}
+            {getCategoryName(product.category)}
           </p>
           <Card.Title className="card-title fw-bold mb-1 fs-6">
             {product.title}

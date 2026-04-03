@@ -4,7 +4,6 @@ import React, { useContext } from "react";
 import { Container, Row, Col, Card, Button } from "react-bootstrap";
 import { ReviewContext } from "../context/ReviewContext";
 import Swal from "sweetalert2";
-import { Pencil, Trash2 } from "lucide-react";
 
 export default function Testimonials() {
   const { myReviews, token, deleteReview, updateReview } =
@@ -125,7 +124,6 @@ export default function Testimonials() {
                         variant="link"
                         className="p-0 me-3 text-decoration-none shadow-none d-flex align-items-center"
                         onClick={() => handleEdit(rev)}
-                        style={{ color: "#6c5b4b" }}
                       >
                         <i className="fas fa-edit me-1"></i>
                         <span style={{ fontSize: "0.85rem" }}>Editar</span>

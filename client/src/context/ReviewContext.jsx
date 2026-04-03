@@ -1,8 +1,6 @@
 import React, { createContext, useState, useContext, useEffect } from "react";
 import { UserContext } from "./UserContext";
-import { testimonials as initialData } from "../data/testimonials";
 import axios from "axios";
-import Swal from "sweetalert2";
 
 export const ReviewContext = createContext();
 
@@ -34,8 +32,6 @@ export const ReviewProvider = ({ children }) => {
       ),
     );
 
-    // 2. ¿El usuario YA calificó este producto?
-    // Buscamos en el estado global de 'reviews'
     const alreadyReviewed = reviews.some(
       (r) =>
         String(r.id_customer) === String(userId) &&
@@ -54,12 +50,11 @@ export const ReviewProvider = ({ children }) => {
         config,
       );
       if (res.status === 201 || res.status === 200) {
-        // Usamos .flat() para deshacernos de las capas de arrays extra
-        // o simplemente accedemos al primer elemento si viene como [[{...}]]
+        
         const newReviewData = res.data.flat()[0];
 
         setReviews((prev) => {
-          // Aplanamos también el estado anterior por si acaso quedó mal guardado antes
+          
           const currentReviews = prev.flat();
           return [...currentReviews, newReviewData];
         });
@@ -74,7 +69,7 @@ export const ReviewProvider = ({ children }) => {
   useEffect(() => {
     const loadReviews = async () => {
       try {
-        const res = await axios.get("http://localhost:3000/api/review"); // Tu ruta de GET
+        const res = await axios.get("http://localhost:3000/api/review");
         setReviews(res.data);
       } catch (error) {
         console.error("Error cargando reseñas desde Neon:", error);
@@ -109,8 +104,6 @@ export const ReviewProvider = ({ children }) => {
     try {
       const config = { headers: { Authorization: `Bearer ${token}` } };
 
-      // IMPORTANTE: El backend espera los campos en la raíz del body
-      // para que el controlador los reciba y se los pase a tu función de arriba.
       const res = await axios.put(
         `http://localhost:3000/api/review/${reviewId}`,
         {

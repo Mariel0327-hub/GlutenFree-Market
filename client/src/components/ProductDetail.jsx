@@ -4,27 +4,41 @@ import { Container, Row, Col, Button, Card } from "react-bootstrap";
 import { ProductContext } from "../context/ProductContext";
 import { FaStar, FaMinus, FaPlus } from "react-icons/fa";
 import "../assets/css/ProductDetail.css";
-import TestimonialsSection from "./TestimonialsSection";
-import { UserContext } from "../context/UserContext";
-//import { OrderContext } from "../context/OrderContext";
 import { CartContext } from "../context/CartContext";
 import { ReviewContext } from "../context/ReviewContext";
+import ProductCard from "../components/ProductCard";
 
 const ProductDetail = () => {
   const { id } = useParams();
   const { products } = useContext(ProductContext);
   const { addToCart } = useContext(CartContext);
   const [cantidad, setCantidad] = useState(1);
-  const { user } = useContext(UserContext);
   const navigate = useNavigate();
   const { reviews } = useContext(ReviewContext);
+  const [randomProducts, setRandomProducts] = useState([]);
+  const [quantity, setQuantity] = useState(1);
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
-
   //Buscamos el producto
   const product = products.find((p) => String(p.product_id) === String(id));
+  useEffect(() => {
+    if (products && products.length > 0) {
+      // 2. Filtramos para no mostrar el actual
+      const otherProducts = products.filter(
+        (p) => String(p.product_id) !== String(id),
+      );
+
+      // 3. Mezclamos (esto solo ocurrirá una vez al cargar el componente o cambiar de producto)
+      const shuffled = [...otherProducts].sort(() => Math.random() - 0.5);
+
+      // 4. Guardamos los primeros 3
+      setRandomProducts(shuffled.slice(0, 3));
+    }
+  }, [products, id]);
+
+  if (!product) return <p>Cargando producto...</p>;
 
   // 2.Si no hay producto, cortamos la ejecución aquí
   if (!product) {
@@ -50,10 +64,16 @@ const ProductDetail = () => {
     (r) => String(r.id_product) === String(id),
   );
 
+  const handleOrderNow = () => {
+    addToCart(product, quantity);
+
+    navigate("/checkout");
+  };
+
   return (
     <div className="product-detail-container">
       <div className="banner-divider-card pt-5 "></div>
-      <Container>
+      <Container className="pt-5">
         <Row className="align-items-center gy-5 ">
           {/* Imagen del Producto */}
           <Col md={6} className="text-center">
@@ -68,11 +88,10 @@ const ProductDetail = () => {
                 alt={product.title}
                 className="img-fluid rounded-4 shadow-sm"
                 style={{
-                  maxHeight: "450px", // Le damos un poco más de aire en el detalle
+                  maxHeight: "450px",
                   width: "auto",
                   objectFit: "contain",
                 }}
-                // 2. Si la URL del back existe pero el link está caído, entra el fallback
                 onError={(e) => {
                   e.currentTarget.onerror = null;
                   e.currentTarget.src =
@@ -105,22 +124,21 @@ const ProductDetail = () => {
 
             <div className="d-flex align-items-center gap-4 mb-4">
               <div className="quantity-selector d-flex align-items-center">
-                <button
+                <Button
                   onClick={() => cantidad > 1 && setCantidad(cantidad - 1)}
                   className="btn-qty"
                 >
                   <FaMinus />
-                </button>
+                </Button>
                 <span className="px-4 fw-bold">{cantidad}</span>
-                <button
+                <Button
                   onClick={() => setCantidad(cantidad + 1)}
                   className="btn-qty"
                 >
                   <FaPlus />
-                </button>
+                </Button>
               </div>
               <div className="mt-3">
-                {/*Aqui implemente esta logica para cuando quedan pocas unidades del producto */}
                 {product.stock > 0 && product.stock <= 5 ? (
                   <div
                     className="d-flex align-items-center gap-2 py-2 px-3 bg-warning bg-opacity-10 rounded-3 border border-warning border-opacity-25"
@@ -140,14 +158,14 @@ const ProductDetail = () => {
 
             <div className="d-flex gap-3">
               <Button
-                className="btn-order-now px-5 py-2 rounded-pill fw-bold"
-                onClick={() => navigate("/checkout")}
+                className="btn px-5 py-2 rounded-pill fw-bold"
+                onClick={handleOrderNow}
               >
                 Ordenar ahora
               </Button>
               <Button
                 variant="dark"
-                className="btn-order-now px-5"
+                className="px-5 btn"
                 onClick={() => addToCart(product, cantidad, true)}
               >
                 Añadir al carrito
@@ -157,7 +175,7 @@ const ProductDetail = () => {
         </Row>
 
         <div className="mt-5 pt-5 border-top">
-          <h3 className="titles-font fw-bold mb-4 text-center">
+          <h3 className="titles-font  mb-4 text-start">
             Lo que dicen nuestros clientes
           </h3>
 
@@ -169,7 +187,6 @@ const ProductDetail = () => {
                     <Card.Body>
                       <div className="d-flex justify-content-between align-items-center mb-3">
                         <div className="d-flex align-items-center gap-2">
-                          {/* Un icono de usuario le da más vida */}
                           <div className="bg-white rounded-circle p-2 shadow-sm">
                             <FaStar
                               className="text-warning"
@@ -200,6 +217,17 @@ const ProductDetail = () => {
               </p>
             </div>
           )}
+        </div>
+        <div className="mt-5">
+          <h3 className="mb-4">Productos que te pueden gustar</h3>
+
+          <div className="row g-4 justify-content-center">
+            {randomProducts.map((item) => (
+              <div className="col-12 col-sm-12 col-md-4" key={item.product_id}>
+                <ProductCard product={item} />
+              </div>
+            ))}
+          </div>
         </div>
       </Container>
     </div>

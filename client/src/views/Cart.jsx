@@ -118,7 +118,7 @@ export default function Cart() {
                           >
                             <FaMinus size={10} />
                           </Button>
-                          <span className="fw-bold px-2 small">{item.qty}</span>
+                          <span className="fw-bold px-2 small">{item.quantity || item.qty || 0}</span>
                           <Button
                             variant="link"
                             size="sm"

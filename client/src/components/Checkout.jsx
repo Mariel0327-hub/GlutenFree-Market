@@ -16,13 +16,23 @@ export default function Checkout() {
 
     try {
       const config = { headers: { Authorization: `Bearer ${token}` } };
+
+      const orderData = {
+        items: cart, // Tus productos
+        total: totalGeneral, // El total calculado
+        shipping_address: formData.direccion, // La dirección que escribió el usuario
+      };
+
       const res = await axios.post(
         "http://localhost:3000/api/order",
-        {},
+        orderData,
         config,
       );
 
+      console.log("Estructura exacta de la respuesta:", res.data);
       if (res.status === 201 || res.status === 200) {
+        const orderId = res.data?.order_total_id;
+
         await Swal.fire({
           icon: "success",
           title: "¡Pago Exitoso!",
@@ -32,7 +42,7 @@ export default function Checkout() {
         });
 
         setCart([]);
-        navigate("/mis-pedidos");
+        navigate("/success", { state: { orderNumber: orderId } });
       }
     } catch (error) {
       console.error("Error en el pago:", error);
@@ -56,8 +66,8 @@ export default function Checkout() {
   const totalGeneral = (Number(cartTotal) || 0) + (Number(shippingCost) || 0);
 
   const handleSubmit = (e) => {
-    e.preventDefault();
-    handlePay();
+    e.preventDefault(); // 🚩 CRÍTICO: Evita que la página se recargue
+    handlePay(); // Llama a tu lógica de axios y redirección
   };
 
   return (
