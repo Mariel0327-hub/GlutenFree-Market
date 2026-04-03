@@ -29,8 +29,6 @@ export default function Testimonials() {
     });
 
     if (text !== undefined && text !== rev.review_body) {
-      // 🚩 PASAMOS LOS DATOS QUE TU BACKEND ESPERA
-      // Enviamos el ID de la reseña y el objeto con los campos a actualizar
       await updateReview(rev.review_id, {
         review_body: text,
         rating: rev.rating,

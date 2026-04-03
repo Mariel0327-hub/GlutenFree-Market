@@ -53,14 +53,17 @@ export const ReviewProvider = ({ children }) => {
         newReview,
         config,
       );
-
       if (res.status === 201 || res.status === 200) {
-        const savedReview = {
-          ...res.data,
-          id_customer: user?.customer_id || user?.id,
-        };
+        // Usamos .flat() para deshacernos de las capas de arrays extra
+        // o simplemente accedemos al primer elemento si viene como [[{...}]]
+        const newReviewData = res.data.flat()[0];
 
-        setReviews((prev) => [...prev, savedReview]);
+        setReviews((prev) => {
+          // Aplanamos también el estado anterior por si acaso quedó mal guardado antes
+          const currentReviews = prev.flat();
+          return [...currentReviews, newReviewData];
+        });
+
         return { success: true };
       }
     } catch (error) {
@@ -132,6 +135,7 @@ export const ReviewProvider = ({ children }) => {
         updateReview,
         canUserReview,
         addReview,
+        token,
       }}
     >
       {children}

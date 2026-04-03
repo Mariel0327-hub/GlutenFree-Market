@@ -1,5 +1,4 @@
 .product-detail-container {
-  padding-top: 120px; /* Suficiente para bajar el contenido del Navbar */
   padding-bottom: 50px;
   background-color: #fdfbf9;
   min-height: 100vh; /* Asegura que cubra toda la pantalla */
