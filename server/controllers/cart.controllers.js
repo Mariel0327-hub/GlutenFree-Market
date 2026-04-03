@@ -111,7 +111,8 @@ const createNewCartProduct = async (req, res) => {
         .status(404)
         .json({ message: "Cart Product not Found/Created" });
     }
-
+    console.log(newCartProduct);
+    console.log(result);
     return res.status(201).json(result);
   } catch (error) {
     console.error(error);
@@ -131,8 +132,8 @@ const updateExistingCartProduct = async (req, res) => {
         .status(404)
         .json({ message: "Cart Product not Found/Updated" });
     }
-    console.log(product)
-    console.log(result)
+    console.log(product);
+    console.log(result);
     return res.status(200).json(result);
   } catch (error) {
     console.error(error);
