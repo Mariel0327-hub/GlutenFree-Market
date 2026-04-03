@@ -17,6 +17,7 @@ import { ReviewContext } from "../context/ReviewContext";
 import { ProductContext } from "../context/ProductContext";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
+import { baseURL } from "../utils/baseUrl.js";
 
 export default function MyOrders() {
   const { user, token } = useContext(UserContext);
@@ -42,7 +43,7 @@ export default function MyOrders() {
     try {
       const config = { headers: { Authorization: `Bearer ${token}` } };
       const res = await axios.get(
-        "http://localhost:3000/api/order/customer",
+        `${baseURL}/api/order/customer`,
         config,
       );
       setOrders(res.data);
@@ -118,7 +119,7 @@ export default function MyOrders() {
     try {
       const config = { headers: { Authorization: `Bearer ${token}` } };
       const res = await axios.get(
-        `http://localhost:3000/api/order/customer/${order.order_total_id}/items`,
+        `${baseURL}/api/order/customer/${order.order_total_id}/items`,
         config,
       );
       setSelectedOrder({ ...order, items: res.data });

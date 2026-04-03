@@ -1,5 +1,6 @@
 import React, { createContext, useState, useEffect } from "react";
 import axios from "axios";
+import { baseURL } from "../utils/baseUrl.js";
 
 export const UserContext = createContext();
 
@@ -64,7 +65,7 @@ export const UserProvider = ({ children }) => {
 
       // AGREGAMOS /api A LA RUTA
       const response = await axios.put(
-        `http://localhost:3000/api/auth/alter_profile/${userId}`, // <--- /api agregado
+        `${baseURL}}/api/auth/alter_profile/${userId}`, // <--- /api agregado
         newData,
         {
           headers: { Authorization: `Bearer ${token}` },

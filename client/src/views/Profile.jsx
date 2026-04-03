@@ -14,6 +14,7 @@ import {
   FaCommentDots,
 } from "react-icons/fa";
 import Swal from "sweetalert2";
+import { baseURL } from "../utils/baseUrl";
 
 export default function Profile() {
   const { user, logout, updateUser, setUser } = useContext(UserContext);
@@ -32,7 +33,7 @@ export default function Profile() {
         if (token) {
           // Llamamos a la ruta de perfil que tienes en el Back
           const response = await axios.get(
-            "http://localhost:3000/api/auth/profile",
+            `${baseURL}/api/auth/profile`,
             {
               headers: { Authorization: `Bearer ${token}` },
             },
