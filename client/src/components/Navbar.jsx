@@ -204,7 +204,6 @@ const Navbar = () => {
                 <Link
                   to="/registro"
                   className="btn btn-dark btn-sm px-3 rounded-pill"
-                  style={{ backgroundColor: "#3e2723" }}
                   onClick={() => setIsNavExpanded(false)}
                 >
                   Registro
