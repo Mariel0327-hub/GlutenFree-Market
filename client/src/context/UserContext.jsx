@@ -10,7 +10,7 @@ export const UserProvider = ({ children }) => {
   });
 
   const [token, setToken] = useState(
-    () => localStorage.getItem("token") || null, // Quitamos el token-demo
+    () => localStorage.getItem("token") || null,
   );
 
   useEffect(() => {

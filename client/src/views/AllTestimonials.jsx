@@ -1,43 +1,94 @@
 import React, { useContext, useState, useEffect } from "react";
-import { Container, Row, Col, Card, Modal, Button} from "react-bootstrap";
+import { Container, Row, Col, Card, Modal, Button, Form } from "react-bootstrap";
 import { ReviewContext } from "../context/ReviewContext";
 import { FaStar, FaQuoteLeft, FaTimes } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import Swal from "sweetalert2";
+import "../assets/css/Testimonials.css"
 
 export default function AllTestimonials({ limit = false }) {
-  const { reviews } = useContext(ReviewContext); // Consumimos TODO el array
+  // Busca estas líneas al principio de AllTestimonials y cámbialas por esta única:
+const { reviews, addReview, token } = useContext(ReviewContext);
 
   // Estados para el Modal de Vista Detallada
   const [showDetail, setShowDetail] = useState(false);
   const [selectedReview, setSelectedReview] = useState(null);
   const [displayReviews, setDisplayReviews] = useState([]);
 
+  const [comment, setComment] = useState("");
+  const [rating, setRating] = useState(5);
+
   const handleOpenDetail = (review) => {
     setSelectedReview(review);
     setShowDetail(true);
   };
 
+  const handlePost = async () => {
+    if (!comment.trim()) return;
+    const payload = {
+      id_product: null,
+      about_product: false,
+      review_title: "Opinión Comunidad",
+      review_body: comment,
+      rating: rating,
+    };
+    const result = await addReview(payload, token);
+    if (result.success) {
+      setComment(""); // Limpia el input
+      setRating(5);
+      Swal.fire(
+        "¡Listo!",
+        "Tu comentario ya es parte de la comunidad",
+        "success",
+      );
+    }
+  };
+  //  filtrar/limitar reseñas
   useEffect(() => {
     if (reviews && reviews.length > 0) {
-      if (limit) {
-        // Desordenamos y cortamos a 3
-        const shuffled = [...reviews]
-          .sort(() => Math.random() - 0.5)
-          .slice(0, 3);
-        setDisplayReviews(shuffled);
-      } else {
-        // Si no hay límite, mostramos todos
-        setDisplayReviews(reviews);
-      }
+      const filtered = reviews.filter((r) => r.about_product === false);
+      setDisplayReviews(
+        limit
+          ? [...filtered].sort(() => 0.5 - Math.random()).slice(0, 3)
+          : reviews,
+      );
     }
   }, [reviews, limit]);
-
+console.log("¿Hay token?:", token);
   return (
     <>
       <Container className="py-5 mt-5">
         <h2 className="text-center titles-font fw-bold mb-5">
           Nuestra Comunidad
         </h2>
+        {token && (
+          <Row className="justify-content-center mb-5">
+            <Col md={8} lg={6} className="bg-light p-4 rounded-4 shadow-sm">
+              <Form.Control
+                as="textarea"
+                placeholder="Cuéntanos tu experiencia..."
+                value={comment}
+                onChange={(e) => setComment(e.target.value)}
+                className="mb-3 border-0"
+              />
+              <div className="d-flex justify-content-between align-items-center">
+                <div className="text-warning">
+                  {[1, 2, 3, 4, 5].map((n) => (
+                    <FaStar
+                      key={n}
+                      onClick={() => setRating(n)}
+                      style={{ cursor: "pointer" }}
+                      className={n <= rating ? "" : "opacity-25"}
+                    />
+                  ))}
+                </div>
+                <Button variant="dark" onClick={handlePost}>
+                  Postear
+                </Button>
+              </div>
+            </Col>
+          </Row>
+        )}
         <Row className="g-4">
           {displayReviews.map((t) => (
             <Col key={t.review_id} xs={12} md={6} lg={4}>
@@ -46,13 +97,16 @@ export default function AllTestimonials({ limit = false }) {
                 onClick={() => handleOpenDetail(t)}
                 style={{ cursor: "pointer" }}
               >
-                <Card.Body className="p-4 d-flex flex-column">
+                <Card.Body className="p-4 d-flex flex-column details-modal">
                   <FaQuoteLeft
                     className="text-warning mb-3 opacity-50"
                     size={24}
                   />
                   <h6 className="fw-bold">{t.about_product}</h6>
 
+                  <h6 className="fw-bold text-primary">
+                    {t.about_product ? "Reseña de Producto" : "Opinión General"}
+                  </h6>
                   <Card.Text className="body-font text-muted fst-italic mb-4 flex-grow-1">
                     "{t.review_body}"
                   </Card.Text>
@@ -93,7 +147,7 @@ export default function AllTestimonials({ limit = false }) {
           contentClassName="rounded-4 border-0 shadow"
         >
           {/* --- MODAL DE VISTA DETALLADA --- */}
-          <Modal.Body className="p-5">
+          <Modal.Body className="p-5 details-modal ">
             <div className="d-flex justify-content-end">
               <Button
                 variant="link"

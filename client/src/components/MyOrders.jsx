@@ -67,11 +67,16 @@ export default function MyOrders() {
     console.log("Producto seleccionado en el Modal:", selectedProduct);
 
     const payload = {
-      id_product: selectedProduct?.product_id || selectedProduct?.id_product || selectedProduct?.id,
-      about_product: "true",
+      id_product:
+        selectedProduct?.product_id ||
+        selectedProduct?.id_product ||
+        selectedProduct?.id,
+      about_product: true,
+      review_title: "Reseña de producto",
       review_body: comment,
       rating: rating,
     };
+    console.log("Enviando este payload:", payload);
 
     const result = await addReview(payload, token);
 
@@ -113,7 +118,7 @@ export default function MyOrders() {
     try {
       const config = { headers: { Authorization: `Bearer ${token}` } };
       const res = await axios.get(
-        `http://localhost:3000/api/order/items/${order.order_total_id}`,
+        `http://localhost:3000/api/order/customer/${order.order_total_id}/items`,
         config,
       );
       setSelectedOrder({ ...order, items: res.data });
@@ -138,10 +143,11 @@ export default function MyOrders() {
   if (orders.length === 0) {
     return (
       <Container className="py-5 text-center mt-5">
-        {/* ... Tu diseño de "Sin Pedidos" ... */}
+        <p className="text-muted">Aún no has realizado ningún pedido.</p>
       </Container>
     );
   }
+  console.log(reviews);
 
   return (
     <>
@@ -248,8 +254,6 @@ export default function MyOrders() {
                         {item.quantity}
                       </span>
                     </div>
-
-                    {/* 🚩 PASO 2: Lógica del Botón */}
                     {(selectedOrder.is_shipped === true ||
                       selectedOrder.is_shipped === "t") &&
                       (alreadyReviewed ? (
@@ -277,7 +281,6 @@ export default function MyOrders() {
             </ListGroup>
             <div className="d-flex justify-content-between fw-bold fs-5 pt-3 border-top mt-3">
               <span>Total:</span>
-              {/* 🚩 Usamos total */}
               <span>
                 ${Number(selectedOrder?.total).toLocaleString("es-CL")}
               </span>
@@ -294,7 +297,7 @@ export default function MyOrders() {
             </Button>
           </Modal.Footer>
         </Modal>
-        {/* Modal de Calificar Pedido (El segundo modal) */}
+        {/* Modal de Calificar Pedido*/}
         <Modal show={showReview} onHide={() => setShowReview(false)} centered>
           <Modal.Header closeButton>
             <Modal.Title>Calificar Pedido</Modal.Title>
@@ -333,8 +336,6 @@ export default function MyOrders() {
             <Button variant="secondary" onClick={() => setShowReview(false)}>
               Cerrar
             </Button>
-
-            {/* 🚩 AQUÍ LLAMAS A LA FUNCIÓN */}
             <Button variant="dark" onClick={handleSubmitReview}>
               Publicar
             </Button>

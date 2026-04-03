@@ -30,9 +30,7 @@ export default function Home() {
       </section>
       <Categories />
       <div className="banner-divider"></div>
-      <section className="home-testimonials">
-        <AllTestimonials limit={true} />
-      </section>
+      <AllTestimonials limit={true} />
       <ImgGallery />
       <Newsletter />
     </div>

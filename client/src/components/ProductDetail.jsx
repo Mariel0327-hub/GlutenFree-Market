@@ -52,8 +52,9 @@ const ProductDetail = () => {
 
   return (
     <div className="product-detail-container">
-      <Container className="">
-        <Row className="align-items-center gy-5">
+      <div className="banner-divider-card pt-5 "></div>
+      <Container>
+        <Row className="align-items-center gy-5 ">
           {/* Imagen del Producto */}
           <Col md={6} className="text-center">
             <div className="product-image-container p-4 shadow-sm rounded-4 bg-white h-100 d-flex align-items-center justify-content-center">

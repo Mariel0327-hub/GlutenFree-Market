@@ -15,31 +15,14 @@ export default function Checkout() {
     if (cart.length === 0) return;
 
     try {
-      console.log("Tipo de token:", typeof token);
-      console.log("Valor del token:", token);
       const config = { headers: { Authorization: `Bearer ${token}` } };
-
-      // 1. Datos de la orden
-      const orderPayload = {
-        customer_id: user.customer_id,
-        total_amount: totalGeneral,
-        shipping_address: formData.direccion,
-        phone: formData.telefono,
-        customer_name: formData.nombre,
-        items: cart.map((item) => ({
-          id_product: item.product_id,
-          quantity: item.quantity,
-          price: item.price,
-        })),
-      };
       const res = await axios.post(
         "http://localhost:3000/api/order",
-        orderPayload,
+        {},
         config,
       );
 
       if (res.status === 201 || res.status === 200) {
-        // 3. Notificación de éxito
         await Swal.fire({
           icon: "success",
           title: "¡Pago Exitoso!",
@@ -48,20 +31,7 @@ export default function Checkout() {
           showConfirmButton: false,
         });
 
-        // 4. Limpiar carrito en la BD (Ruta para vaciar el carrito completo)
-        try {
-          await axios.delete(
-            `http://localhost:3000/api/cart/${user.customer_id}`,
-            config,
-          );
-        } catch (error) {
-          console.warn(
-            "No se pudo vaciar el carrito en el servidor, pero la orden es válida.",error
-          );
-        }
-
-        // ESTO ES LO MÁS IMPORTANTE:
-        setCart([]); // Vacía el carrito en el estado global (frontend)
+        setCart([]);
         navigate("/mis-pedidos");
       }
     } catch (error) {
@@ -69,12 +39,10 @@ export default function Checkout() {
       Swal.fire({
         icon: "error",
         title: "Error",
-        text: "No pudimos procesar tu pago. Inténtalo de nuevo.",
+        text: error.response?.data?.message || "No pudimos procesar tu pago.",
       });
     }
   };
-
-  // Estado para el formulario
   const [formData, setFormData] = useState({
     nombre: user?.customer_name || "",
     telefono: user?.phone || "",
@@ -88,8 +56,8 @@ export default function Checkout() {
   const totalGeneral = (Number(cartTotal) || 0) + (Number(shippingCost) || 0);
 
   const handleSubmit = (e) => {
-    e.preventDefault(); // 🚩 CRÍTICO: Evita que la página se recargue
-    handlePay(); // Llama a tu lógica de axios y redirección
+    e.preventDefault();
+    handlePay();
   };
 
   return (
