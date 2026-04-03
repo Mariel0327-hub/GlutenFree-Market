@@ -105,16 +105,24 @@ export const ReviewProvider = ({ children }) => {
       return { success: false };
     }
   };
-
   const updateReview = async (reviewId, updatedData, token) => {
     try {
       const config = { headers: { Authorization: `Bearer ${token}` } };
-      // La URL según tu backend es /api/review/reviews/:id
+
+      // IMPORTANTE: El backend espera los campos en la raíz del body
+      // para que el controlador los reciba y se los pase a tu función de arriba.
       const res = await axios.put(
-        `http://localhost:3000/api/review/reviews/${reviewId}`,
-        updatedData,
+        `http://localhost:3000/api/review/${reviewId}`,
+        {
+          about_product: updatedData.about_product,
+          id_product: updatedData.id_product,
+          review_title: updatedData.review_title || "Reseña actualizada",
+          review_body: updatedData.review_body,
+          rating: updatedData.rating,
+        },
         config,
       );
+
       if (res.status === 200) {
         setReviews((prev) =>
           prev.map((r) =>
@@ -123,7 +131,7 @@ export const ReviewProvider = ({ children }) => {
         );
       }
     } catch (error) {
-      console.error("Error al editar:", error);
+      console.error("Error al editar:", error.response?.data || error.message);
     }
   };
   return (
