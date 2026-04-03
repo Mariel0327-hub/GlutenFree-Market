@@ -138,14 +138,14 @@ export const CartProvider = ({ children }) => {
           // DELETE
           await axios.delete("http://localhost:3000/api/cart/product", {
             ...config,
-            data: { id_product: pId },
+            data: {  productToDelete : {id_product: pId} },
           });
         } else {
           // PUT para actualizar cantidad
           await axios.put(
             "http://localhost:3000/api/cart/product",
             {
-              newCartProduct: { id_product: pId, quantity: item.quantity - 1 },
+              product: { id_product: pId, quantity: item.quantity - 1 },
             },
             config,
           );
