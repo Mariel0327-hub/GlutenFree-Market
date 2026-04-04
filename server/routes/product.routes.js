@@ -37,17 +37,17 @@ productRouter.post(
   productController.createNewProduct,
 );
 productRouter.put(
-  "/:id",
-  tokenVerification,
-  adminVerification(ADMIN_ROLE),
-  productController.updateNewProduct,
-);
-productRouter.put(
   "/restore/:id",
   tokenVerification,
   adminVerification(ADMIN_ROLE),
   productController.restoreOldProduct,
 ); //recuperar producto eliminad (soft delete)
+productRouter.put(
+  "/:id",
+  tokenVerification,
+  adminVerification(ADMIN_ROLE),
+  productController.updateNewProduct,
+);
 productRouter.delete(
   "/:id",
   tokenVerification,
