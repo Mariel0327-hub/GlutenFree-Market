@@ -6,6 +6,7 @@ import { UserContext } from "../context/UserContext";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { registerUserDB } from "../data/connection";
+import { Link } from "react-router-dom";
 
 
 export default function Register() {
@@ -237,21 +238,31 @@ export default function Register() {
               Registrarse
             </Button>
           </Form>
+          <p className="small text-muted mt-3">
+            ¿No tienes cuenta?{" "}
+            <Link
+              to="/login"
+              className="text-decoration-none fw-bold"
+              style={{ color: "#7c5c4c" }}
+            >
+              Inicia sesión aquí
+            </Link>
+          </p>
 
           <div className="divider my-4">
             <span className="text-muted small">O regístrate con</span>
           </div>
 
           <div className="d-flex justify-content-center gap-3 mb-4">
-            <button className="btn-social">
+            <Button className="btn-social">
               <FcGoogle size={24} />
-            </button>
-            <button className="btn-social">
+            </Button>
+            <Button className="btn-social">
               <FaApple size={24} />
-            </button>
-            <button className="btn-social">
+            </Button>
+            <Button  className="btn-social ">
               <FaFacebook size={24} color="#1877F2" />
-            </button>
+            </Button>
           </div>
         </Col>
       </Row>

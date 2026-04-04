@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Navigate, Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import Home from "./views/Home";
@@ -21,11 +21,15 @@ import AllTestimonials from "./views/AllTestimonials";
 import ScrollToTop from "./components/ScrollToTop";
 //import Testimonials from "./components/Testimonials";
 import AdminDashboard from "./views/AdminDashboard";
-//import AdminLogin from "./components/AdminLogin";
+import AdminLogin from "./views/AdminLogin";
+import { useContext } from "react";
+import { UserContext } from "./context/UserContext";
 
 function App() {
+  const { token, user } = useContext(UserContext);
+
   return (
-    <BrowserRouter>
+    <>
       <ScrollToTop />
       <Navbar />
 
@@ -39,7 +43,7 @@ function App() {
         <Route path="/registro" element={<Register />} />
         <Route path="/carrito" element={<Cart />} />
         <Route path="/todos-los-testimonios" element={<AllTestimonials />} />
-        <Route path="/admin-panel" element={<AdminDashboard />} />
+        <Route path="/admin" element={<AdminLogin />} />
         {/* Rutas privadas */}
         <Route
           path="/checkout"
@@ -81,7 +85,6 @@ function App() {
             </ProtectedRoute>
           }
         />
-
         <Route
           path="/mis-reviews"
           element={
@@ -90,12 +93,24 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/admin-panel"
+          element={
+            token && user?.role === "admin" ? (
+              <ProtectedRoute>
+                <AdminDashboard />
+              </ProtectedRoute>
+            ) : (
+              <Navigate to="/admin" />
+            )
+          }
+        />
         {/* Ruta 404 por si se pierden */}
         <Route path="*" element={<NotFound />} />
       </Routes>
       <MainLayout />
       <Footer />
-    </BrowserRouter>
+    </>
   );
 }
 
