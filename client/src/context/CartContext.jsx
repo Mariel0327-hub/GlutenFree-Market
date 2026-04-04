@@ -168,7 +168,6 @@ export const CartProvider = ({ children }) => {
       }
     }
   };
-
   const cartTotal = cart.reduce(
     (acc, i) => acc + Number(i.price) * i.quantity,
     0,

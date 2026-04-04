@@ -1,6 +1,6 @@
 :root {
   /* Paleta de Colores GlutenFree */
-  --color-bgButton: #4c3d33; /* Café miel (Botones) */
+  --color-bgButton: #3a5a40; /* Café miel (Botones) */
   --color-titulos: #4b3f2f; /* Café oscuro (Títulos) */
   --color-bgFooter: #faf8f0; /* Crema suave (Fondo Hero/footer) */
   --color-white: #ffffff;
@@ -60,4 +60,20 @@ html {
   box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
   transform: translateY(-2px); /* Sube ligeramente */
   filter: brightness(1.1);
+}
+
+.table .btn-action {
+  background-color: transparent !important; /* Quita el color de var(--color-bgButton) */
+  box-shadow: none !important;            /* Quita la sombra */
+  padding: 5px !important;                /* Reduce el tamaño */
+  width: 35px;                            /* Los hace cuadrados y simétricos */
+  height: 35px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.table .btn-action:hover {
+  transform: scale(1.1);                  /* Un pequeño efecto de aumento */
+  background-color: rgba(0,0,0,0.05) !important; /* Un gris muy tenue al pasar el mouse */
 }

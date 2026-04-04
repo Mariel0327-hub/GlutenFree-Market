@@ -40,7 +40,6 @@ const Navbar = () => {
     }
   };
 
-  console.log("Datos del usuario en Navbar:", user);
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-white shadow-sm py-3 sticky-top">
       <div className="container">
@@ -110,7 +109,7 @@ const Navbar = () => {
           <div className="d-flex align-items-center justify-content-between justify-content-lg-end gap-3 pb-3 pb-lg-0">
             {token ? (
               <div className="d-flex align-items-center gap-2 gap-md-3 flex-wrap justify-content-between">
-                {/* Favoritos: Icono en móvil, Texto en Desktop */}
+
                 <NavLink
                   to="/favoritos"
                   className="nav-icon-link text-decoration-none d-flex align-items-center gap-1"
@@ -122,7 +121,6 @@ const Navbar = () => {
                   </span>
                 </NavLink>
 
-                {/* Mis Pedidos: Icono en móvil, Texto en Desktop */}
                 <NavLink
                   to="/mis-pedidos"
                   className="nav-icon-link text-decoration-none d-flex align-items-center gap-1"
@@ -180,6 +178,11 @@ const Navbar = () => {
                   </div>
                 </NavLink>
 
+                {user?.role === "admin" && (
+                  <Link to="/admin-panel" className="nav-link text-danger">
+                    ⚙️ Panel Admin
+                  </Link>
+                )}
                 {/* Botón Salir */}
                 <button
                   onClick={handleLogout}
@@ -201,7 +204,6 @@ const Navbar = () => {
                 <Link
                   to="/registro"
                   className="btn btn-dark btn-sm px-3 rounded-pill"
-                  style={{ backgroundColor: "#3e2723" }}
                   onClick={() => setIsNavExpanded(false)}
                 >
                   Registro
@@ -209,7 +211,6 @@ const Navbar = () => {
               </div>
             )}
 
-            {/* Carrito: Siempre al final */}
             <Link
               to="/carrito"
               className="nav-icon-link position-relative ms-2"

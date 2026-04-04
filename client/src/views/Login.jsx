@@ -100,7 +100,6 @@ export default function Login() {
               type="submit"
               variant="primary"
               className="w-100 rounded-pill py-2 mb-3"
-              style={{ backgroundColor: "#7c5c4c", border: "none" }}
             >
               Entrar
             </Button>

@@ -34,7 +34,7 @@ const { reviews, addReview, token } = useContext(ReviewContext);
     };
     const result = await addReview(payload, token);
     if (result.success) {
-      setComment(""); // Limpia el input
+      setComment(""); 
       setRating(5);
       Swal.fire(
         "¡Listo!",
@@ -54,7 +54,6 @@ const { reviews, addReview, token } = useContext(ReviewContext);
       );
     }
   }, [reviews, limit]);
-console.log("¿Hay token?:", token);
   return (
     <>
       <Container className="py-5 mt-5">

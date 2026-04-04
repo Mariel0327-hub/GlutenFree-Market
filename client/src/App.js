@@ -20,11 +20,8 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/registro" element={<Register />} />
         <Route path="/perfil" element={<Profile />} />
-
         <Route path="/producto/:id" element={<ProductDetail />} />
-
         <Route path="/carrito" element={<Cart />} />
-
         <Route path="*" element={<NotFound />} />
       </Routes>
 

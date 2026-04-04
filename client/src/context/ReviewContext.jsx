@@ -1,6 +1,5 @@
 import React, { createContext, useState, useContext, useEffect } from "react";
 import { UserContext } from "./UserContext";
-import { testimonials as initialData } from "../data/testimonials";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { baseURL } from "../utils/baseUrl.js";
@@ -35,8 +34,6 @@ export const ReviewProvider = ({ children }) => {
       ),
     );
 
-    // 2. ¿El usuario YA calificó este producto?
-    // Buscamos en el estado global de 'reviews'
     const alreadyReviewed = reviews.some(
       (r) =>
         String(r.id_customer) === String(userId) &&
@@ -55,12 +52,11 @@ export const ReviewProvider = ({ children }) => {
         config,
       );
       if (res.status === 201 || res.status === 200) {
-        // Usamos .flat() para deshacernos de las capas de arrays extra
-        // o simplemente accedemos al primer elemento si viene como [[{...}]]
+        
         const newReviewData = res.data.flat()[0];
 
         setReviews((prev) => {
-          // Aplanamos también el estado anterior por si acaso quedó mal guardado antes
+          
           const currentReviews = prev.flat();
           return [...currentReviews, newReviewData];
         });
@@ -106,16 +102,16 @@ export const ReviewProvider = ({ children }) => {
       return { success: false };
     }
   };
-
   const updateReview = async (reviewId, updatedData, token) => {
     try {
       const config = { headers: { Authorization: `Bearer ${token}` } };
-      // La URL según tu backend es /api/review/reviews/:id
+
       const res = await axios.put(
         `${baseURL}/api/reviewreviews/${reviewId}`,
         updatedData,
         config,
       );
+
       if (res.status === 200) {
         setReviews((prev) =>
           prev.map((r) =>
@@ -124,7 +120,7 @@ export const ReviewProvider = ({ children }) => {
         );
       }
     } catch (error) {
-      console.error("Error al editar:", error);
+      console.error("Error al editar:", error.response?.data || error.message);
     }
   };
   return (

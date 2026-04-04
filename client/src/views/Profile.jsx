@@ -20,12 +20,12 @@ export default function Profile() {
   const { user, logout, updateUser, setUser } = useContext(UserContext);
   const navigate = useNavigate();
 
-  // Estado para controlar si estamos editando
+
   const [isEditing, setIsEditing] = useState(false);
-  // Estado local para los inputs del formulario
+
   const [formData, setFormData] = useState({ name: "", shipping_address: "" });
 
-  // Este efecto corre apenas entras a la página de Perfil
+
   useEffect(() => {
     const fetchUserData = async () => {
       try {
@@ -38,9 +38,6 @@ export default function Profile() {
               headers: { Authorization: `Bearer ${token}` },
             },
           );
-
-          // Al hacer setUser con la respuesta de Neon,
-          // ahora 'user' tendrá su customer_id real (ej: cust-019d...)
           setUser(response.data);
         }
       } catch (error) {
@@ -49,19 +46,19 @@ export default function Profile() {
     };
 
     fetchUserData();
-  }, []); // [] significa que solo corre una vez al cargar la página
+  }, []); 
 
   const handleEditClick = () => {
     if (user) {
       setFormData({
         // Mapeamos los nombres de la BD (izquierda) a tus estados del Form (derecha)
-        name: user.customer_name || "", // Antes: user.name
+        name: user.customer_name || "", 
         email: user.email || "",
         shipping_address: user.shipping_address || "",
         billing_address: user.billing_address || "",
-        profile_image: user.img_url_customer || "", // Antes: user.profile_image
-        phone: user.phone || "", // Agregamos phone si lo necesitas
-        password: "", // La contraseña siempre inicia vacía por seguridad
+        profile_image: user.img_url_customer || "", 
+        phone: user.phone || "",
+        password: "",
         customer_id: user.customer_id,
       });
       setIsEditing(true);
@@ -76,7 +73,7 @@ export default function Profile() {
   const handleSave = async () => {
     try {
       const cleanData = {
-        // 🚩 IMPORTANTE: Usamos el ID que ya tiene el usuario, no uno nuevo
+        // Usamos el ID que ya tiene el usuario, no uno nuevo
         customer_id: user.customer_id,
 
         // Mapeo de variables: React -> SQL
@@ -137,7 +134,6 @@ export default function Profile() {
               fontSize: "32px",
             }}
           >
-            {/* ✅ Cambio a img_url_customer */}
             {user?.img_url_customer ? (
               <img
                 src={user.img_url_customer}
@@ -175,17 +171,13 @@ export default function Profile() {
                     />
                   ) : (
                     <span className="fw-medium">
-                      {/* ✅ Cambio a customer_name */}
                       {user?.customer_name || "No registrado"}
                     </span>
                   )}
                 </div>
               </Col>
-
-              {/* Campo Teléfono (NUEVO) */}
               <Col xs={12} className="d-flex align-items-start gap-3">
                 <FaPhone className="text-muted mt-2" />{" "}
-                {/* Asegúrate de importar FaPhone de react-icons/fa */}
                 <div className="flex-grow-1">
                   <small className="d-block text-muted fw-bold text-uppercase">
                     Teléfono
@@ -201,7 +193,6 @@ export default function Profile() {
                     />
                   ) : (
                     <span className="fw-medium">
-                      {/* ✅ Cambio a phone */}
                       {user?.phone || "Sin teléfono registrado"}
                     </span>
                   )}
@@ -263,7 +254,6 @@ export default function Profile() {
                     />
                   ) : (
                     <span className="fw-medium">
-                      {/* ✅ Cambio a shipping_address */}
                       {user?.shipping_address || "Sin dirección registrada"}
                     </span>
                   )}
@@ -325,7 +315,7 @@ export default function Profile() {
                   <Button
                     variant="outline-secondary"
                     className="rounded-pill py-2 d-flex align-items-center justify-content-center gap-2"
-                    onClick={() => navigate("/mis-testimonios")}
+                    onClick={() => navigate("/mis-reviews")}
                   >
                     <FaCommentDots /> Mis Testimonios
                   </Button>

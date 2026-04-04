@@ -7,6 +7,8 @@ import { ProductContext } from "../context/ProductContext";
 import { UserContext } from "../context/UserContext";
 import Swal from "sweetalert2";
 import { CartContext } from "../context/CartContext";
+import { calcularPromedio } from "../utils/reviewHelper";
+import { ReviewContext } from "../context/ReviewContext";
 
 const ProductCard = ({ product }) => {
   const { favorites, toggleFavorite } = useContext(ProductContext);
@@ -14,8 +16,17 @@ const ProductCard = ({ product }) => {
   const { token } = useContext(UserContext);
   const { addToCart } = useContext(CartContext);
   const navigate = useNavigate();
+  const { getCategoryName } = useContext(ProductContext);
+  const { reviews } = useContext(ReviewContext);
+
+  //Buscamos el producto
 
   if (!product) return null;
+
+  const productReviews = reviews.filter(
+    (r) => String(r.id_product) === String(product.product_id), // Usamos el ID del prop
+  );
+  const promedio = calcularPromedio(productReviews);
 
   const handleFavoriteClick = () => {
     if (!token) {
@@ -35,7 +46,7 @@ const ProductCard = ({ product }) => {
     }
     toggleFavorite(product);
   };
-  console.log(product);
+
   return (
     <Card className="product-card h-100 shadow-sm border-0">
       <Link
@@ -61,12 +72,15 @@ const ProductCard = ({ product }) => {
       <CardBody className="p-3 d-flex flex-column">
         <div className="d-flex justify-content-between align-items-center mb-2">
           <div className="d-flex align-items-center text-warning small">
-            {[...Array(5)].map((_, i) => (
-              <FaStar key={i} className="me-1" />
+            {[1, 2, 3, 4, 5].map((star) => (
+              <FaStar
+                key={star}
+                // Si el promedio es 3, las estrellas 4 y 5 serán grises (#e4e5e9)
+                style={{ color: star <= promedio ? "#ffc107" : "#e4e5e9" }}
+                size={16}
+              />
             ))}
-            <span className="text-muted ms-2" style={{ fontSize: "0.75rem" }}>
-              3 Opiniones
-            </span>
+            <small className="ms-2 text-muted">({productReviews.length})</small>
           </div>
           <FaHeart
             className="heart-icon fs-5"
@@ -80,13 +94,10 @@ const ProductCard = ({ product }) => {
         </div>
         <div className="text-center flex-grow-1">
           <p
-            className="text-muted mb-1 text-start"
-            style={{ fontSize: "0.8rem", fontWeight: "500" }}
+            className="text-muted small mb-1"
+            style={{ textTransform: "capitalize" }}
           >
-            {product.category_description
-              ? product.category_description.charAt(0).toUpperCase() +
-                product.category_description.slice(1)
-              : "Sin categoría"}
+            {getCategoryName(product.category)}
           </p>
           <Card.Title className="card-title fw-bold mb-1 fs-6">
             {product.title}
