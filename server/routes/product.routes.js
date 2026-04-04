@@ -22,14 +22,12 @@ productRouter.delete("/categories/:id", productController.deleteNewCategory); //
 
 //PRODUCTOS
 //Para todo público
-//Ruta específica para redirigir a categorías y ver sus productos.
-productRouter.get("/category/:id", productController.readProductsByCategory); 
+
 //Ruta para filtrar todos los productos por precio, categoría, relevancia**, stock, etc...
 productRouter.get("/filter", productController.readAllProductsFiltered);
+//Ruta específica para redirigir a categorías y ver sus productos.
+productRouter.get("/category/:id", productController.readProductsByCategory); 
 
-// Rutas generales para revisar productos (inventario) público?
-productRouter.get("/:id", productController.readProductsById);
-productRouter.get("/", productController.readAllProducts);
 
 //ADMIN ONLY (BackOffice)
 productRouter.post(
@@ -56,6 +54,11 @@ productRouter.delete(
   adminVerification(ADMIN_ROLE),
   productController.deleteNewProduct,
 ); //usa soft delete (is_active = true -> is_active = false)
+
+
+// Rutas generales para revisar productos (inventario) público?
+productRouter.get("/:id", productController.readProductsById);
+productRouter.get("/", productController.readAllProducts);
 
 
 export default productRouter;
