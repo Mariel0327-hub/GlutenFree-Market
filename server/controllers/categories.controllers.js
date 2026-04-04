@@ -1,4 +1,4 @@
-import categoryModel from "../models/categories.models";
+import categoryModel from "../models/categories.models.js";
 
 
 //////////// CATEGORÌAS
