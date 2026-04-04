@@ -54,9 +54,9 @@ const ProductProvider = ({ children }) => {
         if (data && data.length > 0) {
           setProducts(data);
         }
-        const resCat = await fetch("http://localhost:3000/api/categories");
-        const dataCat = await resCat.json();
-        setCategories(dataCat);
+        //const resCat = await fetch("http://localhost:3000/api/categories");
+        //const dataCat = await resCat.json();
+       // setCategories(dataCat);
       } catch (error) {
         console.error("Backend no disponible, usando local.", error);
       }

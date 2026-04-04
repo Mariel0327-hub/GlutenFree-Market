@@ -77,3 +77,13 @@ html {
   transform: scale(1.1);                  /* Un pequeño efecto de aumento */
   background-color: rgba(0,0,0,0.05) !important; /* Un gris muy tenue al pasar el mouse */
 }
+
+.btn-social {
+  background-color: transparent;
+  border: 1px solid var(--color-bgButton);
+  color: var(--color-bgButton);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+} 

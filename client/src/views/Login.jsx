@@ -108,7 +108,7 @@ export default function Login() {
           <p className="small text-muted mt-3">
             ¿No tienes cuenta?{" "}
             <Link
-              to="/register"
+              to="/registro"
               className="text-decoration-none fw-bold"
               style={{ color: "#7c5c4c" }}
             >

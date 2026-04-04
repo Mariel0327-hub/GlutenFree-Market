@@ -9,6 +9,7 @@ import ProductProvider from "./context/ProductContext.jsx";
 import { ReviewProvider } from "./context/ReviewContext.jsx";
 import { OrderProvider } from "./context/OrderContext.jsx";
 import { CartProvider } from "./context/CartContext.jsx";
+import { BrowserRouter } from "react-router-dom";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
@@ -17,7 +18,9 @@ createRoot(document.getElementById("root")).render(
         <CartProvider>
           <ReviewProvider>
             <OrderProvider>
-              <App />
+              <BrowserRouter>
+                <App />
+              </BrowserRouter>
             </OrderProvider>
           </ReviewProvider>
         </CartProvider>{" "}
