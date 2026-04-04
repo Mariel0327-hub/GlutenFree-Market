@@ -315,7 +315,7 @@ export default function Profile() {
                   <Button
                     variant="outline-secondary"
                     className="rounded-pill py-2 d-flex align-items-center justify-content-center gap-2"
-                    onClick={() => navigate("/mis-testimonios")}
+                    onClick={() => navigate("/mis-reviews")}
                   >
                     <FaCommentDots /> Mis Testimonios
                   </Button>

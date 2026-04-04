@@ -7,6 +7,7 @@ import "../assets/css/ProductDetail.css";
 import { CartContext } from "../context/CartContext";
 import { ReviewContext } from "../context/ReviewContext";
 import ProductCard from "../components/ProductCard";
+import { calcularPromedio } from "../utils/reviewHelper";
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -23,9 +24,10 @@ const ProductDetail = () => {
   }, []);
   //Buscamos el producto
   const product = products.find((p) => String(p.product_id) === String(id));
+
   useEffect(() => {
     if (products && products.length > 0) {
-      // 2. Filtramos para no mostrar el actual
+      //2. Filtramos para no mostrar el actual
       const otherProducts = products.filter(
         (p) => String(p.product_id) !== String(id),
       );
@@ -34,19 +36,16 @@ const ProductDetail = () => {
       const shuffled = [...otherProducts].sort(() => Math.random() - 0.5);
 
       // 4. Guardamos los primeros 3
-      setRandomProducts(shuffled.slice(0, 3));
+      setRandomProducts(shuffled.slice(0, 4));
     }
   }, [products, id]);
 
-  if (!product) return <p>Cargando producto...</p>;
-
-  // 2.Si no hay producto, cortamos la ejecución aquí
   if (!product) {
     return (
-      <div>
+      <Container className="py-5 text-center">
         <h2 className="text-danger fw-bold">¡Ups! Producto no encontrado</h2>
         <p className="text-muted">
-          Parece que el producto con ID {id} no existe en nuestro catálogo.
+          Parece que el producto con ID {id} no existe.
         </p>
         <Button
           variant="dark"
@@ -55,14 +54,14 @@ const ProductDetail = () => {
         >
           Volver a la tienda
         </Button>
-      </div>
+      </Container>
     );
   }
-
   // Buscamos las reseñas específicas de este producto
   const productReviews = reviews.filter(
     (r) => String(r.id_product) === String(id),
   );
+  const promedio = calcularPromedio(productReviews);
 
   const handleOrderNow = () => {
     addToCart(product, quantity);
@@ -71,13 +70,13 @@ const ProductDetail = () => {
   };
 
   return (
-    <div className="product-detail-container">
+    <div className="product-detail-container ">
       <div className="banner-divider-card pt-5 "></div>
-      <Container className="pt-5">
+      <Container className="pt-5 ">
         <Row className="align-items-center gy-5 ">
           {/* Imagen del Producto */}
-          <Col md={6} className="text-center">
-            <div className="product-image-container p-4 shadow-sm rounded-4 bg-white h-100 d-flex align-items-center justify-content-center">
+          <Col md={6} className="text-center product-detail">
+            <div className="product-image-container shadow-sm rounded-4 bg-white h-100 overflow-hidden d-flex">
               <img
                 // 1. Verificamos si existe la URL antes de intentar cargarla
                 src={
@@ -86,12 +85,7 @@ const ProductDetail = () => {
                     : "https://images.unsplash.com/photo-1578985543062-bc3b01620c4d?w=800&q=80"
                 }
                 alt={product.title}
-                className="img-fluid rounded-4 shadow-sm"
-                style={{
-                  maxHeight: "450px",
-                  width: "auto",
-                  objectFit: "contain",
-                }}
+                className="w-100 h-100 img-product-detail"
                 onError={(e) => {
                   e.currentTarget.onerror = null;
                   e.currentTarget.src =
@@ -107,8 +101,18 @@ const ProductDetail = () => {
               {product.title}
             </h1>
             <div className="d-flex align-items-center gap-2 mb-3">
-              <div className="text-warning">
-                <FaStar /> <FaStar /> <FaStar /> <FaStar /> <FaStar />
+              <div className="text-warning small d-flex gap-1">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <FaStar
+                    key={star}
+                    style={{
+                      color: star <= promedio ? "#ffc107" : "#e4e5e9",
+                    }}
+                  />
+                ))}
+                <small className="ms-2 text-muted">
+                  ({productReviews.length})
+                </small>
               </div>
               <span className="text-muted small">(Reseñas)</span>
             </div>
@@ -174,7 +178,7 @@ const ProductDetail = () => {
           </Col>
         </Row>
 
-        <div className="mt-5 pt-5 border-top">
+        <div className="mt-5 pt-5 border-top ">
           <h3 className="titles-font  mb-4 text-start">
             Lo que dicen nuestros clientes
           </h3>
@@ -197,8 +201,22 @@ const ProductDetail = () => {
                             {rev.user_name || "Cliente Satisfecho"}
                           </span>
                         </div>
-                        <div className="text-warning small">
-                          {"⭐".repeat(rev.rating)}
+                        <div className="text-warning small d-flex gap-1">
+                          <div className="text-warning small d-flex gap-1">
+                            {[1, 2, 3, 4, 5].map((star) => (
+                              <FaStar
+                                key={star}
+                                // CAMBIO AQUÍ: Usamos rev.rating para ver la nota de CADA comentario
+                                style={{
+                                  color:
+                                    star <= rev.rating ? "#ffc107" : "#e4e5e9",
+                                }}
+                              />
+                            ))}
+                          </div>
+                          <small className="ms-2 text-muted">
+                            ({productReviews.length})
+                          </small>
                         </div>
                       </div>
                       <p className="text-muted mb-0 fst-italic">
@@ -223,7 +241,10 @@ const ProductDetail = () => {
 
           <div className="row g-4 justify-content-center">
             {randomProducts.map((item) => (
-              <div className="col-12 col-sm-12 col-md-4" key={item.product_id}>
+              <div
+                className="col-12 col-sm-6 col-md-4 col-lg-3"
+                key={item.product_id}
+              >
                 <ProductCard product={item} />
               </div>
             ))}

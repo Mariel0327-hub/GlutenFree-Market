@@ -14,24 +14,24 @@ export default function Checkout() {
 
   const handlePay = async () => {
     if (cart.length === 0) return;
-
     try {
-      const config = { headers: { Authorization: `Bearer ${token}` } };
-
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
       const orderData = {
-        items: cart, // Tus productos
+        items: cart, //  productos
         total: totalGeneral, // El total calculado
         shipping_address: formData.direccion, // La dirección que escribió el usuario
       };
 
       const res = await axios.post(
-        "http://localhost:3000/api/order",
-        orderData,
         `${baseURL}/api/order`,
-        {},
-        config,
+        orderData,
+        config
       );
-
+      console.log("PAGO EXITOSO:", res.data);
       console.log("Estructura exacta de la respuesta:", res.data);
       if (res.status === 201 || res.status === 200) {
         const orderId = res.data?.order_total_id;
@@ -69,8 +69,8 @@ export default function Checkout() {
   const totalGeneral = (Number(cartTotal) || 0) + (Number(shippingCost) || 0);
 
   const handleSubmit = (e) => {
-    e.preventDefault(); // 🚩 CRÍTICO: Evita que la página se recargue
-    handlePay(); // Llama a tu lógica de axios y redirección
+    e.preventDefault();
+    handlePay();
   };
 
   return (

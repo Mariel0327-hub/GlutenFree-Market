@@ -171,7 +171,6 @@ const AdminDashboard = () => {
             <Button
               variant="primary"
               onClick={() => handleShow()}
-              style={{ backgroundColor: "#6c5b4b", border: "none" }}
             >
               + Crear Pedido
             </Button>

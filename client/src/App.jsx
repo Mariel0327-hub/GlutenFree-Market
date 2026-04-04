@@ -16,10 +16,10 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Profile from "./views/Profile";
 import Favorites from "./views/Favorites";
 import MyOrders from "./components/MyOrders";
-//import MyReviews from "./views/MyReviews";
+import MyReviews from "./views/MyReviews";
 import AllTestimonials from "./views/AllTestimonials";
 import ScrollToTop from "./components/ScrollToTop";
-import Testimonials from "./components/Testimonials";
+//import Testimonials from "./components/Testimonials";
 import AdminDashboard from "./views/AdminDashboard";
 //import AdminLogin from "./components/AdminLogin";
 
@@ -81,11 +81,12 @@ function App() {
             </ProtectedRoute>
           }
         />
+
         <Route
-          path="/mis-testimonios"
+          path="/mis-reviews"
           element={
             <ProtectedRoute>
-              <Testimonials />
+              <MyReviews />
             </ProtectedRoute>
           }
         />

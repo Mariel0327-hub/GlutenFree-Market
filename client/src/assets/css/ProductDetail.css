@@ -1,12 +1,11 @@
 .product-detail-container {
   padding-bottom: 50px;
   background-color: #fdfbf9;
-  min-height: 100vh; /* Asegura que cubra toda la pantalla */
+  min-height: 100vh;
 }
 
 .product-image-container {
   transition: transform 0.3s ease;
-  padding: 20px; /* Un padding normal para que la imagen respire */
   background-color: white;
   border-radius: 20px;
 }
@@ -14,6 +13,17 @@
   transform: scale(1.02);
 }
 
+.product-detail {
+  height: 450px;
+  
+}
+
+.img-product-detail {
+  object-fit: cover;
+  border-radius: 20px;
+  min-height: 350px;
+  object-position: center;
+}
 .quantity-selector {
   border: 1px solid #e0e0e0;
   border-radius: 50px;
