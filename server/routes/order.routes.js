@@ -71,7 +71,6 @@ orderRouter.delete(
   "/:id",
   tokenVerification,
   adminVerification(ADMIN_ROLE),
-  adminVerification(ADMIN_ROLE),
   orderController.deleteNewOrder,
 );
 

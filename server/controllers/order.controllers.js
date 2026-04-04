@@ -127,6 +127,13 @@ const createNewOrder = async (req, res) => {
 const updateNewOrder = async (req, res) => {
   const { id } = req.params;
   const orderToUpdate  = req.body;
+
+  //Evitar pedidos no pagados y enviados
+  if(orderToUpdate.is_shipped && !orderToUpdate.is_paid){
+    return res.status(400).json({message: "Debes pagar para poder recibir tus productos"})
+  }
+
+
   try {
     const result = await orderModel.updateOrder(id, orderToUpdate);
 
