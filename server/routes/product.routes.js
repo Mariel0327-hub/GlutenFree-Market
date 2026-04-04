@@ -12,7 +12,7 @@ const productRouter = Router();
 
 //CATEGORIAS
 //Mostrar categorías existentes:
-productRouter.get("/categories", productController.readAllCategories); //implementar para ver productos por categoría
+productRouter.get("/attempts/categories", productController.readAllCategories); //implementar para ver productos por categoría
 productRouter.get("/categories/:id", productController.readCategoriesById); //implementar para ver productos por categoría
 productRouter.post("/categories", tokenVerification, adminVerification(ADMIN_ROLE), productController.createNewCategory); //implementar para ver productos por categoría
 productRouter.put("/categories/:id", tokenVerification, adminVerification(ADMIN_ROLE), productController.updateNewCategory); //implementar para ver productos por categoría
