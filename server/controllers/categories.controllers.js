@@ -26,7 +26,7 @@ const readCategoriesById = async (req, res) => {
     const result = await categoryModel.findCategoriesById(id);
 
     if (!result) {
-      return res.status(404).json({ message: "No Product Found" });
+      return res.status(404).json({ message: "No Product Found here is the issue?" });
     }
 
     return res.status(200).json(result);
