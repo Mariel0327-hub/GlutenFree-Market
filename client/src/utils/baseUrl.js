@@ -2,3 +2,4 @@
 // VITE_BACKEND_URL = import.meta.env.VITE_NAME
 
 export const baseURL =  'https://glutenfree-market.onrender.com'
+//export const baseURL =  'http://localhost:3000'

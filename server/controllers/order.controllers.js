@@ -1,6 +1,6 @@
 import orderModel from "../models/order.models.js";
 
-//ORDENES 
+//ORDENES
 //ADMIN
 const readAllOrders = async (req, res) => {
   try {
@@ -50,7 +50,6 @@ const readOrdersbyCustomer = async (req, res) => {
   }
 };
 
-
 //DETALLES DE ORDEN:
 const readAllOrderDetails = async (req, res) => {
   try {
@@ -71,7 +70,6 @@ const readAllOrderDetails = async (req, res) => {
 //Para encontrar detalles en específico // se agrega filtro de usuario para evitar acceso a ordenes agenas.
 const readOrderDetailsbyId = async (req, res) => {
   try {
-
     const { id } = req.params;
     const result = await orderModel.findOrderDetailsbyId(id);
 
@@ -128,12 +126,15 @@ const createNewOrder = async (req, res) => {
 // acutalizar orden de compra
 const updateNewOrder = async (req, res) => {
   const { id } = req.params;
+  const orderToUpdate  = req.body;
   try {
-    await orderModel.updateOrder(id);
+    const result = await orderModel.updateOrder(id, orderToUpdate);
 
-    if (!order) {
-      throw { code: 404, message: "Not order to update" };
+    if (!result) {
+      return res.status(404).json({message: "No order to update" });
     }
+
+    return res.status(200).json(result);
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "Internal Server Error" });

@@ -9,14 +9,17 @@ const ADMIN_ROLE = process.env.ADMIN_ROLE;
 
 const productRouter = Router();
 
-//Para tood público
-//Ruta específica para redirigir a categorías
-productRouter.get("/category/:id", productController.readProductsByCategory); //implementar para ver productos por categoría
+
+
+
+//PRODUCTOS
+//Para todo público
+
 //Ruta para filtrar todos los productos por precio, categoría, relevancia**, stock, etc...
 productRouter.get("/filter", productController.readAllProductsFiltered);
-// Rutas generales para revisar productos (inventario) público?
-productRouter.get("/:id", productController.readProductsById);
-productRouter.get("/", productController.readAllProducts);
+//Ruta específica para redirigir a categorías y ver sus productos.
+productRouter.get("/category/:id", productController.readProductsByCategory); 
+
 
 //ADMIN ONLY (BackOffice)
 productRouter.post(
@@ -26,23 +29,28 @@ productRouter.post(
   productController.createNewProduct,
 );
 productRouter.put(
-  "/:id",
-  tokenVerification,
-  adminVerification(ADMIN_ROLE),
-  productController.updateNewProduct,
-);
-productRouter.put(
   "/restore/:id",
   tokenVerification,
   adminVerification(ADMIN_ROLE),
   productController.restoreOldProduct,
 ); //recuperar producto eliminad (soft delete)
+productRouter.put(
+  "/:id",
+  tokenVerification,
+  adminVerification(ADMIN_ROLE),
+  productController.updateNewProduct,
+);
 productRouter.delete(
   "/:id",
   tokenVerification,
   adminVerification(ADMIN_ROLE),
   productController.deleteNewProduct,
 ); //usa soft delete (is_active = true -> is_active = false)
+
+
+// Rutas generales para revisar productos (inventario) público?
+productRouter.get("/:id", productController.readProductsById);
+productRouter.get("/", productController.readAllProducts);
 
 
 export default productRouter;

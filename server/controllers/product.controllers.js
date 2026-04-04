@@ -148,7 +148,95 @@ const restoreOldProduct = async (req, res) => {
   }
 };
 
+//////////// CATEGORÌAS
+//(PUBLIC)
+const readAllCategories = async (req, res) => {
+  try {
+    const result = await productModel.findAllCategories();
+
+    if (!result) {
+      return res.status(404).json({ message: "No Categories Found" });
+    }
+
+    return res.status(200).json(result);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+////(CLIENTS + ADMIN )
+
+const readCategoriesById = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const result = await productModel.findCategoriesById(id);
+
+    if (!result) {
+      return res.status(404).json({ message: "No Product Found" });
+    }
+
+    return res.status(200).json(result);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+////(ADMIN ONLY)
+const createNewCategory = async (req, res) => {
+  const { category_description } = req.body;
+  try {
+    const newCategory = await productModel.createCategory(category_description);
+    if (!newCategory) {
+      return res.status(404).json({ message: "No Product Created " });
+    }
+
+    return res.status(201).json(newCategory);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+const updateNewCategory = async (req, res) => {
+  const { id } = req.params;
+  const { category_description } = req.body;
+  try {
+    const result = await productModel.updateCategory(id, category_description);
+
+    if (!result) {
+      return res.status(404).json({ message: "No Product Updated " });
+    }
+
+    return res
+      .status(200)
+      .json({ message: "Producto modificado de manera exitosa" });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+const deleteNewCategory = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const result = await productModel.deleteCategory(id);
+
+    if (!result) {
+      return res
+        .status(404)
+        .json({ message: "Categoría no encontrada o Id inválido" });
+    }
+
+    return res.status(200).json({ message: "Categoría eliminada con éxito" });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
 const productController = {
+  ////PRODUCTS
   readAllProducts,
   readAllProductsFiltered,
   readProductsByCategory,
@@ -157,6 +245,13 @@ const productController = {
   updateNewProduct,
   restoreOldProduct,
   deleteNewProduct,
+
+  ////CATEGORÌAS DE PRODUCTO
+  readAllCategories,
+  readCategoriesById,
+  createNewCategory,
+  updateNewCategory,
+  deleteNewCategory,
 };
 
 export default productController;

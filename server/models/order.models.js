@@ -152,18 +152,17 @@ const createOrders = async (id) => {
 };
 
 //Editar Compra  /////////////////REVISAR!!!!!
-const updateOrder = async (id) => {
+const updateOrder = async (id, orderToUpdate) => {
+  let {total, is_paid, is_shipped} = orderToUpdate
   const updated_at = new Date();
   const query =
-    "UPDATE product SET total = COALESCE($1, total), is_paid = COALESCE($2, is_paid), is_shipped = COALESCE($3, is_shipped), created_at = COALESCE($4,created_at), updated_at = COALESCE($5,updated_at) WHERE order_id = $6 AND customer_id = $7 RETURNING *";
+    "UPDATE order_total SET total = COALESCE($1, total), is_paid = COALESCE($2, is_paid), is_shipped = COALESCE($3, is_shipped), updated_at = $4 WHERE order_total_id = $5 RETURNING *";
   const values = [
     total,
     is_paid,
     is_shipped,
-    created_at,
     updated_at,
-    order_id,
-    customer_id,
+    id, //order_total_id
   ];
   const { rows } = await pool.query(query, values);
   return rows[0];
