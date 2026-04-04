@@ -10,6 +10,7 @@ import customerRouter from "./routes/customer.routes.js";
 //import { getDbConnection } from "./db/db.js";
 //import { getDbConnectionNeon } from './db/db_neon.js' //DB online
 import { getDbConnectionSwitch } from "./db/dbSwitch.js";
+import categoryRouter from "./routes/categories.routes.js";
 
 const apiRouter = express.Router() //- -> para aplicar en la implementación de BD NEON.
 dotenv.config();
@@ -28,6 +29,7 @@ apiRouter.use("/order", orderRouter);
 apiRouter.use("/products", productRouter);
 apiRouter.use("/review", reviewRouter);
 apiRouter.use("/customer", customerRouter);
+apiRouter.use("/categories", categoryRouter);
 
 
 //main Router
