@@ -91,7 +91,7 @@ const ProductProvider = ({ children }) => {
         // 🚩 CAMBIO AQUÍ: Debe ser POST y enviar el objeto que espera tu controlador
         // Creamos el objeto exactamente como el backend lo necesita
         const res = await axios.post(
-          "${baseURL}/api/customer/favorites",
+          `${baseURL}/api/customer/favorites`,
           {
             favProduct: {
               id_product: product.product_id, // Cambiamos product_id por id_product

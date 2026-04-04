@@ -9,11 +9,24 @@ const ADMIN_ROLE = process.env.ADMIN_ROLE;
 
 const productRouter = Router();
 
-//Para tood público
-//Ruta específica para redirigir a categorías
-productRouter.get("/category/:id", productController.readProductsByCategory); //implementar para ver productos por categoría
+
+//CATEGORIAS
+//Mostrar categorías existentes:
+productRouter.get("/categories", productController.readAllCategories); //implementar para ver productos por categoría
+productRouter.get("/categories/:id", productController.readCategoriesById); //implementar para ver productos por categoría
+productRouter.post("/categories", tokenVerification, adminVerification(ADMIN_ROLE), productController.createNewCategory); //implementar para ver productos por categoría
+productRouter.put("/categories/:id", tokenVerification, adminVerification(ADMIN_ROLE), productController.updateNewCategory); //implementar para ver productos por categoría
+productRouter.delete("/categories/:id", productController.deleteNewCategory); //implementar para ver productos por categoría
+
+
+
+//PRODUCTOS
+//Para todo público
+//Ruta específica para redirigir a categorías y ver sus productos.
+productRouter.get("/category/:id", productController.readProductsByCategory); 
 //Ruta para filtrar todos los productos por precio, categoría, relevancia**, stock, etc...
 productRouter.get("/filter", productController.readAllProductsFiltered);
+
 // Rutas generales para revisar productos (inventario) público?
 productRouter.get("/:id", productController.readProductsById);
 productRouter.get("/", productController.readAllProducts);

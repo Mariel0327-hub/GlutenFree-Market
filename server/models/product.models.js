@@ -2,16 +2,22 @@ import { uuidv7 } from "uuidv7";
 import { pool } from "../db/dbSwitch.js";
 import format from "pg-format";
 
-//ver todos los productos (Se podría implementar un filtro para omitir productos no activos)
+//ver todos los productos
 const findAllProducts = async () => {
-  const query = "SELECT * FROM product";
+  const query = "SELECT * FROM product WHERE is_active = true";
   const { rows } = await pool.query(query);
   return rows;
 };
 
-//ver todos los productos (paginacion a implementar)
+//ver todos los productos (paginacion para implementar en una versión posterior)
 const findAllProductsFiltered = async ({ limit = 10, order_by }) => {
-  const [campo, dir] = order_by.split("_");
+  const FIELD_PRODUCT_ALIAS = {
+    productid: "product_id",
+    idcustomer: "id_customer",
+  };
+
+  const [alias, dir] = order_by.split("_");
+  const campo = FIELD_PRODUCT_ALIAS[alias] || alias;
   const queryFormat = format(
     "SELECT * FROM product ORDER BY %s %s LIMIT %s",
     campo,
@@ -24,7 +30,8 @@ const findAllProductsFiltered = async ({ limit = 10, order_by }) => {
 
 //Ver productos según categoria (secciones de productos)
 const findProductByCategory = async (id) => {
-  const query = "SELECT * FROM product where category = $1";
+  const query =
+    "SELECT p.*, c.category_description FROM product p JOIN categories c ON p.category = c.category_id where p.category = $1";
   const { rows } = await pool.query(query, [id]);
   return rows;
 };
@@ -46,7 +53,6 @@ const createProduct = async ({
   sku,
   category,
 }) => {
-
   const productIdBody = uuidv7();
   const product_id = `prod-${productIdBody}`;
 
@@ -115,7 +121,49 @@ const restoreProduct = async (id) => {
   return rows;
 };
 
+//////////// CATEGORÌAS
+//(PUBLIC)
+const findAllCategories = async () => {
+  const query = "SELECT * FROM categories";
+  const { rows } = await pool.query(query);
+  return rows;
+};
+
+////(clients  + ADMIN ) ?
+const findCategoriesById = async (id) => {
+  const query = "SELECT * FROM categories WHERE category_id = $1";
+  const { rows } = await pool.query(query, [id]);
+  return rows[0];
+};
+
+////(ADMIN ONLY)
+const createCategory = async (category_description) => {
+  const categoryIdBody = uuidv7();
+  const categoryId = `cat-${categoryIdBody}`;
+
+  const values = [categoryId, category_description];
+  const query =
+    "INSERT INTO categories (category_id, category_description) VALUES( $1, $2) RETURNING *";
+  const { rows: rowsCategory } = await pool.query(query, values);
+  return rowsCategory[0];
+};
+
+const updateCategory = async (id, category_description) => {
+  const query =
+    "UPDATE categories SET category_description = COALESCE($1, category_description) WHERE category_id = $2 RETURNING *";
+  const { rows: rowsCategory } = await pool.query(query, [category_description, id]);
+  return rowsCategory[0];
+};
+
+const deleteCategory = async (id) => {;
+  const query = "DELETE FROM categories WHERE category_id = $1 RETURNING *";
+  const { rows } = await pool.query(query, [id]);
+  return rows[0];
+}
+
+
 const productModel = {
+  //PRODCUTOS
   findAllProducts,
   findAllProductsFiltered,
   findProductByCategory,
@@ -124,6 +172,13 @@ const productModel = {
   updateProduct,
   restoreProduct,
   deleteProduct,
+
+  //CATEGORÌAS DE PRODUCTOS
+  findAllCategories,
+  findCategoriesById,
+  createCategory,
+  updateCategory,
+  deleteCategory,
 };
 
 export default productModel;
