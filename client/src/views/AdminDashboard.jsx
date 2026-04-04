@@ -15,6 +15,7 @@ import Swal from "sweetalert2";
 //import { productsData } from "../data/products";
 import axios from "axios";
 import { UserContext } from "../context/UserContext";
+import { baseURL } from "../utils/baseUrl.js";
 
 const AdminDashboard = () => {
   const [orders, setOrders] = useState([]);
@@ -48,12 +49,9 @@ const AdminDashboard = () => {
     const config = { headers: { Authorization: `Bearer ${token}` } };
 
     try {
-      const res = await axios.get(
-        `http://localhost:3000/api/products`,
-        config,
-      );
-      console.log(products)
-      console.log("Esto es : " , res)
+      const res = await axios.get(`${baseURL}/api/products`, config);
+      console.log(products);
+      console.log("Esto es : ", res);
       console.log("DATOS FRESCOS:", res.data);
       setProducts([...res.data]);
     } catch (e) {
@@ -61,9 +59,9 @@ const AdminDashboard = () => {
     }
 
     try {
-      const res = await axios.get("http://localhost:3000/api/order", config);
-      //console.log("El cliente es:", res.data[1].id_customer);
-      // console.table(res.data, ["order_total_id", "id_customer", "total"]);
+      const res = await axios.get(`${baseURL}/api/order`, config);
+      console.log("El cliente es:", res.data[1].id_customer);
+      console.table(res.data, ["order_total_id", "id_customer", "total"]);
       setOrders(res.data);
     } catch (e) {
       console.error("Error órdenes:", e);
@@ -86,7 +84,7 @@ const AdminDashboard = () => {
     });
     try {
       const config = { headers: { Authorization: `Bearer ${token}` } };
-      const url = "http://localhost:3000/api/products";
+      const url = `${baseURL}/api/products`;
 
       const payload = {
         title: newProd.title,
@@ -146,7 +144,7 @@ const AdminDashboard = () => {
     if (result.isConfirmed) {
       try {
         const config = { headers: { Authorization: `Bearer ${token}` } };
-        await axios.delete(`http://localhost:3000/api/products/${id}`, config);
+        await axios.delete(`${baseURL}/api/products/${id}`, config);
         cargarDatosDesdeBD();
         Swal.fire(
           "Eliminado",
@@ -163,13 +161,25 @@ const AdminDashboard = () => {
     setShow(false);
     setEditingOrder(null);
   };
+
+  /// Se agregó let status y se definieron casos de pago
   const handleShow = (order) => {
+    if (!order) {
+      setEditingOrder({ id_customer: "", total: 0, status: "Pendiente" });
+      setShow(true);
+      return;
+    }
+    let status;
+    if (order.is_shipped) status = "Enviado";
+    else if (order.is_paid) status = "Pagado";
+    else status = "Pendiente";
     setEditingOrder({
       ...order,
-      status: order.is_paid ? "Pagado" : "Pendiente",
+      status,
     });
     setShow(true);
   };
+  //////////////////////////////////
 
   const deleteOrder = async (id) => {
     const confirm = await Swal.fire({
@@ -184,7 +194,7 @@ const AdminDashboard = () => {
       try {
         const config = { headers: { Authorization: `Bearer ${token}` } };
 
-        await axios.delete(`http://localhost:3000/api/order/${id}`, config);
+        await axios.delete(`${baseURL}/api/order/${id}`, config);
         Swal.fire("Eliminado", "El pedido ha sido borrado", "success");
         cargarDatosDesdeBD();
       } catch (error) {
@@ -199,14 +209,13 @@ const AdminDashboard = () => {
 
     try {
       const config = { headers: { Authorization: `Bearer ${token}` } };
-      const url = "http://localhost:3000/api/order";
+      const url = `${baseURL}/api/order`;
 
       const payload = {
-        total: editingOrder.total,
-        is_paid: editingOrder.is_paid,
-        is_shipped: editingOrder.is_shipped || false,
-        id_customer: editingOrder.id_customer,
-        created_at: editingOrder.created_at,
+        total: Number(editingOrder.total),
+        is_paid:
+          editingOrder.status === "Pagado" || editingOrder.status === "Enviado",
+        is_shipped: editingOrder.status === "Enviado",
       };
 
       if (editingOrder.order_total_id) {
@@ -291,11 +300,21 @@ const AdminDashboard = () => {
                   <td>
                     <Badge
                       pill
-                      bg={order.status === "Enviado" ? "success" : "warning"}
+                      bg={
+                        order.is_shipped
+                          ? "success"
+                          : order.is_paid
+                            ? "primary"
+                            : "warning"
+                      }
                       className="px-3 py-2"
                       style={{ fontSize: "0.85rem", fontWeight: "500" }}
                     >
-                      {order.status === "Enviado" ? "● Enviado" : "○ Pendiente"}
+                      {order.is_shipped
+                        ? "● Enviado"
+                        : order.is_paid
+                          ? "● Pagado"
+                          : "○ Pendiente"}
                     </Badge>
                   </td>
                   <td>
@@ -334,7 +353,7 @@ const AdminDashboard = () => {
         <Col md={4}>
           <div className="dashboard-card text-center border-start border-warning border-5">
             <h6 className="text-muted">Pendientes</h6>
-            <h3>{orders.filter((o) => o.status === "Pendiente").length}</h3>
+            <h3>{orders.filter((o) => o.is_paid && !o.is_shipped).length}</h3>
           </div>
         </Col>
         <Col md={4}>
@@ -384,7 +403,10 @@ const AdminDashboard = () => {
                 type="number"
                 value={editingOrder?.total || ""}
                 onChange={(e) =>
-                  setEditingOrder({ ...editingOrder, total: e.target.value })
+                  setEditingOrder({
+                    ...editingOrder,
+                    total: Number(e.target.value),
+                  })
                 }
               />
             </Form.Group>
@@ -398,6 +420,7 @@ const AdminDashboard = () => {
                 }
               >
                 <option value="Pendiente">Pendiente</option>
+                <option value="Pagado">Pagado</option>
                 <option value="Enviado">Enviado</option>
                 <option value="Cancelado">Cancelado</option>
               </Form.Select>
