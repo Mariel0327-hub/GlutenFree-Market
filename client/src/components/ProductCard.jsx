@@ -12,7 +12,7 @@ import { ReviewContext } from "../context/ReviewContext";
 
 const ProductCard = ({ product }) => {
   const { favorites, toggleFavorite } = useContext(ProductContext);
-  const isFav = favorites.some((fav) => fav.product_id === product.product_id);
+  const isFav = favorites.some((fav) => fav.id_product === product.product_id);
   const { token } = useContext(UserContext);
   const { addToCart } = useContext(CartContext);
   const navigate = useNavigate();

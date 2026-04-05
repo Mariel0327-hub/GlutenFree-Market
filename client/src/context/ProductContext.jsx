@@ -35,8 +35,12 @@ const ProductProvider = ({ children }) => {
   const filteredProducts = products
     .filter((p) => {
       // Normalizamos ambos para comparar "panaderia" con "panaderia"
-      const categoryProduct = normalize(p.category || "");
+      const categoryProduct = normalize(p.id_category || "");
       const categoryFilter = normalize(filters.category);
+
+      console.log("categories:", categories);
+console.log("sample product id_category:", products[0]?.id_category);
+console.log("filters.category:", filters.category);
 
       return categoryFilter === "all" || categoryProduct === categoryFilter;
     })
@@ -66,14 +70,14 @@ const ProductProvider = ({ children }) => {
 
   // Función para agregar/quitar favoritos
   const toggleFavorite = async (product) => {
-    const isFav = favorites.some((f) => f.product_id === product.product_id);
+    const isFav = favorites.some((f) => f.id_product === product.product_id);
     const config = { headers: { Authorization: `Bearer ${token}` } };
 
     try {
       if (isFav) {
         // Buscamos el favorito que queremos borrar para obtener su ID real de la tabla
         const favoriteToDelete = favorites.find(
-          (f) => f.product_id === product.product_id,
+          (f) => f.id_product === product.product_id,
         );
 
         if (favoriteToDelete && favoriteToDelete.favorites_id) {
@@ -83,7 +87,7 @@ const ProductProvider = ({ children }) => {
           );
           // Actualizamos estado local
           setFavorites(
-            favorites.filter((f) => f.product_id !== product.product_id),
+            favorites.filter((f) => f.id_product !== product.product_id),
           );
         }
       } else {
@@ -98,7 +102,7 @@ const ProductProvider = ({ children }) => {
         );
 
         // Guardamos en local combinando la info
-        const newFav = { ...product, favorites_id: res.data[0].favorites_id };
+        const newFav = { ...product, favorites_id: res.data[0].favorites_id, id_product: product.product_id };
         setFavorites([...favorites, newFav]);
       }
     } catch (error) {
