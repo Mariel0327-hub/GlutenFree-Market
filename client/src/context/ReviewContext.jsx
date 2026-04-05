@@ -79,14 +79,15 @@ export const ReviewProvider = ({ children }) => {
     };
     loadReviews();
   }, []);
-
-  const deleteReview = async (reviewId, token) => {
+  // La misma solución del deleteReview
+  const deleteReview = async (reviewId) => {
     console.log("Intentando eliminar la reseña con ID:", reviewId);
-
+     //En vez de colocarlo como arugmento se coloca directo (CAMBIO)
+    const token = localStorage.getItem("token");
     try {
       const config = { headers: { Authorization: `Bearer ${token}` } };
       const res = await axios.delete(
-        `${baseURL}/api/review${reviewId}`,
+        `${baseURL}/api/review/${reviewId}`,
         config,
       );
 
@@ -102,12 +103,17 @@ export const ReviewProvider = ({ children }) => {
       return { success: false };
     }
   };
-  const updateReview = async (reviewId, updatedData, token) => {
+
+  //ORIGINAL: /const updateReview = async (reviewId, updatedData, token)/
+  const updateReview = async (reviewId, updatedData) => {
+  //En vez de colocarlo como arugmento se coloca directo (CAMBIO)
+    const token = localStorage.getItem("token");
+
     try {
       const config = { headers: { Authorization: `Bearer ${token}` } };
 
       const res = await axios.put(
-        `${baseURL}/api/reviewreviews/${reviewId}`,
+        `${baseURL}/api/review/${reviewId}`,
         updatedData,
         config,
       );
