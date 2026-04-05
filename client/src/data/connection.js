@@ -2,7 +2,7 @@ import axios from "axios";
 import { baseURL } from "../utils/baseUrl.js";
 
 // 1. Agregamos el /api a la URL base
-const API_URL = `${baseURL}/api`;
+ const API_URL = `${baseURL}/api`;
 
 // obtenemos los productos
 export const getProductsDB = async () => {

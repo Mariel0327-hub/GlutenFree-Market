@@ -15,7 +15,7 @@ import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 
 export default function MyReviews() {
-  const { myReviews, deleteReview, updateReview, token } =
+  const { myReviews, deleteReview, updateReview } =
     useContext(ReviewContext);
   const { products } = useContext(ProductContext); // Consumimos productos
   const navigate = useNavigate();

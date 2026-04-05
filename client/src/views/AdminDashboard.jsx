@@ -15,6 +15,7 @@ import Swal from "sweetalert2";
 //import { productsData } from "../data/products";
 import axios from "axios";
 import { UserContext } from "../context/UserContext";
+import { baseURL } from "../utils/baseUrl";
 
 const AdminDashboard = () => {
   const [orders, setOrders] = useState([]);
@@ -27,7 +28,7 @@ const AdminDashboard = () => {
   });
   const [searchTerm, setSearchTerm] = useState("");
   const [showProdModal, setShowProdModal] = useState(false);
-  const { token, user } = useContext(UserContext);
+  const { token } = useContext(UserContext);
 
   const [newProd, setNewProd] = useState({
     product_id: "",
@@ -43,27 +44,27 @@ const AdminDashboard = () => {
   const filteredOrders = orders.filter((o) =>
     (o.id_customer || "").toLowerCase().includes(searchTerm.toLowerCase()),
   );
+
   const cargarDatosDesdeBD = async () => {
     if (!token) return;
-    const config = { headers: { Authorization: `Bearer ${token}` } };
 
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
     try {
-      const res = await axios.get(
-        `http://localhost:3000/api/products`,
-        config,
-      );
-      console.log(products)
-      console.log("Esto es : " , res)
-      console.log("DATOS FRESCOS:", res.data);
+      const res = await axios.get(`${baseURL}/api/products`, config);
+      //console.log(products);
+      //console.log("Esto es : ", res);
+      //console.log("DATOS FRESCOS:", res.data);
       setProducts([...res.data]);
     } catch (e) {
       console.error("Error productos:", e);
     }
 
     try {
-      const res = await axios.get("http://localhost:3000/api/order", config);
-      //console.log("El cliente es:", res.data[1].id_customer);
-      // console.table(res.data, ["order_total_id", "id_customer", "total"]);
+      const res = await axios.get(`${baseURL}/api/order`, config);
       setOrders(res.data);
     } catch (e) {
       console.error("Error órdenes:", e);
@@ -77,28 +78,23 @@ const AdminDashboard = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
 
-  const saveProduct = async () => {
-    console.log("ID que se enviará:", newProd.product_id);
-    console.log("Payload que se enviará:", {
-      title: newProd.title,
-      stock: Number(newProd.stock),
-      sku: newProd.sku, // Prueba quitando el Number() si el SKU tiene letras
-    });
+  {
+    /* const saveProduct = async () => {
+    //console.log("ID que se enviará:", newProd.product_id);;
     try {
       const config = { headers: { Authorization: `Bearer ${token}` } };
-      const url = "http://localhost:3000/api/products";
+      const url = `${baseURL}/api/products`;
 
       const payload = {
         title: newProd.title,
         product_description: newProd.product_description,
         price: Number(newProd.price),
         image_url: newProd.image_url,
-        stock: Number(newProd.stock),
+        //stock: Number(newProd.stock),
         category: newProd.category,
-        sku: Number(newProd.sku),
+        sku: newProd.sku,
         is_active: newProd.is_active,
       };
-
       if (newProd.product_id) {
         const res = await axios.put(
           `${url}/${newProd.product_id}`,
@@ -122,39 +118,123 @@ const AdminDashboard = () => {
         product_description: "",
         price: 0,
         image_url: "",
-        stock: 0,
+        //stock: 0,
         category: "Sin categoría",
-        sku: 0,
+        sku: "",
         is_active: true,
       });
-
       Swal.fire("Éxito", "Producto sincronizado con Neon", "success");
     } catch (error) {
       console.error(error);
       Swal.fire("Error", "No se pudo guardar en la base de datos", "error");
     }
+  };*/
+  }
+
+  const addProduct = async () => {
+    try {
+      const config = { headers: { Authorization: `Bearer ${token}` } };
+
+      const payload = {
+        title: newProd.title,
+        product_description: newProd.product_description,
+        price: Number(newProd.price),
+        image_url: newProd.image_url,
+        category: newProd.category, // Asegúrate que sea el ID de la categoría
+        sku: newProd.sku, // Enviado como String "SKU-003"
+        stock: 0, // Stock inicial obligatorio para el INSERT
+        is_active: true,
+      };
+
+      await axios.post(`${baseURL}/api/products`, payload, config);
+
+      await finalizarOperacion("Producto creado con éxito");
+    } catch (error) {
+      manejarError(error, "crear");
+    }
   };
 
+  const updateProduct = async () => {
+    try {
+      const config = { headers: { Authorization: `Bearer ${token}` } };
+
+      const payload = {
+        title: newProd.title,
+        product_description: newProd.product_description,
+        price: Number(newProd.price),
+        image_url: newProd.image_url,
+        category: newProd.category,
+        sku: newProd.sku,
+        is_active: newProd.is_active,
+      };
+
+      await axios.put(
+        `${baseURL}/api/products/${newProd.product_id}`,
+        payload,
+        config,
+      );
+
+      await finalizarOperacion("Producto actualizado correctamente");
+    } catch (error) {
+      manejarError(error, "actualizar");
+    }
+  };
+
+  const finalizarOperacion = async (mensaje) => {
+    await cargarDatosDesdeBD();
+    setShowProdModal(false);
+    resetForm();
+    Swal.fire("Éxito", mensaje, "success");
+  };
+
+  const resetForm = () => {
+    setNewProd({
+      product_id: "",
+      title: "",
+      product_description: "",
+      price: 0,
+      image_url: "",
+      stock: 0,
+      category: "",
+      sku: "",
+      is_active: true,
+    });
+  };
+
+  const manejarError = (error, accion) => {
+    console.error(`Error al ${accion}:`, error.response?.data || error.message);
+    Swal.fire(
+      "Error",
+      `No se pudo ${accion} el producto. Revisa la consola.`,
+      "error",
+    );
+  };
   const deleteProduct = async (id) => {
     const result = await Swal.fire({
-      title: "¿Eliminar permanentemente?",
+      title: "¿Desactivar producto?",
+      text: "El producto ya no será visible en la tienda, pero se mantendrá en el historial.",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonText: "Sí, borrar de Neon",
+      confirmButtonText: "Sí, desactivar",
+      confirmButtonColor: "#d33",
     });
 
     if (result.isConfirmed) {
       try {
         const config = { headers: { Authorization: `Bearer ${token}` } };
-        await axios.delete(`http://localhost:3000/api/products/${id}`, config);
-        cargarDatosDesdeBD();
+        // IMPORTANTE: Tu ruta en el backend debe aceptar el método DELETE
+        // aunque por dentro haga un UPDATE.
+        await axios.delete(`${baseURL}/api/products/${id}`, config);
+
+        cargarDatosDesdeBD(); // Recarga la tabla
+
         Swal.fire(
-          "Eliminado",
-          "El producto ya no existe en la base de datos",
+          "Desactivado",
+          "El producto ha sido quitado del catálogo.",
           "success",
         );
       } catch (error) {
-        Swal.fire("Error", "No se pudo eliminar el registro", error);
+        Swal.fire("Error", "No se pudo procesar la solicitud", error);
       }
     }
   };
@@ -163,10 +243,15 @@ const AdminDashboard = () => {
     setShow(false);
     setEditingOrder(null);
   };
+
   const handleShow = (order) => {
+    let status;
+    if (order?.is_shipped) status = "Enviado";
+    else if (order?.is_paid) status = "Pagado";
+    else status = "Pendiente";
     setEditingOrder({
       ...order,
-      status: order.is_paid ? "Pagado" : "Pendiente",
+      status,
     });
     setShow(true);
   };
@@ -184,7 +269,7 @@ const AdminDashboard = () => {
       try {
         const config = { headers: { Authorization: `Bearer ${token}` } };
 
-        await axios.delete(`http://localhost:3000/api/order/${id}`, config);
+        await axios.delete(`${baseURL}/api/products/${id}`, config);
         Swal.fire("Eliminado", "El pedido ha sido borrado", "success");
         cargarDatosDesdeBD();
       } catch (error) {
@@ -192,6 +277,7 @@ const AdminDashboard = () => {
       }
     }
   };
+
   const saveOrder = async () => {
     if (!editingOrder?.id_customer) {
       return Swal.fire("Error", "El ID del Cliente es obligatorio", "error");
@@ -199,14 +285,13 @@ const AdminDashboard = () => {
 
     try {
       const config = { headers: { Authorization: `Bearer ${token}` } };
-      const url = "http://localhost:3000/api/order";
+      const url = `${baseURL}/api/order`;
 
       const payload = {
-        total: editingOrder.total,
-        is_paid: editingOrder.is_paid,
-        is_shipped: editingOrder.is_shipped || false,
-        id_customer: editingOrder.id_customer,
-        created_at: editingOrder.created_at,
+        total: Number(editingOrder.total),
+        is_paid:
+          editingOrder.status === "Pagado" || editingOrder.status === "Enviado",
+        is_shipped: editingOrder.status === "Enviado",
       };
 
       if (editingOrder.order_total_id) {
@@ -228,6 +313,7 @@ const AdminDashboard = () => {
       Swal.fire("Error", "No se pudo actualizar la base de datos", "error");
     }
   };
+
   const handleEditProduct = (prod) => {
     setNewProd({
       product_id: prod.product_id,
@@ -236,12 +322,19 @@ const AdminDashboard = () => {
       image_url: prod.image_url,
       product_description: prod.product_description,
       category: prod.category,
-      stock: prod.stock,
+      //stock: prod.stock,
       sku: prod.sku,
       is_active: prod.is_active,
     });
     setShowProdModal(true);
   };
+  const STATUS_MAP = {
+    Enviado: { bg: "success", icon: "●" },
+    Pagado: { bg: "info", icon: "✔" },
+    Pendiente: { bg: "warning", icon: "○" },
+    Cancelado: { bg: "danger", icon: "✖" },
+  };
+
   return (
     <Container className="py-5">
       <Card className="shadow-sm border-0">
@@ -275,45 +368,55 @@ const AdminDashboard = () => {
               </tr>
             </thead>
             <tbody>
-              {filteredOrders.map((order) => (
-                <tr key={order.order_total_id}>
-                  <td>#{order.order_total_id}</td>
-                  <td>{order.id_customer}</td>
+              {filteredOrders.map((order) => {
+                // Determinamos el estado actual (Lógica idéntica a tu handleShow)
+                let currentStatus = "Pendiente";
+                if (order.is_shipped) currentStatus = "Enviado";
+                else if (order.is_paid) currentStatus = "Pagado";
+                // Si en el futuro añades is_cancelled a la BD, lo pones aquí
 
-                  <td>
-                    {order.order_date
-                      ? new Date(order.order_date).toLocaleDateString()
-                      : "S/F"}
-                  </td>
+                const config =
+                  STATUS_MAP[currentStatus] || STATUS_MAP.Pendiente;
 
-                  <td>${Number(order.total).toLocaleString("es-CL")}</td>
+                return (
+                  <tr key={order.order_total_id}>
+                    <td>#{order.order_total_id}</td>
+                    <td>{order.id_customer}</td>
+                    <td>
+                      {order.order_date
+                        ? new Date(order.order_date).toLocaleDateString()
+                        : "S/F"}
+                    </td>
+                    <td>${Number(order.total).toLocaleString("es-CL")}</td>
 
-                  <td>
-                    <Badge
-                      pill
-                      bg={order.status === "Enviado" ? "success" : "warning"}
-                      className="px-3 py-2"
-                      style={{ fontSize: "0.85rem", fontWeight: "500" }}
-                    >
-                      {order.status === "Enviado" ? "● Enviado" : "○ Pendiente"}
-                    </Badge>
-                  </td>
-                  <td>
-                    <Button
-                      className="btn-action"
-                      onClick={() => handleShow(order)}
-                    >
-                      ✏️
-                    </Button>
-                    <Button
-                      className="btn-action"
-                      onClick={() => deleteOrder(order.order_total_id)}
-                    >
-                      🗑️
-                    </Button>
-                  </td>
-                </tr>
-              ))}
+                    <td>
+                      <Badge
+                        pill
+                        bg={config.bg}
+                        className="px-3 py-2"
+                        style={{ fontSize: "0.85rem", fontWeight: "500" }}
+                      >
+                        {config.icon} {currentStatus}
+                      </Badge>
+                    </td>
+
+                    <td>
+                      <Button
+                        className="btn-action"
+                        onClick={() => handleShow(order)}
+                      >
+                        ✏️
+                      </Button>
+                      <Button
+                        className="btn-action"
+                        onClick={() => deleteOrder(order.order_total_id)}
+                      >
+                        🗑️
+                      </Button>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </Table>
         </Card.Body>
@@ -355,64 +458,81 @@ const AdminDashboard = () => {
         </Button>
       </div>
 
-      <Modal show={show} onHide={handleClose}>
-        <Modal.Header closeButton>
-          <Modal.Title>
-            {editingOrder?.customer ? "Editar Pedido" : "Nuevo Pedido"}
-          </Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form>
-            <Form.Group className="mb-3">
-              <Form.Label>ID Cliente</Form.Label>
-              <Form.Control
-                type="text"
-                /* Cambia editingOrder.customer por editingOrder.id_customer */
-                value={editingOrder?.id_customer || ""}
-                onChange={(e) =>
-                  setEditingOrder({
-                    ...editingOrder,
-                    id_customer: e.target.value,
-                  })
-                }
-              />
-            </Form.Group>
+      <Modal show={showProdModal} onHide={handleCloseModal}>
+  <Modal.Header closeButton>
+    <Modal.Title>
+      {newProd.product_id ? "Editar Producto" : "Nuevo Producto"}
+    </Modal.Title>
+  </Modal.Header>
+  <Modal.Body>
+    <Form>
+      {/* --- CAMPO NOMBRE --- */}
+      <Form.Group className="mb-3">
+        <Form.Label>Nombre del Producto</Form.Label>
+        <Form.Control
+          type="text"
+          value={newProd.title || ""}
+          onChange={(e) => setNewProd({ ...newProd, title: e.target.value })}
+        />
+      </Form.Group>
 
-            <Form.Group className="mb-3">
-              <Form.Label>Total</Form.Label>
-              <Form.Control
-                type="number"
-                value={editingOrder?.total || ""}
-                onChange={(e) =>
-                  setEditingOrder({ ...editingOrder, total: e.target.value })
-                }
-              />
-            </Form.Group>
+      {/* --- CAMPO PRECIO --- */}
+      <Form.Group className="mb-3">
+        <Form.Label>Precio</Form.Label>
+        <Form.Control
+          type="number"
+          value={newProd.price || ""}
+          onChange={(e) => setNewProd({ ...newProd, price: Number(e.target.value) })}
+        />
+      </Form.Group>
 
-            <Form.Group className="mb-3">
-              <Form.Label>Estado</Form.Label>
-              <Form.Select
-                value={editingOrder?.status || "Pendiente"}
-                onChange={(e) =>
-                  setEditingOrder({ ...editingOrder, status: e.target.value })
-                }
-              >
-                <option value="Pendiente">Pendiente</option>
-                <option value="Enviado">Enviado</option>
-                <option value="Cancelado">Cancelado</option>
-              </Form.Select>
-            </Form.Group>
-          </Form>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
-            Cerrar
-          </Button>
-          <Button variant="primary" onClick={saveOrder}>
-            Guardar
-          </Button>
-        </Modal.Footer>
-      </Modal>
+      {/* --- CAMPO STOCK: Solo aparece si NO hay product_id (Es decir, en AGREGAR) --- */}
+      {!newProd.product_id && (
+        <Form.Group className="mb-3">
+          <Form.Label className="fw-bold text-primary">Stock Inicial</Form.Label>
+          <Form.Control
+            type="number"
+            placeholder="Ingrese cantidad inicial"
+            value={newProd.stock || ""}
+            onChange={(e) => setNewProd({ ...newProd, stock: Number(e.target.value) })}
+          />
+          <Form.Text className="text-muted">
+            Este valor se guardará como carga inicial en la base de datos.
+          </Form.Text>
+        </Form.Group>
+      )}
+
+      {/* --- CAMPO SKU --- */}
+      <Form.Group className="mb-3">
+        <Form.Label>SKU / Código</Form.Label>
+        <Form.Control
+          type="text"
+          value={newProd.sku || ""}
+          onChange={(e) => setNewProd({ ...newProd, sku: e.target.value })}
+        />
+      </Form.Group>
+
+      {/* --- SWITCH DE DISPONIBILIDAD --- */}
+      <Form.Check 
+        type="switch"
+        label="¿Producto disponible para la venta?"
+        checked={newProd.is_active}
+        onChange={(e) => setNewProd({ ...newProd, is_active: e.target.checked })}
+      />
+    </Form>
+  </Modal.Body>
+  <Modal.Footer>
+    <Button variant="secondary" onClick={handleCloseModal}>
+      Cancelar
+    </Button>
+    <Button 
+      variant="success" 
+      onClick={newProd.product_id ? updateProduct : addProduct}
+    >
+      {newProd.product_id ? "Actualizar Producto" : "Guardar Producto"}
+    </Button>
+  </Modal.Footer>
+</Modal>
 
       <Modal
         show={showProdModal}
@@ -468,23 +588,13 @@ const AdminDashboard = () => {
 
             {/* Stock y SKU */}
             <Row className="mb-3">
-              <Form.Group as={Col} controlId="formStock">
-                <Form.Label>Stock (Unidades)</Form.Label>
-                <Form.Control
-                  type="number"
-                  value={newProd.stock}
-                  onChange={(e) =>
-                    setNewProd({ ...newProd, stock: Number(e.target.value) })
-                  }
-                />
-              </Form.Group>
               <Form.Group as={Col} controlId="formSku">
                 <Form.Label>SKU / Código</Form.Label>
                 <Form.Control
-                  type="number"
+                  type="text"
                   value={newProd.sku}
                   onChange={(e) =>
-                    setNewProd({ ...newProd, sku: Number(e.target.value) })
+                    setNewProd({ ...newProd, sku: e.target.value })
                   }
                 />
               </Form.Group>
@@ -507,15 +617,16 @@ const AdminDashboard = () => {
           <Button variant="secondary" onClick={() => setShowProdModal(false)}>
             Cancelar
           </Button>
-          <Button variant="primary" onClick={saveProduct}>
-            Guardar Producto
+          <Button onClick={newProd.product_id ? updateProduct : addProduct}>
+            {newProd.product_id ? "Actualizar" : "Crear"} Producto
           </Button>
         </Modal.Footer>
       </Modal>
 
       <h2 className="mt-5" style={{ color: "#6c5b4b" }}>
-        🍞 Gestión de Productos
+        Gestión de Productos
       </h2>
+
       <div className="dashboard-card">
         <Table
           responsive
@@ -610,6 +721,7 @@ const AdminDashboard = () => {
           </tbody>
         </Table>
       </div>
+
       <hr className="my-5" />
     </Container>
   );

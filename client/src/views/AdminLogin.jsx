@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { UserContext } from "../context/UserContext";
+import { baseURL } from "../utils/baseUrl";
 
 const AdminLogin = () => {
   const [credentials, setCredentials] = useState({ user: "", pass: "" });
@@ -16,7 +17,7 @@ const AdminLogin = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const { data } = await axios.post('http://localhost:3000/api/auth/admin', credentials);
+      const { data } = await axios.post(`${baseURL}/api/auth/admin`, credentials);
 
       if (data.adminToken) {
         setToken(data.adminToken);
