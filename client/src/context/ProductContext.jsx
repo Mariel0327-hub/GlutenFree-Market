@@ -76,24 +76,24 @@ const ProductProvider = ({ children }) => {
 
   // Función para agregar/quitar favoritos
   const toggleFavorite = async (product) => {
-    const isFav = favorites.some((f) => f.product_id === product.product_id);
+    const isFav = favorites.some((f) => f.id_product === product.product_id);
     const config = { headers: { Authorization: `Bearer ${token}` } };
 
     try {
       if (isFav) {
         // Buscamos el favorito que queremos borrar para obtener su ID real de la tabla
         const favoriteToDelete = favorites.find(
-          (f) => f.product_id === product.product_id,
+          (f) => f.id_product === product.product_id,
         );
 
-        if (favoriteToDelete && favoriteToDelete.favoritos_id) {
+        if (favoriteToDelete && favoriteToDelete.favorites_id) {
           await axios.delete(
-            `${baseURL}/api/customer/favorites/${favoriteToDelete.favoritos_id}`,
+            `${baseURL}/api/customer/favorites/${favoriteToDelete.favorites_id}`,
             config,
           );
           // Actualizamos estado local
           setFavorites(
-            favorites.filter((f) => f.product_id !== product.product_id),
+            favorites.filter((f) => f.id_product !== product.product_id),
           );
         }
       } else {
@@ -108,7 +108,7 @@ const ProductProvider = ({ children }) => {
         );
 
         // Guardamos en local combinando la info
-        const newFav = { ...product, favoritos_id: res.data[0].favoritos_id };
+        const newFav = { ...product, favorites_id: res.data[0].favorites_id, id_product: product.product_id };
         setFavorites([...favorites, newFav]);
       }
     } catch (error) {

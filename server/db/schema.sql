@@ -1,11 +1,11 @@
 -- Active: 1769730037726@@127.0.0.1@5432@gluten_free_market
 
-/*   CREATE DATABASE gluten_free_market;
+/*  CREATE DATABASE gluten_free_market;
 
 --drop databse in case of need:
 
-DROP DATABASE gluten_free_market;  */
-
+DROP DATABASE gluten_free_market;   
+ */
 --connect to DB
 /
 --c gluten_free_market;
@@ -50,7 +50,7 @@ CREATE TABLE product (
     price INT,
     image_url VARCHAR,
     stock INT,
-    category VARCHAR REFERENCES categories (category_id),
+    id_category VARCHAR REFERENCES categories (category_id),
     sku INT,
     is_active BOOLEAN,
     created_at TIMESTAMP,
@@ -118,8 +118,8 @@ CREATE TABLE stock_mov (
 );
 
 
-CREATE TABLE favoritos (
-    favoritos_id VARCHAR PRIMARY KEY,
+CREATE TABLE favorites (
+    favorites_id VARCHAR PRIMARY KEY,
     id_customer VARCHAR REFERENCES customer (customer_id) ON DELETE CASCADE,
     id_product VARCHAR REFERENCES product (product_id),
     created_at TIMESTAMP,
@@ -199,7 +199,7 @@ INSERT INTO
         price,
         image_url,
         stock,
-        category,
+        id_category,
         sku,
         is_active,
         created_at,
@@ -535,8 +535,8 @@ VALUES (
 
 --favoritos
 INSERT INTO
-    favoritos (
-        favoritos_id,
+    favorites (
+        favorites_id,
         id_customer,
         id_product
     )
@@ -605,6 +605,6 @@ select * from review;
 
 select * from categories;
 
-select * from favoritos;
+select * from favorites;
 
 select * from type_of_movements;

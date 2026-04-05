@@ -1,6 +1,5 @@
 import customerModel from "../models/customer.models.js";
 
-
 /* 
 DE MOMENTO, CLIENTES Y FAVORITOS ESTÁN JUNTOS EN LA MEDIDA QUE HAY UNA RELACIÓN DIRECTA ENTRE AMBAS TABLAS Y LAS RTAS NO SON LO SUFICIENTEMENTE COMPLEJAS COMO PARA SEPARARLAS. PARA VERSIONES POSTERIORES, DE CRECER MÁS DE LO CONTROLABLE EN ESTA FORMA, SE SEPARARÁN LAS RUTAS EN /customers ; /favorites. 
 
@@ -61,7 +60,7 @@ const readAllFavorites = async (req, res) => {
     console.error(error);
     return res.status(500).json({ message: "Internal Server Error" });
   }
-}; 
+};
 
 const readAllFavoritesFiltered = async (req, res) => {
   const queryString = req.query;
@@ -94,19 +93,20 @@ const readFavoritesbyId = async (req, res) => {
     console.error(error);
     return res.status(500).json({ message: "Internal Server Error" });
   }
-}; 
+};
 
 //Seleccionar y almacenar un producto favorito
 const createNewFavorite = async (req, res) => {
   const { email } = req.user;
   const { favProduct } = req.body;
+
   try {
     const result = await customerModel.createFavorites(email, favProduct);
 
     if (!result) {
       return res.status(404).json({ message: "Producto no encontrado" });
     }
-
+    console.log(result);
     res.status(201).json(result);
   } catch (error) {
     console.error(error);
@@ -128,12 +128,14 @@ const deleteNewFavorite = async (req, res) => {
   try {
     const { id } = req.params;
 
-    await customerModel.deleteFavorite(id);
+    const result = await customerModel.deleteFavorite(id);
 
-    console.log(`Orden de compra ${id}, eliminada exitosamente`);
+    console.log(result);
+
+    console.log(`Seleeción favorita ${id}, eliminada exitosamente`);
     return res
       .status(200)
-      .json({ message: `Orden de compra ${id}, eliminada exitosamente` });
+      .json({ message: `Seleeción favorita ${id}, eliminada exitosamente` });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "Internal Server Error" });
