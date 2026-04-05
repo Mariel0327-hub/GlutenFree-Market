@@ -115,12 +115,17 @@ const ProductProvider = ({ children }) => {
     localStorage.setItem("user_favorites", JSON.stringify(favorites));
   }, [favorites]);
 
-  const getCategoryName = (catId) => {
-    const found = categories.find((c) => c.category_id === catId);
-    return found ? found.category_description : "Cargando...";
-  };
-  console.log("Mostrando las categorias:", categories);
+  const getCategoryName = (id) => {
+    // 1. Verificamos que las categorías existan
+    if (!categories || categories.length === 0) return "Cargando...";
 
+    // 2. Buscamos usando 'id_category' (como se ve en la consola)
+    // y lo comparamos con 'category_id' (como se ve en tu otra captura de categorías)
+    const found = categories.find((cat) => cat.category_id === id);
+
+    // 3. Devolvemos la descripción
+    return found ? found.category_description : "Sin categoría";
+  };
   return (
     <ProductContext.Provider
       value={{

@@ -16,6 +16,7 @@ import Swal from "sweetalert2";
 import axios from "axios";
 import { UserContext } from "../context/UserContext";
 import { baseURL } from "../utils/baseUrl.js";
+import ImageUploader from "../components/ImageUploader.jsx";
 
 const AdminDashboard = () => {
   const [orders, setOrders] = useState([]);
@@ -76,41 +77,28 @@ const AdminDashboard = () => {
   }, [token]);
 
   const saveProduct = async () => {
-    console.log("ID que se enviará:", newProd.product_id);
-    console.log("Payload que se enviará:", {
-      title: newProd.title,
-      stock: Number(newProd.stock),
-      sku: newProd.sku, // Prueba quitando el Number() si el SKU tiene letras
-    });
     try {
       const config = { headers: { Authorization: `Bearer ${token}` } };
       const url = `${baseURL}/api/products`;
-
       const payload = {
         title: newProd.title,
         product_description: newProd.product_description,
         price: Number(newProd.price),
         image_url: newProd.image_url,
-        stock: Number(newProd.stock),
-        category: newProd.category,
-        sku: Number(newProd.sku),
-        is_active: newProd.is_active,
+        category_id: newProd.category_id || 1,
+        sku: String(newProd.sku),
+        is_active: Boolean(newProd.is_active),
       };
+      if (!newProd.product_id) {
+        payload.stock = Number(newProd.stock);
+      }
 
       if (newProd.product_id) {
-        const res = await axios.put(
-          `${url}/${newProd.product_id}`,
-          payload,
-          config,
-        );
-        console.log("Respuesta del servidor:", res.data);
+        await axios.put(`${url}/${newProd.product_id}`, payload, config);
       } else {
+        // CREAR
         await axios.post(url, payload, config);
       }
-      setTimeout(async () => {
-        await cargarDatosDesdeBD();
-      }, 300);
-
       await cargarDatosDesdeBD();
       setShowProdModal(false);
 
@@ -121,8 +109,8 @@ const AdminDashboard = () => {
         price: 0,
         image_url: "",
         stock: 0,
-        category: "Sin categoría",
-        sku: 0,
+        category: "",
+        sku: "",
         is_active: true,
       });
 
@@ -156,12 +144,25 @@ const AdminDashboard = () => {
       }
     }
   };
+  const handleEditProduct = (prod) => {
+    setNewProd({
+      product_id: prod.product_id,
+      title: prod.title,
+      price: prod.price,
+      image_url: prod.image_url,
+      product_description: prod.product_description,
+      category: prod.category,
+      stock: prod.stock,
+      sku: prod.sku,
+      is_active: prod.is_active,
+    });
+    setShowProdModal(true);
+  };
 
   const handleClose = () => {
     setShow(false);
     setEditingOrder(null);
   };
-
   /// Se agregó let status y se definieron casos de pago
   const handleShow = (order) => {
     if (!order) {
@@ -237,20 +238,7 @@ const AdminDashboard = () => {
       Swal.fire("Error", "No se pudo actualizar la base de datos", "error");
     }
   };
-  const handleEditProduct = (prod) => {
-    setNewProd({
-      product_id: prod.product_id,
-      title: prod.title,
-      price: prod.price,
-      image_url: prod.image_url,
-      product_description: prod.product_description,
-      category: prod.category,
-      stock: prod.stock,
-      sku: prod.sku,
-      is_active: prod.is_active,
-    });
-    setShowProdModal(true);
-  };
+
   return (
     <Container className="py-5">
       <Card className="shadow-sm border-0">
@@ -345,15 +333,20 @@ const AdminDashboard = () => {
             <h3>
               $
               {orders
-                .reduce((acc, curr) => acc + curr.total, 0)
-                .toLocaleString()}
+                .reduce((acc, curr) => acc + Number(curr.total || 0), 0)
+                .toLocaleString("es-CL")}
             </h3>
           </div>
         </Col>
         <Col md={4}>
           <div className="dashboard-card text-center border-start border-warning border-5">
             <h6 className="text-muted">Pendientes</h6>
-            <h3>{orders.filter((o) => o.is_paid && !o.is_shipped).length}</h3>
+            <h3>
+              {
+                orders.filter((o) => o.is_shipped === false || !o.is_shipped)
+                  .length
+              }
+            </h3>
           </div>
         </Col>
         <Col md={4}>
@@ -449,8 +442,13 @@ const AdminDashboard = () => {
         </Modal.Header>
         <Modal.Body>
           <Form>
-            {/* Título y Precio */}
             <Row className="mb-3">
+              <ImageUploader
+                currentImage={newProd.image_url}
+                onUploadSuccess={(url) =>
+                  setNewProd({ ...newProd, image_url: url })
+                }
+              />
               <Form.Group as={Col} controlId="formTitle">
                 <Form.Label>Nombre del Producto</Form.Label>
                 <Form.Control
@@ -491,23 +489,28 @@ const AdminDashboard = () => {
 
             {/* Stock y SKU */}
             <Row className="mb-3">
-              <Form.Group as={Col} controlId="formStock">
-                <Form.Label>Stock (Unidades)</Form.Label>
-                <Form.Control
-                  type="number"
-                  value={newProd.stock}
-                  onChange={(e) =>
-                    setNewProd({ ...newProd, stock: Number(e.target.value) })
-                  }
-                />
-              </Form.Group>
+              {!newProd.product_id && (
+                <Form.Group as={Col} controlId="formStock">
+                  <Form.Label>Stock Inicial (Unidades)</Form.Label>
+                  <Form.Control
+                    type="number"
+                    placeholder="Ej: 50"
+                    value={newProd.stock}
+                    onChange={(e) =>
+                      setNewProd({ ...newProd, stock: Number(e.target.value) })
+                    }
+                  />
+                </Form.Group>
+              )}
+
               <Form.Group as={Col} controlId="formSku">
                 <Form.Label>SKU / Código</Form.Label>
                 <Form.Control
-                  type="number"
+                  type="text" // Cambiado a text por si usas letras en el SKU (ej: "GAL-001")
+                  placeholder="Ej: SKU123"
                   value={newProd.sku}
                   onChange={(e) =>
-                    setNewProd({ ...newProd, sku: Number(e.target.value) })
+                    setNewProd({ ...newProd, sku: e.target.value })
                   }
                 />
               </Form.Group>
@@ -562,19 +565,20 @@ const AdminDashboard = () => {
               <tr key={prod.product_id}>
                 <td>{prod.product_id}</td>
                 <td className="ps-4">
-                  <img
-                    src={
-                      prod.image_url ||
-                      "https://via.placeholder.com/150?text=Sin+Foto"
-                    }
-                    alt={prod.title}
-                    style={{
-                      width: "50px",
-                      height: "40px",
-                      objectFit: "cover",
-                    }}
-                    className="rounded-3 shadow-sm"
-                  />
+                  {prod.image_url ? (
+                    <img
+                      src={prod.image_url}
+                      alt={prod.title}
+                      style={{
+                        width: "50px",
+                        height: "50px",
+                        objectFit: "cover",
+                        borderRadius: "4px",
+                      }}
+                    />
+                  ) : (
+                    <span className="text-muted small">Sin imagen</span>
+                  )}
                 </td>
                 <td>
                   <div className="fw-bold text-dark">{prod.title}</div>

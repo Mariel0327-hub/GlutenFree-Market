@@ -65,7 +65,7 @@ const ProductCard = ({ product }) => {
           onError={(e) => {
             e.currentTarget.onerror = null;
             e.currentTarget.src =
-              "https://images.unsplash.com/photo-1551024601-bec78aea704b?w=400&h=300&fit=crop"; // Una imagen de postre distinta por si la otra falla
+              "https://images.unsplash.com/photo-1551024601-bec78aea704b?w=400&h=300&fit=crop";
           }}
         />
       </Link>
@@ -75,7 +75,6 @@ const ProductCard = ({ product }) => {
             {[1, 2, 3, 4, 5].map((star) => (
               <FaStar
                 key={star}
-                // Si el promedio es 3, las estrellas 4 y 5 serán grises (#e4e5e9)
                 style={{ color: star <= promedio ? "#ffc107" : "#e4e5e9" }}
                 size={16}
               />
@@ -97,7 +96,7 @@ const ProductCard = ({ product }) => {
             className="text-muted small mb-1"
             style={{ textTransform: "capitalize" }}
           >
-            {getCategoryName(product.category)}
+            {getCategoryName(product.id_category)}
           </p>
           <Card.Title className="card-title fw-bold mb-1 fs-6">
             {product.title}

@@ -109,36 +109,43 @@ const Navbar = () => {
           <div className="d-flex align-items-center justify-content-between justify-content-lg-end gap-3 pb-3 pb-lg-0">
             {token ? (
               <div className="d-flex align-items-center gap-2 gap-md-3 flex-wrap justify-content-between">
+                {/* --- INICIO ELEMENTOS SOLO PARA CLIENTES --- */}
+                {user?.role !== "admin" && (
+                  <>
+                    <NavLink
+                      to="/favoritos"
+                      className="nav-icon-link text-decoration-none d-flex align-items-center gap-1"
+                      onClick={() => setIsNavExpanded(false)}
+                    >
+                      <FaHeart className="d-xl-none text-danger" size={24} />
+                      <span className="d-none d-xl-inline small fw-bold p-1">
+                        Favoritos
+                      </span>
+                    </NavLink>
 
-                <NavLink
-                  to="/favoritos"
-                  className="nav-icon-link text-decoration-none d-flex align-items-center gap-1"
-                  onClick={() => setIsNavExpanded(false)}
-                >
-                  <FaHeart className="d-xl-none text-danger" size={24} />
-                  <span className="d-none d-xl-inline small fw-bold p-1">
-                    Favoritos
-                  </span>
-                </NavLink>
+                    <NavLink
+                      to="/mis-pedidos"
+                      className="nav-icon-link text-decoration-none d-flex align-items-center gap-1"
+                      onClick={() => setIsNavExpanded(false)}
+                    >
+                      <FaClipboardList
+                        className="d-xl-none text-dark"
+                        size={24}
+                      />
+                      <span className="d-none d-xl-inline small fw-bold">
+                        Mis pedidos
+                      </span>
+                    </NavLink>
+                  </>
+                )}
+                {/* --- FIN ELEMENTOS SOLO PARA CLIENTES --- */}
 
-                <NavLink
-                  to="/mis-pedidos"
-                  className="nav-icon-link text-decoration-none d-flex align-items-center gap-1"
-                  onClick={() => setIsNavExpanded(false)}
-                >
-                  <FaClipboardList className="d-xl-none text-dark" size={24} />
-                  <span className="d-none d-xl-inline small fw-bold">
-                    Mis pedidos
-                  </span>
-                </NavLink>
-
-                {/* Perfil / Avatar */}
+                {/* Perfil / Avatar (Visible para todos los logueados) */}
                 <NavLink
                   to="/perfil"
                   className="nav-link d-flex align-items-center gap-2 py-0"
                   onClick={() => setIsNavExpanded(false)}
                 >
-                  {/* Imagen o Iniciales */}
                   {user?.img_url_customer &&
                   !user.img_url_customer.includes("placeholder") ? (
                     <img
@@ -178,11 +185,16 @@ const Navbar = () => {
                   </div>
                 </NavLink>
 
+                {/* Panel Admin (Solo para Admin) */}
                 {user?.role === "admin" && (
-                  <Link to="/admin-panel" className="nav-link text-danger">
+                  <Link
+                    to="/admin-panel"
+                    className="nav-link text-danger fw-bold"
+                  >
                     ⚙️ Panel Admin
                   </Link>
                 )}
+
                 {/* Botón Salir */}
                 <button
                   onClick={handleLogout}
@@ -211,18 +223,21 @@ const Navbar = () => {
               </div>
             )}
 
-            <Link
-              to="/carrito"
-              className="nav-icon-link position-relative ms-2"
-              onClick={() => setIsNavExpanded(false)}
-            >
-              <FaShoppingCart size={24} />
-              {totalItems > 0 && (
-                <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill cart-badge-custom">
-                  {totalItems}
-                </span>
-              )}
-            </Link>
+            {/* Carrito: Solo visible si NO es admin */}
+            {user?.role !== "admin" && (
+              <Link
+                to="/carrito"
+                className="nav-icon-link position-relative ms-2"
+                onClick={() => setIsNavExpanded(false)}
+              >
+                <FaShoppingCart size={24} />
+                {totalItems > 0 && (
+                  <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill cart-badge-custom">
+                    {totalItems}
+                  </span>
+                )}
+              </Link>
+            )}
           </div>
         </div>
       </div>
