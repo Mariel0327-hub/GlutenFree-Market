@@ -28,7 +28,7 @@ const deleteCustomer = async (id) => {
 
 //ver favoritos  //ADMIN
  const findFavorites = async () => {
-  const query = "SELECT * FROM favoritos";
+  const query = "SELECT * FROM favorites";
   const { rows } = await pool.query(query);
   return rows;
 };
@@ -36,7 +36,7 @@ const deleteCustomer = async (id) => {
 const findFavoritesFiltered = async ({ limit = 10, order_by }) => {
   //Se crean alias para procesar las columnas (para obviar underscore)
   const FIELD_FAV_ALIAS = {
-    favoritosid : 'favoritos_id',
+    favoritesid : 'favorites_id',
     idcustomer : 'id_customer',
     idproduct: 'id_product',
     createdat : 'created_at',
@@ -46,7 +46,7 @@ const findFavoritesFiltered = async ({ limit = 10, order_by }) => {
   const [alias, dir] = order_by.split("_");
   const campo = FIELD_FAV_ALIAS[alias] || alias
   const queryFormat = format(
-    "SELECT * FROM favoritos ORDER BY %I %s LIMIT %L",
+    "SELECT * FROM favorites ORDER BY %I %s LIMIT %L",
     campo,
     dir,
     limit,
@@ -57,7 +57,7 @@ const findFavoritesFiltered = async ({ limit = 10, order_by }) => {
 
 //Ver favorito en específico  //ADMIN
 const findFavoritesById = async (id) => {
-  const query = "SELECT * FROM favoritos WHERE favoritos_id = $1";
+  const query = "SELECT * FROM favorites WHERE favorites_id = $1";
   const { rows } = await pool.query(query, [id]);
   return rows[0];
 }; 
@@ -66,7 +66,7 @@ const findFavoritesById = async (id) => {
 const createFavorites = async (email, favProduct) => {
   //dummy id
   const favIdBody = uuidv7();
-  const favoritos_id = `fav-${favIdBody}`;
+  const favorites_id = `fav-${favIdBody}`;
 
   //id_customer:
   const { rows: customerRows, rowCount } = await pool.query(
@@ -83,10 +83,10 @@ const createFavorites = async (email, favProduct) => {
 
   const created_at = new Date();
 
-  const values = [favoritos_id, id_customer, favProduct.id_product, created_at];
+  const values = [favorites_id, id_customer, favProduct.id_product, created_at];
 
   const { rows: favRows } = await pool.query(
-    "INSERT INTO favoritos (favoritos_id, id_customer, id_product) values($1, $2, $3, $4) RETURNING *",
+    "INSERT INTO favorites (favorites_id, id_customer, id_product) values($1, $2, $3, $4) RETURNING *",
     values,
   );
 
@@ -122,7 +122,7 @@ const updateFavorites = async (id) => {
 
 //Eliminar favorito
 const deleteFavorite = async (id) => {
-  const query = "DELETE FROM favoritos WHERE favoritos_id = $1";
+  const query = "DELETE FROM favorites WHERE favorites_id = $1";
   const { rows } = await pool.query(query, [id]);
   return rows[0];
 };
