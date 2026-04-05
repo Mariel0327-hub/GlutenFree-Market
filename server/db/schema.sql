@@ -1,10 +1,10 @@
 -- Active: 1769730037726@@127.0.0.1@5432@gluten_free_market
 
-/* CREATE DATABASE gluten_free_market;
+/*   CREATE DATABASE gluten_free_market;
 
 --drop databse in case of need:
 
-DROP DATABASE gluten_free_market; */
+DROP DATABASE gluten_free_market;  */
 
 --connect to DB
 /
@@ -100,7 +100,7 @@ CREATE TABLE order_total (
 CREATE TABLE order_item (
     order_item_id VARCHAR PRIMARY KEY,
     id_product VARCHAR REFERENCES product (product_id),
-    id_order_total VARCHAR REFERENCES order_total (order_total_id),
+    id_order_total VARCHAR REFERENCES order_total (order_total_id) ON DELETE CASCADE,
     unit_price INT,
     quantity INT,
     created_at TIMESTAMP,
@@ -109,7 +109,7 @@ CREATE TABLE order_item (
 
 CREATE TABLE stock_mov (
     mov_id SERIAL PRIMARY KEY,
-    id_order_item VARCHAR REFERENCES order_item (order_item_id),
+    id_order_item VARCHAR REFERENCES order_item (order_item_id) ON DELETE CASCADE,
     id_product VARCHAR REFERENCES product (product_id),
     id_type_mov VARCHAR REFERENCES type_of_movements (type_mov_id),
     quantity VARCHAR,
@@ -606,3 +606,5 @@ select * from review;
 select * from categories;
 
 select * from favoritos;
+
+select * from type_of_movements;

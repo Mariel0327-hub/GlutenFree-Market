@@ -63,7 +63,7 @@ export const UserProvider = ({ children }) => {
 
       // AGREGAMOS /api A LA RUTA
       const response = await axios.put(
-        `${baseURL}}/api/auth/alter_profile/${userId}`,
+        `${baseURL}/api/auth/alter_profile/${userId}`, // <--- /api agregado
         newData,
         {
           headers: { Authorization: `Bearer ${token}` },

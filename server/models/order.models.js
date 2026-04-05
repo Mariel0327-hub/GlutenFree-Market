@@ -86,7 +86,7 @@ const createOrders = async (id) => {
   const values = [
     order_total_id,
     id_customer,
-    total,
+    Number(total),
     order_date,
     is_paid,
     is_shipped,
@@ -153,7 +153,8 @@ const createOrders = async (id) => {
 
 //Editar Compra  /////////////////REVISAR!!!!!
 const updateOrder = async (id, orderToUpdate) => {
-  let {total, is_paid, is_shipped} = orderToUpdate
+  const {total, is_paid, is_shipped} = orderToUpdate
+  
   const updated_at = new Date();
   const query =
     "UPDATE order_total SET total = COALESCE($1, total), is_paid = COALESCE($2, is_paid), is_shipped = COALESCE($3, is_shipped), updated_at = $4 WHERE order_total_id = $5 RETURNING *";
