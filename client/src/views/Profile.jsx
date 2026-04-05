@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 //import { getInitials } from "../utils/helpers";
 import { FaCamera, FaLock, FaPhone } from "react-icons/fa";
 import axios from "axios";
-
+import ImageUploader from "../components/ImageUploader";
 
 import {
   FaEnvelope,
@@ -20,11 +20,9 @@ export default function Profile() {
   const { user, logout, updateUser, setUser } = useContext(UserContext);
   const navigate = useNavigate();
 
-
   const [isEditing, setIsEditing] = useState(false);
 
   const [formData, setFormData] = useState({ name: "", shipping_address: "" });
-
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -32,12 +30,9 @@ export default function Profile() {
         const token = localStorage.getItem("token");
         if (token) {
           // Llamamos a la ruta de perfil que tienes en el Back
-          const response = await axios.get(
-            `${baseURL}/api/auth/profile`,
-            {
-              headers: { Authorization: `Bearer ${token}` },
-            },
-          );
+          const response = await axios.get(`${baseURL}/api/auth/profile`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
           setUser(response.data);
         }
       } catch (error) {
@@ -46,17 +41,17 @@ export default function Profile() {
     };
 
     fetchUserData();
-  }, []); 
+  }, []);
 
   const handleEditClick = () => {
     if (user) {
       setFormData({
         // Mapeamos los nombres de la BD (izquierda) a tus estados del Form (derecha)
-        name: user.customer_name || "", 
+        name: user.customer_name || "",
         email: user.email || "",
         shipping_address: user.shipping_address || "",
         billing_address: user.billing_address || "",
-        profile_image: user.img_url_customer || "", 
+        profile_image: user.img_url_customer || "",
         phone: user.phone || "",
         password: "",
         customer_id: user.customer_id,
@@ -73,38 +68,30 @@ export default function Profile() {
   const handleSave = async () => {
     try {
       const cleanData = {
-        // Usamos el ID que ya tiene el usuario, no uno nuevo
         customer_id: user.customer_id,
-
-        // Mapeo de variables: React -> SQL
         customer_name: formData.name,
         email: formData.email,
         phone: formData.phone || user.phone,
 
-        // Solo enviamos la contraseña si el usuario escribió una nueva
-        customer_password:
-          formData.password && formData.password.trim() !== ""
-            ? formData.password
-            : undefined,
+        img_url_customer: formData.profile_image || user.img_url_customer,
 
         shipping_address: formData.shipping_address,
         billing_address: formData.billing_address,
 
-        // Usamos el nombre de columna de tu SQL
-        img_url_customer:
-          formData.img_url_customer||
-          user.img_url_customer ||
-          "https://via.placeholder.com/150",
+        customer_password:
+          formData.password && formData.password.trim() !== ""
+            ? formData.password
+            : undefined,
       };
-
-      console.log("Enviando actualización con estos nombres:", cleanData);
+        console.log(cleanData)
       const result = await updateUser(cleanData);
 
       if (result) {
-        // Asumiendo que updateUser devuelve el objeto actualizado o true
+        setUser({
+          ...user,
+          ...cleanData,
+        });
         setIsEditing(false);
-        setFormData((prev) => ({ ...prev, password: "" }));
-
         Swal.fire({
           icon: "success",
           title: "¡Perfil Actualizado!",
@@ -118,6 +105,13 @@ export default function Profile() {
       Swal.fire("Error", "No se pudo actualizar el perfil", "error");
     }
   };
+
+  const handleImageSuccess = (url) => {
+    setFormData((prev) => ({
+      ...prev,
+      profile_image: url, // Usamos el nombre que tienes en tu estado de edición
+    }));
+  };
   return (
     <Container className="py-5 d-flex justify-content-center">
       <Card
@@ -125,29 +119,33 @@ export default function Profile() {
         style={{ maxWidth: "550px", width: "100%" }}
       >
         <Card.Body>
-          <div
-            className="avatar-circle mx-auto mb-3 bg-dark text-white d-flex align-items-center justify-content-center overflow-hidden"
-            style={{
-              width: "100px",
-              height: "100px",
-              borderRadius: "50%",
-              fontSize: "32px",
-            }}
-          >
-            {user?.img_url_customer ? (
-              <img
-                src={user.img_url_customer}
-                alt={user.customer_name}
-                className="w-100 h-100 object-fit-cover"
+          {isEditing ? (
+            <Form.Group className="mb-4 text-center">
+              <Form.Label className="fw-bold">Foto de Perfil</Form.Label>
+              <ImageUploader
+                onUploadSuccess={handleImageSuccess}
+                currentImage={
+                  formData.img_url_customer || user.img_url_customer
+                }
               />
-            ) : (
-              (user?.customer_name || "U")
-                .split(" ")
-                .map((n) => n[0])
-                .join("")
-                .toUpperCase()
-            )}
-          </div>
+              <Form.Text className="text-muted">
+                Haz clic para subir una nueva imagen a Cloudinary.
+              </Form.Text>
+            </Form.Group>
+          ) : (
+            <div className="text-center mb-4">
+              <img
+                src={
+                  formData.profile_image ||
+                  user?.img_url_customer ||
+                  "https://via.placeholder.com/150"
+                }
+                alt="Profile"
+                className="rounded-circle img-thumbnail"
+                style={{ width: "150px", height: "150px", objectFit: "cover" }}
+              />
+            </div>
+          )}
 
           <h2 className="fw-bold mt-3 text-center" style={{ color: "#3e2723" }}>
             {isEditing ? "Editar Perfil" : "Mi Perfil"}
@@ -198,30 +196,6 @@ export default function Profile() {
                   )}
                 </div>
               </Col>
-
-              {/* Campo URL de Imagen (Solo en edición) */}
-              {isEditing && (
-                <Col xs={12} className="d-flex align-items-start gap-3 mt-3">
-                  <FaCamera className="text-muted mt-2" />
-                  <div className="flex-grow-1">
-                    <small className="d-block text-muted fw-bold text-uppercase">
-                      URL de Imagen de Perfil
-                    </small>
-                    <Form.Control
-                      type="text"
-                      placeholder="https://ejemplo.com/tu-foto.jpg"
-                      value={formData.profile_image}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          profile_image: e.target.value,
-                        })
-                      }
-                    />
-                  </div>
-                </Col>
-              )}
-
               {/* Campo Email */}
               <Col xs={12} className="d-flex align-items-start gap-3">
                 <FaEnvelope className="text-muted mt-2" />
