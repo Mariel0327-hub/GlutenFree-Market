@@ -1,7 +1,9 @@
 # Gluten Free Market
 
-[FRONTEND](https://glutenfree-market-l8mc.onrender.com/)
-[BACKEND](https://glutenfree-market.onrender.com)
+- [FRONTEND](https://glutenfree-market-l8mc.onrender.com/) : 
+Link para usar la aplicación
+- [BACKEND](https://glutenfree-market.onrender.com) : 
+Link para ver datos público
 
 * BASE DE DATOS: La base de datos PostgreSQL está alojada en NEON.
 
