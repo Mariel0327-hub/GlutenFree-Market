@@ -17,15 +17,18 @@ export default function Home() {
         <h2 className="fw-bold mb-4 text-center">Productos de Temporada</h2>
 
         <div className="row g-2 justify-content-center">
-          {" "}
-          {products.map((p) => (
-            <div
-              key={p.product_id}
-              className="col-12 col-sm-6 col-md-4 col-lg-3 d-flex justify-content-center"
-            >
-              <ProductCard product={p} />
-            </div>
-          ))}
+          {products.slice(0, 8).map(
+            (
+              p,
+            ) => (
+              <div
+                key={p.product_id}
+                className="col-12 col-sm-6 col-md-4 col-lg-3 d-flex justify-content-center"
+              >
+                <ProductCard product={p} />
+              </div>
+            ),
+          )}
         </div>
       </section>
       <Categories />
