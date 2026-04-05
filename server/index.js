@@ -38,9 +38,11 @@ app.use('/api', apiRouter)  //-> para aplicar en la implementación de BD NEON.
 app.listen(PORT, async () => {
   console.log(`Server running on http://localhost:${PORT}`);
 
-  //Elegir base de datos
+  //Elegir base de datos (pruebas)
   //await getDbConnection(); //Connect to localDB
   //await getDbConnectionNeon();   //connect to CloudDB
+
+  //Switch
   await getDbConnectionSwitch()
 });
 
