@@ -31,7 +31,7 @@ const findAllProductsFiltered = async ({ limit = 10, order_by }) => {
 //Ver productos según categoria (secciones de productos)
 const findProductByCategory = async (id) => {
   const query =
-    "SELECT p.*, c.category_description FROM product p JOIN categories c ON p.category = c.category_id where p.category = $1";
+    "SELECT p.*, c.category_description FROM product p JOIN categories c ON p.id_category = c.category_id where p.id_category = $1";
   const { rows } = await pool.query(query, [id]);
   return rows;
 };

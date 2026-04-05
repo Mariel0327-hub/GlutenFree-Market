@@ -64,7 +64,8 @@ const findFavoritesById = async (id) => {
 
 //Crear Favorito (obtener id directo del token)
 const createFavorites = async (email, favProduct) => {
-  //dummy id
+  
+  //id
   const favIdBody = uuidv7();
   const favorites_id = `fav-${favIdBody}`;
 
@@ -86,7 +87,7 @@ const createFavorites = async (email, favProduct) => {
   const values = [favorites_id, id_customer, favProduct.id_product, created_at];
 
   const { rows: favRows } = await pool.query(
-    "INSERT INTO favorites (favorites_id, id_customer, id_product) values($1, $2, $3) RETURNING *",
+    "INSERT INTO favorites (favorites_id, id_customer, id_product, created_at) values($1, $2, $3, $4) RETURNING *",
     values,
   );
 
