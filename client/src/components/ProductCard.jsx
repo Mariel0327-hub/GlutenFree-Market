@@ -46,7 +46,7 @@ const ProductCard = ({ product }) => {
     }
     toggleFavorite(product);
   };
-
+//console.log("esto es categoria", product.id_category)
   return (
     <Card className="product-card h-100 shadow-sm border-0">
       <Link
@@ -97,6 +97,7 @@ const ProductCard = ({ product }) => {
             style={{ textTransform: "capitalize" }}
           >
             {getCategoryName(product.id_category)}
+            
           </p>
           <Card.Title className="card-title fw-bold mb-1 fs-6">
             {product.title}

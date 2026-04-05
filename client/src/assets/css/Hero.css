@@ -1,44 +1,75 @@
-
 .hero-container {
-  background-image: url(../imgs/heroBg.jpg);
+  position: relative;
   background-size: cover;
   background-position: center;
-  min-height: 70vh;
-  width: 100vw;
+  min-height: 80vh; /* Para que tenga buen tamaño */
+  overflow: hidden;
   display: flex;
-  align-items: center;
-  margin-left: calc(-50vw + 50%);
-  margin-right: calc(-50vw + 50%);
-  margin-top: 0;
-  padding-top: 0;
+  align-items: center; /* Centra verticalmente */
+  justify-content: flex-start;
+  padding-top: 4rem;
+}
+
+.hero-container::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    to right,
+    rgba(0, 0, 0, 0.7) 0%,
+    rgba(0, 0, 0, 0.2) 60%,
+    transparent 100%
+  );
+  z-index: 1;
+}
+
+.hero-container .container-fluid {
+  position: relative;
+  z-index: 2;
+  padding-top: 0.5rem;
+  padding-bottom: 10px;
   
 }
 
 .hero-title {
-  font-family: var( --font-titles);
+  color: #ffffff !important;
   font-weight: 800;
-  font-size: 3.5rem; 
-  line-height: 1.2;
-  color:var(--color-titulos);
-  margin-bottom: 20px;
-  
-  opacity: 0;
-  animation: fadeSlideIn 1s ease-out forwards;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  font-size: clamp(2.5rem, 5vw, 4rem); /* Tamaño fluido */
+  margin-bottom: 1.5rem; /* Espacio extra entre el título y la descripción */
+  line-height: 1.1;
+  padding-left: 25px;
 }
 
-/* Subtítulo o Descripción (P) */
 .hero-description {
-  font-family: 'Open Sans', sans-serif; /* O tu 'body-font' */
-  font-weight: 400;
+  color: #ffffff !important;
+  font-weight: bold; /* Un blanco roto muy sutil */
   font-size: 1.1rem;
+  margin-bottom: 2.5rem; /* ✅ Aquí es donde el botón "respira" */
+  max-width: 500px; /* Acortamos el ancho para que no sea una línea tan larga */
   line-height: 1.6;
-  color: #5d4037; /* Marrón un poco más claro */
-  margin-bottom: 30px;
-  max-width: 600px; /* Evita que el texto sea muy largo y canse la vista */
-  
-  /* Retraso para que aparezca después del título */
-  opacity: 0;
-  animation: fadeSlideIn 1s ease-out 0.5s forwards;
+  padding-left: 25px;
+}
+
+/* Sobrescribe el estilo del botón en el hero */
+.hero-container .btn-warning {
+  background-color: #bb9457; /* Un amarillo más vibrante */
+  border: none;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); /* Sombra para darle profundidad */
+  padding: 0.8rem 2.5rem !important;
+  font-size: 1.1rem;
+  margin-left: 10px;
+}
+
+.hero-container .btn-warning:hover {
+  transform: translateY(-3px); /* Efecto de flotar al pasar el mouse */
+  background-color: #f39c12;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+  color: #f8f9fa;
 }
 
 /* --- Animaciones Keyframes --- */
@@ -57,6 +88,10 @@
 
 /* --- Ajuste Responsivo --- */
 @media (max-width: 768px) {
-  .hero-title { font-size: 2.5rem; }
-  .hero-description { font-size: 1rem; }
+  .hero-title {
+    font-size: 2.2rem;
+  }
+  .hero-description {
+    font-size: 1rem;
+  }
 }

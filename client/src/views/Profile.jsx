@@ -83,14 +83,16 @@ export default function Profile() {
             ? formData.password
             : undefined,
       };
-        console.log(cleanData)
+        
       const result = await updateUser(cleanData);
-
+      console.log(cleanData)
       if (result) {
         setUser({
           ...user,
           ...cleanData,
         });
+
+        console.log(setUser)
         setIsEditing(false);
         Swal.fire({
           icon: "success",

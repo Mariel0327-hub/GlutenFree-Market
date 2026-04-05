@@ -8,6 +8,7 @@ import { baseURL } from "../utils/baseUrl.js";
 export const getProductsDB = async () => {
   try {
     const token = localStorage.getItem("token");
+    
     // Usamos la constante ${API_URL} para que sea dinámico
     const response = await axios.get(`${API_URL}/products`, {
       headers: {

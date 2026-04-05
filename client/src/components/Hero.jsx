@@ -3,6 +3,7 @@ import "../assets/css/Hero.css";
 import { Link } from "react-router-dom";
 import { useContext } from "react";
 import { ProductContext } from "../context/ProductContext";
+import heroImage from '../assets/imgs/heroGLUTEN.png';
 
 export default function Hero() {
   const { setFilters } = useContext(ProductContext);
@@ -16,10 +17,10 @@ export default function Hero() {
     }));
   };
   return (
-    <div className="hero-container shadow-smd-flex align-items-center">
+    <div className="hero-container shadow-smd-flex align-items-center" style={{ backgroundImage: `url(${heroImage})` }}>
       <div className="container-fluid px-5">
         <div className="row align-items-center">
-          <div className="col-lg-6">
+          <div className="col-lg-6 mb-5">
             <h1 className="hero-title">
               Disfruta sin límites.
               <br />

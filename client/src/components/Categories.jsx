@@ -1,4 +1,3 @@
-import { categories } from "../data/categories";
 import iconPan from "../assets/imgs/pannaderia.png";
 import iconPasta from "../assets/imgs/pastas.png";
 import iconSnack from "../assets/imgs/snack.png";
@@ -16,31 +15,32 @@ import { useContext } from "react";
 import { ProductContext } from "../context/ProductContext";
 
 const categoryIcons = {
-  1: iconPan,
-  2: iconPasta,
-  3: iconSnack,
-  4: iconHarinas,
-  5: iconChocolate,
-  6: iconCafe,
-  7: iconReposteria,
-  8: iconBebidas,
-  9: iconGranos,
-  10: iconCereales,
+  "cat-panaderia": iconPan,
+  "cat-pastas": iconPasta,
+  "cat-snacks": iconSnack,
+  "cat-harinas": iconHarinas,
+  "cat-chocolate": iconChocolate,
+  "cat-cafe": iconCafe,
+  "cat-reposteria": iconReposteria,
+  "cat-bebidas": iconBebidas,
+  "cat-granos": iconGranos,
+  "cat-cereales": iconCereales,
 };
 
 const Categories = () => {
-  const { setFilters } = useContext(ProductContext);
+  const { setFilters, categories } = useContext(ProductContext); 
   const navigate = useNavigate();
 
-  const handleCategoryClick = (categorySlug) => {
+  const handleCategoryClick = (categoryId) => {
     setFilters((prev) => ({
       ...prev,
-      category: categorySlug,
-      searchTerm: "", 
+      category: categoryId,
+      searchTerm: "",
     }));
 
     navigate("/productos");
   };
+  //if (!categories || categories.length === 0) return <p>Cargando categorías...</p>;
   return (
     <section className="container my-5 text-center">
       <h2 className="mb-5 fw-bold titles-font">Categorías Populares</h2>
@@ -49,20 +49,19 @@ const Categories = () => {
         {categories.map((cat) => (
           <div key={cat.category_id} className="category-col">
             <Link
-              to={`/productos/${cat.description.toLowerCase()}`}
-              className="text-decoration-none text-dark"
-              onClick={() => handleCategoryClick(cat.description.toLowerCase())}
+              to="/productos"
+              onClick={() => handleCategoryClick(cat.category_id)} // Enviará "cat-panaderia"
             >
               <div className="category-item">
                 <div className="category-img-container shadow-sm">
                   <img
-                    src={categoryIcons[cat.category_id]}
-                    alt={cat.description}
+                    src={categoryIcons[cat.category_id]} // Buscará "cat-panaderia" en el objeto
+                    alt={cat.category_description}
                     className="category-img"
                   />
                 </div>
-                <p className="mt-3 fw-bold small text-uppercase body-font text-truncate">
-                  {cat.description}
+                <p className="mt-3 fw-bold small text-uppercase">
+                  {cat.category_description} {/* Mostrará "Panadería" */}
                 </p>
               </div>
             </Link>

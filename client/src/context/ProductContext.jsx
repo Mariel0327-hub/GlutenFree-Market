@@ -24,21 +24,24 @@ const ProductProvider = ({ children }) => {
     searchTerm: "",
     sortBy: "default",
   });
-  // 1. Función para quitar tildes y dejar en minúsculas
   const normalize = (text) =>
     text
       .toLowerCase()
       .normalize("NFD")
       .replace(/[\u0300-\u036f]/g, "");
 
-  // Lógica de filtrado dinámico
   const filteredProducts = products
     .filter((p) => {
-      // Normalizamos ambos para comparar "panaderia" con "panaderia"
-      const categoryProduct = normalize(p.category || "");
+      // 1. Normalizamos el filtro
       const categoryFilter = normalize(filters.category);
 
-      return categoryFilter === "all" || categoryProduct === categoryFilter;
+      if (categoryFilter === "all" || categoryFilter === "All") return true;
+
+      //const categoryProduct = normalize(p.id_category || "");
+
+      const categoryProduct = normalize(p.id_category || p.category || "");
+
+      return categoryProduct === categoryFilter;
     })
     .filter((p) => normalize(p.title).includes(normalize(filters.searchTerm)))
     .sort((a, b) => {
@@ -49,16 +52,23 @@ const ProductProvider = ({ children }) => {
 
   useEffect(() => {
     const fetchData = async () => {
+      setProducts([]);
       try {
+        // 1. Obtener Productos
         const data = await getProductsDB();
-        if (data && data.length > 0) {
-          setProducts(data);
-        }
+        if (data) setProducts(data);
+
+        // 2. Obtener Categorías (Ruta corregida)
         const resCat = await fetch(`${baseURL}/api/categories`);
+
+        if (!resCat.ok) throw new Error("Error en la respuesta del servidor");
+
         const dataCat = await resCat.json();
+
+        console.log("Categorías cargadas:", dataCat);
         setCategories(dataCat);
       } catch (error) {
-        console.error("Backend no disponible, usando local.", error);
+        console.error("Error cargando datos:", error);
       }
     };
     fetchData();
@@ -96,6 +106,8 @@ const ProductProvider = ({ children }) => {
           },
           config,
         );
+
+        // Guardamos en local combinando la info
         const newFav = { ...product, favoritos_id: res.data[0].favoritos_id };
         setFavorites([...favorites, newFav]);
       }
@@ -111,8 +123,14 @@ const ProductProvider = ({ children }) => {
   }, [favorites]);
 
   const getCategoryName = (id) => {
+    // 1. Verificamos que las categorías existan
     if (!categories || categories.length === 0) return "Cargando...";
+
+    // 2. Buscamos usando 'id_category' (como se ve en la consola)
+    // y lo comparamos con 'category_id' (como se ve en tu otra captura de categorías)
     const found = categories.find((cat) => cat.category_id === id);
+
+    // 3. Devolvemos la descripción
     return found ? found.category_description : "Sin categoría";
   };
   return (
@@ -129,6 +147,7 @@ const ProductProvider = ({ children }) => {
         filters,
         //fetchFavorites,
         getCategoryName,
+        categories,
       }}
     >
       {children}
