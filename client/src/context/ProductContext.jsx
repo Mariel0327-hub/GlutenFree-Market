@@ -76,9 +76,9 @@ const ProductProvider = ({ children }) => {
           (f) => f.product_id === product.product_id,
         );
 
-        if (favoriteToDelete && favoriteToDelete.favoritos_id) {
+        if (favoriteToDelete && favoriteToDelete.favorites_id) {
           await axios.delete(
-            `${baseURL}/api/customer/favorites/${favoriteToDelete.favoritos_id}`,
+            `${baseURL}/api/customer/favorites/${favoriteToDelete.favorites_id}`,
             config,
           );
           // Actualizamos estado local
@@ -101,7 +101,7 @@ const ProductProvider = ({ children }) => {
         );
 
         // Guardamos en local combinando la info
-        const newFav = { ...product, favoritos_id: res.data[0].favoritos_id };
+        const newFav = { ...product, favorites_id: res.data[0].favorites_id };
         setFavorites([...favorites, newFav]);
       }
     } catch (error) {
