@@ -130,10 +130,10 @@ const deleteNewFavorite = async (req, res) => {
 
     await customerModel.deleteFavorite(id);
 
-    console.log(`Orden de compra ${id}, eliminada exitosamente`);
+    console.log(`Seleeción favorita ${id}, eliminada exitosamente`);
     return res
       .status(200)
-      .json({ message: `Orden de compra ${id}, eliminada exitosamente` });
+      .json({ message: `Seleeción favorita ${id}, eliminada exitosamente` });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "Internal Server Error" });

@@ -86,7 +86,7 @@ const createFavorites = async (email, favProduct) => {
   const values = [favorites_id, id_customer, favProduct.id_product, created_at];
 
   const { rows: favRows } = await pool.query(
-    "INSERT INTO favorites (favorites_id, id_customer, id_product) values($1, $2, $3, $4) RETURNING *",
+    "INSERT INTO favorites (favorites_id, id_customer, id_product) values($1, $2, $3) RETURNING *",
     values,
   );
 
