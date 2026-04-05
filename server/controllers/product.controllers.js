@@ -64,8 +64,9 @@ const readProductsByCategory = async (req, res) => {
   }
 };
 
+//Se cambia category por category_id
 const createNewProduct = async (req, res) => {
-  const { title, product_description, price, image_url, stock, sku, category } =
+  const { title, product_description, price, image_url, stock, sku, category_id } =
     req.body;
   try {
     const newProduct = await productModel.createProduct({
@@ -75,7 +76,7 @@ const createNewProduct = async (req, res) => {
       image_url,
       stock,
       sku,
-      category,
+      category_id,
     });
 
     if (!newProduct) {
@@ -91,7 +92,7 @@ const createNewProduct = async (req, res) => {
 
 const updateNewProduct = async (req, res) => {
   const { id } = req.params;
-  const { title, product_description, price, image_url, sku, category } =
+  const { title, product_description, price, image_url, sku, category_id } =
     req.body;
   try {
     const result = await productModel.updateProduct({
@@ -101,7 +102,7 @@ const updateNewProduct = async (req, res) => {
       price,
       image_url,
       sku,
-      category,
+      category_id,
     });
 
     if (!result) {

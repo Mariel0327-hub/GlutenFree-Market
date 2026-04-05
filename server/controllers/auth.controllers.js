@@ -17,14 +17,12 @@ const registerUser = async (req, res) => {
   }
 };
 
-///add to routes?
+//Alterar datos de usuario
 const modifyUser = async (req, res) => {
   const { id } = req.params;
   const customer = req.body;
   try {
-    /*     const Authorization = req.header("Authorization");
-    const token = Authorization.split("Bearer")[1];
-    jwt.verify(token, `${SECRET}`); */
+    
     const result = await authModel.updateUser(id, customer);
 
     if (!result) {

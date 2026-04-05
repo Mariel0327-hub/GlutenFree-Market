@@ -44,6 +44,7 @@ const createReview = async (
     [email],
   );
 
+
   if (rowCount === 0) {
     throw { code: 404, message: "Customer not found" };
   }
@@ -70,6 +71,14 @@ const createReview = async (
     created_at,
     updated_at,
   ];
+
+  if(! review_title || !review_body || rating == null){
+    throw {code: 400, message: "Faltan campos por rellenar"}
+  }
+
+    if( rating !== "number" || rating < 1 || rating > 5 ){
+    throw {code: 400, message: "Rating debe ser un número entre 1 y 5"}
+  }
 
   const query =
     "INSERT INTO review (review_id, id_customer, id_product, about_product, review_title, review_body, rating,created_at, updated_at) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *";

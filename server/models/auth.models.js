@@ -3,7 +3,6 @@ import { pool } from "../db/dbSwitch.js";
 import { uuidv7 } from "uuidv7";
 
 //registrar usuario nuevo
-//agregar nombre (servidor http y BD)
 const addUser = async (customer) => {
   let {
     customer_name,
@@ -61,18 +60,18 @@ const updateUser = async (id, customer) => {
   const updated_at = new Date();
   const values = [
     customer_name || null,
-    email,
-    phone,
+    email || null,
+    phone || null ,
     encryptedPass,
-    shipping_address || "",
-    billing_address || "",
-    updated_at,
+    shipping_address || null,
+    billing_address || null,
     img_url_customer,
+    updated_at,
     id,
   ];
   //agregar
   const query =
-    "UPDATE customer SET customer_name = COALESCE($1, customer_name), email = COALESCE($2,email), phone = ($3, phone) customer_password = COALESCE($4,customer_password), shipping_address = COALESCE($5,shipping_address), billing_address = COALESCE($6, billing_address), COALESCE($7, img_customer_url),updated_at = ($8) WHERE customer_id = $9 RETURNING *";
+    "UPDATE customer SET customer_name = COALESCE($1, customer_name), email = COALESCE($2,email), phone = COALESCE($3, phone), customer_password = COALESCE($4,customer_password), shipping_address = COALESCE($5,shipping_address), billing_address = COALESCE($6, billing_address), img_url_customer = COALESCE($7, img_customer_url),updated_at = $8 WHERE customer_id = $9 RETURNING *";
   const { rows } = await pool.query(query, values);
   return rows[0];
 };
