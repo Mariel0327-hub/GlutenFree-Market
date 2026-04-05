@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { registerUserDB } from "../data/connection";
 import { Link } from "react-router-dom";
-
+import ImageUploader from "../components/ImageUploader";
 
 export default function Register() {
   const { setUser, setToken } = useContext(UserContext);
@@ -29,10 +29,14 @@ export default function Register() {
     setFormData({ ...formData, [name]: value });
   };
 
+  // 2. URL del uploader
+  const handleAvatarSuccess = (url) => {
+    setFormData({ ...formData, avatar_url: url });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-   
     if (formData.password !== formData.confirmPassword) {
       return Swal.fire("Error", "Las contraseñas no coinciden", "error");
     }
@@ -46,11 +50,11 @@ export default function Register() {
         formData.shipping_address || "Dirección no especificada",
       billing_address: formData.billing_address || "Dirección no especificada",
       img_url_customer:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb",
+        formData.avatar_url || "https://via.placeholder.com/150",
       created_at: new Date(),
       updated_at: new Date(),
     };
-
+    console.log(newUserForDB)
     try {
       // 3. Llamada REAL al Backend
       const data = await registerUserDB(newUserForDB);
@@ -67,6 +71,7 @@ export default function Register() {
           localStorage.setItem("user", JSON.stringify(data.user));
           localStorage.setItem("token", data.token);
         }
+        console.log(data.token)
 
         Swal.fire({
           icon: "success",
@@ -96,7 +101,6 @@ export default function Register() {
           text: "Tu cuenta se creó correctamente, pero hubo un pequeño error al iniciar sesión automáticamente. Por favor, ingresa manualmente.",
         });
 
-     
         navigate("/login");
       } else {
         Swal.fire(
@@ -123,13 +127,9 @@ export default function Register() {
           <Form className="text-start" onSubmit={handleSubmit}>
             <Form.Group className="mb-3">
               <Form.Label className="small fw-bold">Avatar URL</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="https://link-a-tu-foto.jpg"
-                value={formData.avatar_url}
-                onChange={(e) =>
-                  setFormData({ ...formData, avatar_url: e.target.value })
-                }
+              <ImageUploader
+                onUploadSuccess={handleAvatarSuccess}
+                currentImage={formData.avatar_url}
               />
             </Form.Group>
 
@@ -260,7 +260,7 @@ export default function Register() {
             <Button className="btn-social">
               <FaApple size={24} />
             </Button>
-            <Button  className="btn-social ">
+            <Button className="btn-social ">
               <FaFacebook size={24} color="#1877F2" />
             </Button>
           </div>

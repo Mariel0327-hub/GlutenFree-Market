@@ -138,9 +138,6 @@ const Navbar = () => {
                     </NavLink>
                   </>
                 )}
-                {/* --- FIN ELEMENTOS SOLO PARA CLIENTES --- */}
-
-                {/* Perfil / Avatar (Visible para todos los logueados) */}
                 <NavLink
                   to="/perfil"
                   className="nav-link d-flex align-items-center gap-2 py-0"
@@ -159,15 +156,8 @@ const Navbar = () => {
                       }}
                     />
                   ) : (
-                    <div
-                      className="icon-logo-nav rounded-circle d-flex align-items-center justify-content-center fw-bold text-white shadow-sm"
-                      style={{
-                        width: "35px",
-                        height: "35px",
-                        minWidth: "35px",
-                      }}
-                    >
-                      {getInitials(user?.name)}
+                    <div className="icon-logo-nav ...">
+                      {getInitials(user?.customer_name || user?.name)}
                     </div>
                   )}
                   <div className="text-start" style={{ lineHeight: "1" }}>

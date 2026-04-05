@@ -87,14 +87,11 @@ const ProductProvider = ({ children }) => {
           );
         }
       } else {
-        // 2. Agregar (Backend + Local)
-        // 🚩 CAMBIO AQUÍ: Debe ser POST y enviar el objeto que espera tu controlador
-        // Creamos el objeto exactamente como el backend lo necesita
         const res = await axios.post(
           `${baseURL}/api/customer/favorites`,
           {
             favProduct: {
-              id_product: product.product_id, // Cambiamos product_id por id_product
+              id_product: product.product_id,
             },
           },
           config,
@@ -116,14 +113,8 @@ const ProductProvider = ({ children }) => {
   }, [favorites]);
 
   const getCategoryName = (id) => {
-    // 1. Verificamos que las categorías existan
     if (!categories || categories.length === 0) return "Cargando...";
-
-    // 2. Buscamos usando 'id_category' (como se ve en la consola)
-    // y lo comparamos con 'category_id' (como se ve en tu otra captura de categorías)
     const found = categories.find((cat) => cat.category_id === id);
-
-    // 3. Devolvemos la descripción
     return found ? found.category_description : "Sin categoría";
   };
   return (
