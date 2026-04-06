@@ -22,6 +22,9 @@ const PORT = process.env.PORT;
 apiRouter.use(express.json());
 apiRouter.use(cors());
 
+
+
+
 //Routers
 apiRouter.use("/auth", authRouter);
 apiRouter.use("/cart", cartRouter);
@@ -32,12 +35,13 @@ apiRouter.use("/customer", customerRouter);
 apiRouter.use("/categories", categoryRouter);
 
 
-app.get('/', (req,res)=>{
-  res.send("Server Running")
-})
 
 //main Router
 app.use('/api', apiRouter)  //-> para aplicar en la implementación de BD NEON.
+
+app.get('/', (req,res)=>{
+  return res.json({message: "Server Running"})
+})
 
 app.listen(PORT, async () => {
   console.log(`Server running on http://localhost:${PORT}`);

@@ -38,12 +38,22 @@ const createReview = async (
   review_body,
   rating,
 ) => {
+
+  //Payload validation
+
+  if (!review_title || !review_body || rating == null) {
+    throw { code: 400, message: "Faltan campos por rellenar" };
+  }
+
+  if (isNaN(rating) || rating < 1 || rating > 5) {
+    throw { code: 400, message: "Rating debe ser un número entre 1 y 5" };
+  }
+
   //id_customer:
   const { rows: customerRows, rowCount } = await pool.query(
     "SELECT customer_id FROM customer WHERE email = $1",
     [email],
   );
-
 
   if (rowCount === 0) {
     throw { code: 404, message: "Customer not found" };
@@ -72,24 +82,24 @@ const createReview = async (
     updated_at,
   ];
 
-  if(! review_title || !review_body || rating == null){
-    throw {code: 400, message: "Faltan campos por rellenar"}
-  }
-
-    if( rating !== "number" || rating < 1 || rating > 5 ){
-    throw {code: 400, message: "Rating debe ser un número entre 1 y 5"}
-  }
-
   const query =
     "INSERT INTO review (review_id, id_customer, id_product, about_product, review_title, review_body, rating,created_at, updated_at) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *";
-  const { rows } = await pool.query(query, values);
-  return rows;
+  const { rows: reviewsRows, rowCount: reviewRowCount } = await pool.query(
+    query,
+    values,
+  );
+
+  if (reviewRowCount === 0) {
+    throw { code: 500, message: "No fue posible crear el review" };
+  }
+
+  return reviewsRows;
 };
 
 // modificar producto  (PUBLIC + ADMIN)
 const updateReview = async (
   id,
-  about_product,//booleando, indicador de relación review sobre producto (true = sobre producto, false = otros topicos)
+  about_product, //booleando, indicador de relación review sobre producto (true = sobre producto, false = otros topicos)
   id_product,
   review_title,
   review_body,
