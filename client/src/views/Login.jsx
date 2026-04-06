@@ -23,16 +23,12 @@ export default function Login() {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      // 1. AJUSTE CRÍTICO: Renombramos la llave para que el Back la reconozca
       const data = await loginUserDB({
         email: email,
         customer_password: password, // Aquí enviamos el estado 'password' con el nombre que pide el Back
       });
 
       if (data.token) {
-        // 2. AJUSTE DE DATOS:
-        // Como tu Backend actual NO devuelve el objeto 'user' (solo el token),
-        // creamos un objeto con lo que tenemos para que la App no falle.
         const loggedUser = data.user || {
           email: email,
           customer_name: "Usuario", // Valor temporal hasta que cargue el perfil

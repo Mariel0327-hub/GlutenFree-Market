@@ -27,12 +27,12 @@ export default function Cart() {
       return;
     }
 
-    if (token) {
-      navigate("/checkout");
-    } else {
-      navigate("/login?redirect=checkout");
-    }
-  };
+    if (!token) {
+    navigate("/login?redirect=/checkout");
+  } else {
+    navigate("/checkout");
+  }
+};
 
   return (
     <>

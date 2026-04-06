@@ -1,14 +1,22 @@
 import React, { useContext, useState, useEffect } from "react";
-import { Container, Row, Col, Card, Modal, Button, Form } from "react-bootstrap";
+import {
+  Container,
+  Row,
+  Col,
+  Card,
+  Modal,
+  Button,
+  Form,
+} from "react-bootstrap";
 import { ReviewContext } from "../context/ReviewContext";
 import { FaStar, FaQuoteLeft, FaTimes } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
-import "../assets/css/Testimonials.css"
+import "../assets/css/Testimonials.css";
 
 export default function AllTestimonials({ limit = false }) {
   // Busca estas líneas al principio de AllTestimonials y cámbialas por esta única:
-const { reviews, addReview, token } = useContext(ReviewContext);
+  const { reviews, addReview, token } = useContext(ReviewContext);
 
   // Estados para el Modal de Vista Detallada
   const [showDetail, setShowDetail] = useState(false);
@@ -26,7 +34,7 @@ const { reviews, addReview, token } = useContext(ReviewContext);
   const handlePost = async () => {
     if (!comment.trim()) return;
     const payload = {
-      id_product: null,
+      id_product: "prod-000",
       about_product: false,
       review_title: "Opinión Comunidad",
       review_body: comment,
@@ -34,7 +42,7 @@ const { reviews, addReview, token } = useContext(ReviewContext);
     };
     const result = await addReview(payload, token);
     if (result.success) {
-      setComment(""); 
+      setComment("");
       setRating(5);
       Swal.fire(
         "¡Listo!",
@@ -43,6 +51,7 @@ const { reviews, addReview, token } = useContext(ReviewContext);
       );
     }
   };
+  console.log("Enviando reseña con token:", token);
   //  filtrar/limitar reseñas
   useEffect(() => {
     if (reviews && reviews.length > 0) {

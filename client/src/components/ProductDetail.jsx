@@ -206,7 +206,6 @@ const ProductDetail = () => {
                             {[1, 2, 3, 4, 5].map((star) => (
                               <FaStar
                                 key={star}
-                                // CAMBIO AQUÍ: Usamos rev.rating para ver la nota de CADA comentario
                                 style={{
                                   color:
                                     star <= rev.rating ? "#ffc107" : "#e4e5e9",
