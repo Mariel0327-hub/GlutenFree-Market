@@ -17,28 +17,31 @@ export default function ProductFilters() {
             <Form.Label className="small fw-bold">Categoría</Form.Label>
             <Form.Select
               name="category"
+              value={filters.category}
               onChange={handleChange}
               className="rounded-pill"
             >
-              <option value="All">Todas</option>
-              <option value="Panadería">Panadería</option>
-              <option value="Pastas">Pastas</option>
-              <option value="Snacks">Snacks</option>
-              <option value="Harinas">Harinas</option>
-              <option value="Chocolate">Chocolate</option>
-              <option value="Café">Café</option>
-              <option value="Repostería">Repostería</option>
-              <option value="Bebídas">Bebídas</option>
-              <option value="Granos">Granos</option>
-              <option value="Cereales">Cereales</option>
+              <option value="all">Todas</option>
+              <option value="cat-panaderia">Panadería</option>
+              <option value="cat-pastas">Pastas</option>
+              <option value="cat-snacks">Snacks</option>
+              <option value="cat-harinas">Harinas</option>
+              <option value="cat-chocolate">Chocolate</option>
+              <option value="cat-cafe">Café</option>
+              <option value="cat-reposteria">Repostería</option>
+              <option value="cat-bebidas">Bebidas</option>
+              <option value="cat-granos">Granos</option>
+              <option value="cat-cereales">Cereales</option>
             </Form.Select>
           </Form.Group>
         </Col>
+
         <Col md={4}>
           <Form.Group>
             <Form.Label className="small fw-bold">Ordenar Por</Form.Label>
             <Form.Select
               name="sortBy"
+              value={filters.sortBy}
               onChange={handleChange}
               className="rounded-pill"
             >

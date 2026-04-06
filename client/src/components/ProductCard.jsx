@@ -12,7 +12,7 @@ import { ReviewContext } from "../context/ReviewContext";
 
 const ProductCard = ({ product }) => {
   const { favorites, toggleFavorite } = useContext(ProductContext);
-  const isFav = favorites.some((fav) => fav.id_product === product.product_id);
+  const isFav = favorites.some((fav) => fav.product_id === product.product_id);
   const { token } = useContext(UserContext);
   const { addToCart } = useContext(CartContext);
   const navigate = useNavigate();
@@ -46,7 +46,7 @@ const ProductCard = ({ product }) => {
     }
     toggleFavorite(product);
   };
-//console.log("esto es categoria", product.id_category)
+
   return (
     <Card className="product-card h-100 shadow-sm border-0">
       <Link
@@ -97,7 +97,6 @@ const ProductCard = ({ product }) => {
             style={{ textTransform: "capitalize" }}
           >
             {getCategoryName(product.id_category)}
-            
           </p>
           <Card.Title className="card-title fw-bold mb-1 fs-6">
             {product.title}
