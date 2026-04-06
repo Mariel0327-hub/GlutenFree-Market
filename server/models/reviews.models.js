@@ -45,6 +45,8 @@ const createReview = async (
     throw { code: 400, message: "Faltan campos por rellenar" };
   }
 
+  //revisar rating 
+
   if (isNaN(rating) || rating < 1 || rating > 5) {
     throw { code: 400, message: "Rating debe ser un número entre 1 y 5" };
   }

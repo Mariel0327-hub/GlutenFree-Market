@@ -71,7 +71,7 @@ const updateUser = async (id, customer) => {
   ];
   //agregar
   const query =
-    "UPDATE customer SET customer_name = COALESCE($1, customer_name), email = COALESCE($2,email), phone = COALESCE($3, phone), customer_password = COALESCE($4,customer_password), shipping_address = COALESCE($5,shipping_address), billing_address = COALESCE($6, billing_address), img_url_customer = COALESCE($7, img_customer_url),updated_at = $8 WHERE customer_id = $9 RETURNING *";
+    "UPDATE customer SET customer_name = COALESCE($1, customer_name), email = COALESCE($2,email), phone = COALESCE($3, phone), customer_password = COALESCE($4,customer_password), shipping_address = COALESCE($5,shipping_address), billing_address = COALESCE($6, billing_address), img_url_customer = COALESCE($7, img_url_customer),updated_at = $8 WHERE customer_id = $9 RETURNING *";
   const { rows } = await pool.query(query, values);
   return rows[0];
 };
