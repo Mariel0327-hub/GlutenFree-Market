@@ -32,6 +32,10 @@ apiRouter.use("/customer", customerRouter);
 apiRouter.use("/categories", categoryRouter);
 
 
+app.get('/', (req,res)=>{
+  res.send("Server Running")
+})
+
 //main Router
 app.use('/api', apiRouter)  //-> para aplicar en la implementación de BD NEON.
 
