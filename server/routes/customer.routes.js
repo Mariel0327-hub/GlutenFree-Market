@@ -58,7 +58,7 @@ customerRouter.get(
 customerRouter.get(
   "/:id",
   tokenVerification,
-  adminVerification,
+  adminVerification(ADMIN_ROLE),
   customerController.readCustomersbyId,
 );
 
@@ -66,7 +66,7 @@ customerRouter.get(
 customerRouter.delete(
   "/:id",
   tokenVerification,
-  adminVerification,
+  adminVerification(ADMIN_ROLE),
   customerController.deleteNewCustomer,
 );
 
