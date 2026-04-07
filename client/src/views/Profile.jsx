@@ -83,16 +83,18 @@ export default function Profile() {
             ? formData.password
             : undefined,
       };
-        
+      if (formData.password && formData.password.trim() !== "") {
+        cleanData.customer_password = formData.password;
+      }
       const result = await updateUser(cleanData);
-      console.log(cleanData)
+      console.log("Enviando a BD:", cleanData);
       if (result) {
-        setUser({
-          ...user,
+        setUser((prev) => ({
+          ...prev,
           ...cleanData,
-        });
+        }));
 
-        console.log(setUser)
+        //console.log(setUser);
         setIsEditing(false);
         Swal.fire({
           icon: "success",

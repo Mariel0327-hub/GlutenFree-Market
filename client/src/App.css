@@ -14,20 +14,10 @@
   --shadow-elegant: 0 10px 30px rgba(108, 91, 75, 0.08);
   --shadow-hover: 0 15px 45px rgba(108, 91, 75, 0.15);
 
-  --font-titles: 'Montserrat', sans-serif;
-  --font-body: 'Quicksand', sans-serif;
 }
 
-body {
-  background-color: var(--color-white);
-  color: var(--color-titulos);
-  font-family: var(--font-body);
-}
 
-h1, h2, h3, .card-title {
-  font-family: var(--font-titles);
-  letter-spacing: -0.5px;
-}
+
 
 .banner-divider {
   width: 100%;

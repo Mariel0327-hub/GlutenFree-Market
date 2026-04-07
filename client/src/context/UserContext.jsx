@@ -48,7 +48,6 @@ export const UserProvider = ({ children }) => {
   const logout = () => {
     setToken(null);
     setUser(null);
-    
   };
 
   const updateUser = async (newData) => {
@@ -56,10 +55,7 @@ export const UserProvider = ({ children }) => {
       const token = localStorage.getItem("token");
       const userId = user?.customer_id;
 
-      if (!userId) {
-        console.error("No se encontró customer_id");
-        return { success: false, message: "Error de identidad" };
-      }
+      if (!userId) throw new Error("No se encontró customer_id");
 
       // AGREGAMOS /api A LA RUTA
       const response = await axios.put(
@@ -71,14 +67,14 @@ export const UserProvider = ({ children }) => {
       );
 
       if (response.status === 200) {
-        const updatedUser = { ...user, ...newData };
+        const updatedUser = { ...user, ...response.data };
         setUser(updatedUser);
         localStorage.setItem("user", JSON.stringify(updatedUser));
-        return { success: true };
+        return true;
       }
     } catch (error) {
       console.error("Error en update:", error.response?.status);
-      return { success: false };
+      return false;
     }
   };
 

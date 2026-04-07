@@ -48,7 +48,7 @@ const ProductCard = ({ product }) => {
   };
 
   return (
-    <Card className="product-card h-100 shadow-sm border-0">
+    <Card className="product-card h-100  border-0">
       <Link
         to={`/producto/${product.product_id}`}
         style={{ textDecoration: "none" }}

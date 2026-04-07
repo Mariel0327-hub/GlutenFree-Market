@@ -68,7 +68,7 @@ export default function ProductosView() {
           md={1}
           lg={4}
         >
-          <Col lg={11}>
+          <Col lg={12}>
             <ProductFilters />
           </Col>
         </Row>

@@ -44,7 +44,6 @@ const Categories = () => {
       <div className="row g-4 justify-content-center category-grid">
         {categories.map((cat) => (
           <div key={cat.category_id} className="category-col">
-            {/* 1. Cambiamos el 'to' por '#' o lo manejamos todo en el onClick */}
             <div
               style={{ cursor: "pointer" }}
               onClick={() => handleCategoryClick(cat.category_id)}

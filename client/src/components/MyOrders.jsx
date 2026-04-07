@@ -14,16 +14,16 @@ import { FaEye, FaShoppingBag } from "react-icons/fa";
 import { UserContext } from "../context/UserContext";
 import axios from "axios";
 import { ReviewContext } from "../context/ReviewContext";
-import { ProductContext } from "../context/ProductContext";
-import { useNavigate } from "react-router-dom";
+//import { ProductContext } from "../context/ProductContext";
+//import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { baseURL } from "../utils/baseUrl.js";
 
 export default function MyOrders() {
   const { user, token } = useContext(UserContext);
   const { addReview } = useContext(ReviewContext);
-  const navigate = useNavigate();
-  const { products } = useContext(ProductContext);
+  //const navigate = useNavigate();
+ // const { products } = useContext(ProductContext);
 
   // --- ESTADOS ---
   const [orders, setOrders] = useState([]);
@@ -42,10 +42,7 @@ export default function MyOrders() {
   const fetchOrders = async () => {
     try {
       const config = { headers: { Authorization: `Bearer ${token}` } };
-      const res = await axios.get(
-        `${baseURL}/api/order/customer`,
-        config,
-      );
+      const res = await axios.get(`${baseURL}/api/order/customer`, config);
       setOrders(res.data);
     } catch (error) {
       console.error("Error al obtener pedidos:", error);
@@ -72,11 +69,13 @@ export default function MyOrders() {
         selectedProduct?.product_id ||
         selectedProduct?.id_product ||
         selectedProduct?.id,
+      customer_id: user?.customer_id || user?.id,
       about_product: true,
       review_title: "Reseña de producto",
       review_body: comment,
-      rating: rating,
+      rating: Number(rating),
     };
+    console.log("Datos del usuario en contexto:", user);
     console.log("Enviando este payload:", payload);
 
     const result = await addReview(payload, token);

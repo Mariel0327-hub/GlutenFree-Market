@@ -138,28 +138,36 @@ const Navbar = () => {
                     </NavLink>
                   </>
                 )}
+
+                {/* SECCIÓN DE PERFIL: Condicionamos el Avatar */}
                 <NavLink
                   to="/perfil"
                   className="nav-link d-flex align-items-center gap-2 py-0"
                   onClick={() => setIsNavExpanded(false)}
                 >
-                  {user?.img_url_customer &&
-                  !user.img_url_customer.includes("placeholder") ? (
-                    <img
-                      src={user.img_url_customer}
-                      alt="Profile"
-                      className="rounded-circle border shadow-sm"
-                      style={{
-                        width: "35px",
-                        height: "35px",
-                        objectFit: "cover",
-                      }}
-                    />
-                  ) : (
-                    <div className="icon-logo-nav ...">
-                      {getInitials(user?.customer_name || user?.name)}
-                    </div>
+                  {/* MODIFICACIÓN AQUÍ: Solo muestra la imagen/iniciales si NO es admin */}
+                  {user?.role !== "admin" && (
+                    <>
+                      {user?.img_url_customer &&
+                      !user.img_url_customer.includes("placeholder") ? (
+                        <img
+                          src={user.img_url_customer}
+                          alt="Profile"
+                          className="rounded-circle border shadow-sm"
+                          style={{
+                            width: "35px",
+                            height: "35px",
+                            objectFit: "cover",
+                          }}
+                        />
+                      ) : (
+                        <div className="icon-logo-nav">
+                          {getInitials(user?.customer_name || user?.name)}
+                        </div>
+                      )}
+                    </>
                   )}
+
                   <div className="text-start" style={{ lineHeight: "1" }}>
                     <span
                       className="d-block text-muted"
@@ -195,6 +203,7 @@ const Navbar = () => {
                 </button>
               </div>
             ) : (
+              /* ... resto del código (Login/Registro) ... */
               <div className="d-flex gap-2">
                 <Link
                   to="/login"

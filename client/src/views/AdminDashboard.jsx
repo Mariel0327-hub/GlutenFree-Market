@@ -17,11 +17,21 @@ import axios from "axios";
 import { UserContext } from "../context/UserContext";
 import { baseURL } from "../utils/baseUrl.js";
 import ImageUploader from "../components/ImageUploader.jsx";
+import { ReviewContext } from "../context/ReviewContext";
+import ReviewSummary from "../components/ReviewSummary";
+import ReviewAdminTable from "../components/ReviewAdminTable.jsx";
+import AdminStats from "../components/AdminStats.jsx";
+import AdminOrders from "../components/AdminOrders.jsx";
+import AdminProducts from "../components/AdminProducts.jsx";
+import AdminPanel from "../components/PanelAdmin.jsx";
+import AdminUsers from "../components/AdminUsers.jsx";
 
 const AdminDashboard = () => {
+  const [usersList, setUsersList] = useState([]);
   const [orders, setOrders] = useState([]);
   const [products, setProducts] = useState([]);
   const [show, setShow] = useState(false);
+  const { reviews } = useContext(ReviewContext);
   const [editingOrder, setEditingOrder] = useState({
     id_customer: "",
     total: 0,
@@ -29,7 +39,9 @@ const AdminDashboard = () => {
   });
   const [searchTerm, setSearchTerm] = useState("");
   const [showProdModal, setShowProdModal] = useState(false);
-  const { token, user } = useContext(UserContext);
+  const { token } = useContext(UserContext);
+  const [activeTab, setActiveTab] = useState("pedidos");
+  const [searchUser, setSearchUser] = useState("");
 
   const [newProd, setNewProd] = useState({
     product_id: "",
@@ -51,9 +63,7 @@ const AdminDashboard = () => {
 
     try {
       const res = await axios.get(`${baseURL}/api/products`, config);
-      console.log(products);
-      console.log("Esto es : ", res);
-      console.log("DATOS FRESCOS:", res.data);
+
       setProducts([...res.data]);
     } catch (e) {
       console.error("Error productos:", e);
@@ -61,11 +71,16 @@ const AdminDashboard = () => {
 
     try {
       const res = await axios.get(`${baseURL}/api/order`, config);
-      console.log("El cliente es:", res.data[1].id_customer);
-      console.table(res.data, ["order_total_id", "id_customer", "total"]);
       setOrders(res.data);
     } catch (e) {
       console.error("Error órdenes:", e);
+    }
+
+    try {
+      const res = await axios.get(`${baseURL}/api/customer`, config);
+      setUsersList(res.data);
+    } catch (e) {
+      console.error("Error cargando clientes:", e);
     }
   };
 
@@ -239,132 +254,114 @@ const AdminDashboard = () => {
     }
   };
 
+  const deleteUserLogic = async (customer_id) => {
+
+    if (window.confirm(`¿Eliminar cliente ${customer_id}?`)) {
+      try {
+        // 1. Petición al Backend
+        await axios.delete(`${baseURL}/api/customer/${customer_id}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        setUsersList((prev) =>
+          prev.filter((u) => u.customer_id !== customer_id),
+        );
+
+        alert("Eliminado con éxito");
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  };
+
+  const filteredUsers = usersList.filter((u) =>
+    (u.customer_name || u.email || "")
+      .toLowerCase()
+      .includes(searchUser.toLowerCase()),
+  );
+
   return (
     <Container className="py-5">
-      <Card className="shadow-sm border-0">
-        <Card.Body>
-          <div className="d-flex justify-content-between align-items-center mb-4">
-            <h2 style={{ color: "#6c5b4b" }}>📦 Panel de Pedidos</h2>
-            <Button variant="primary" onClick={() => handleShow()}>
-              + Crear Pedido
-            </Button>
-          </div>
+      <div className="container-fluid">
+        <div className="row">
+          <nav className="col-md-3 col-lg-2 bg-light min-vh-100 border-end p-3 shadow-sm">
+            <h4 className="mb-4 pt-2 text-center" style={{ color: "#6c5b4b" }}>
+              Panel Admin
+            </h4>
+            <div className="nav flex-column nav-pills">
+              <button
+                className={`nav-link text-start mb-2 ${activeTab === "pedidos" ? "active shadow" : "text-dark border-0"}`}
+                onClick={() => setActiveTab("pedidos")}
+                style={{ borderRadius: "10px" }}
+              >
+                📦 Pedidos
+              </button>
+              <button
+                className={`nav-link text-start mb-2 ${activeTab === "productos" ? "active shadow" : "text-dark border-0"}`}
+                onClick={() => setActiveTab("productos")}
+                style={{ borderRadius: "10px" }}
+              >
+                🍞 Productos
+              </button>
+              <button
+                className={`nav-link text-start mb-2 ${activeTab === "resenas" ? "active shadow" : "text-dark border-0"}`}
+                onClick={() => setActiveTab("resenas")}
+                style={{ borderRadius: "10px" }}
+              >
+                ⭐ Reseñas
+              </button>
+              <button
+                className={`nav-link text-start mb-2 ${activeTab === "usuarios" ? "active bg-primary" : "text-dark"}`}
+                onClick={() => setActiveTab("usuarios")}
+              >
+                👥 Usuarios
+              </button>
+            </div>
+          </nav>
 
-          <InputGroup className="mb-3">
-            <Form.Control
-              placeholder="Buscar por cliente..."
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </InputGroup>
+          {/* 2. EL CONTENIDO PRINCIPAL */}
+          <main className="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4 bg-white">
+            {activeTab === "pedidos" && (
+              <AdminStats orders={orders} products={products} />
+            )}
 
-          <Table responsive hover>
-            <thead
-              className="bg-light text-muted uppercase"
-              style={{ fontSize: "0.75rem", letterSpacing: "1px" }}
-            >
-              <tr>
-                <th className="border-0">ID ORDEN</th>
-                <th className="border-0">CLIENTE</th>
-                <th className="border-0">FECHA</th>
-                <th className="border-0 text-start">TOTAL</th>
-                <th className="border-0 text-start">ESTADO</th>
-                <th className="border-0 text-start">ACCIONES</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredOrders.map((order) => (
-                <tr key={order.order_total_id}>
-                  <td>#{order.order_total_id}</td>
-                  <td>{order.id_customer}</td>
+            {/* TAB DE PEDIDOS */}
+            {activeTab === "pedidos" && (
+              <div className="animate__animated animate__fadeIn">
+                <AdminOrders
+                  filteredOrders={filteredOrders}
+                  setSearchTerm={setSearchTerm}
+                  handleShow={handleShow}
+                  deleteOrder={deleteOrder}
+                />
+              </div>
+            )}
 
-                  <td>
-                    {order.order_date
-                      ? new Date(order.order_date).toLocaleDateString()
-                      : "S/F"}
-                  </td>
+            {/* TAB DE PRODUCTOS */}
+            {activeTab === "productos" && (
+              <div className="animate__animated animate__fadeIn">
+                <AdminProducts
+                  products={products}
+                  handleEditProduct={handleEditProduct}
+                  deleteProduct={deleteProduct}
+                  setShowProdModal={setShowProdModal}
+                />
+              </div>
+            )}
 
-                  <td>${Number(order.total).toLocaleString("es-CL")}</td>
+            {/* TAB DE RESEÑAS */}
+            {activeTab === "resenas" && (
+              <div className="animate__animated animate__fadeIn">
+                <ReviewSummary reviews={reviews || []} />
+                <ReviewAdminTable />
+              </div>
+            )}
 
-                  <td>
-                    <Badge
-                      pill
-                      bg={
-                        order.is_shipped
-                          ? "success"
-                          : order.is_paid
-                            ? "primary"
-                            : "warning"
-                      }
-                      className="px-3 py-2"
-                      style={{ fontSize: "0.85rem", fontWeight: "500" }}
-                    >
-                      {order.is_shipped
-                        ? "● Enviado"
-                        : order.is_paid
-                          ? "● Pagado"
-                          : "○ Pendiente"}
-                    </Badge>
-                  </td>
-                  <td>
-                    <Button
-                      className="btn-action"
-                      onClick={() => handleShow(order)}
-                    >
-                      ✏️
-                    </Button>
-                    <Button
-                      className="btn-action"
-                      onClick={() => deleteOrder(order.order_total_id)}
-                    >
-                      🗑️
-                    </Button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </Table>
-        </Card.Body>
-      </Card>
-
-      <Row className="mb-4 pt-5">
-        <Col md={4}>
-          <div className="dashboard-card text-center">
-            <h6 className="text-muted">Total Ventas</h6>
-            <h3>
-              $
-              {orders
-                .reduce((acc, curr) => acc + Number(curr.total || 0), 0)
-                .toLocaleString("es-CL")}
-            </h3>
-          </div>
-        </Col>
-        <Col md={4}>
-          <div className="dashboard-card text-center border-start border-warning border-5">
-            <h6 className="text-muted">Pendientes</h6>
-            <h3>
-              {
-                orders.filter((o) => o.is_shipped === false || !o.is_shipped)
-                  .length
-              }
-            </h3>
-          </div>
-        </Col>
-        <Col md={4}>
-          <div className="dashboard-card text-center border-start border-success border-5">
-            <h6 className="text-muted">Productos en Neon</h6>
-            <h3>{products.length}</h3>
-          </div>
-        </Col>
-      </Row>
-
-      <div className="d-flex justify-content-end align-items-center mb-4">
-        <Button
-          variant="success"
-          onClick={() => setShowProdModal(true)}
-          style={{ marginLeft: "10px" }}
-        >
-          + Agregar Producto
-        </Button>
+            {activeTab === "usuarios" && (
+              <AdminUsers users={filteredUsers} deleteUser={deleteUserLogic} />
+            )}
+          </main>
+        </div>
       </div>
 
       <Modal show={show} onHide={handleClose}>
@@ -379,7 +376,6 @@ const AdminDashboard = () => {
               <Form.Label>ID Cliente</Form.Label>
               <Form.Control
                 type="text"
-                /* Cambia editingOrder.customer por editingOrder.id_customer */
                 value={editingOrder?.id_customer || ""}
                 onChange={(e) =>
                   setEditingOrder({
@@ -530,113 +526,23 @@ const AdminDashboard = () => {
           </Form>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowProdModal(false)}>
+          <Button
+            variant="secondary"
+            className="me-2 btn-action"
+            onClick={() => setShowProdModal(false)}
+          >
             Cancelar
           </Button>
-          <Button variant="primary" onClick={saveProduct}>
+          <Button
+            variant="primary"
+            onClick={saveProduct}
+            className="me-2 btn-action"
+          >
             Guardar Producto
           </Button>
         </Modal.Footer>
       </Modal>
 
-      <h2 className="mt-5" style={{ color: "#6c5b4b" }}>
-        🍞 Gestión de Productos
-      </h2>
-      <div className="dashboard-card">
-        <Table
-          responsive
-          hover
-          className="align-middle border-0 table-orders-style"
-        >
-          <thead className="bg-dark text-white">
-            <tr>
-              <th className="ps-4">ID</th>
-              <th className="ps-4">Imagen</th>
-              <th>Producto</th>
-              <th>SKU</th>
-              <th>Stock</th>
-              <th>Categoría</th>
-              <th className="text-center">Precio</th>
-              <th className="text-center pe-4">Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {products.map((prod) => (
-              <tr key={prod.product_id}>
-                <td>{prod.product_id}</td>
-                <td className="ps-4">
-                  {prod.image_url ? (
-                    <img
-                      src={prod.image_url}
-                      alt={prod.title}
-                      style={{
-                        width: "50px",
-                        height: "50px",
-                        objectFit: "cover",
-                        borderRadius: "4px",
-                      }}
-                    />
-                  ) : (
-                    <span className="text-muted small">Sin imagen</span>
-                  )}
-                </td>
-                <td>
-                  <div className="fw-bold text-dark">{prod.title}</div>
-                  <div className="text-muted" style={{ fontSize: "0.75rem" }}>
-                    {new Date(prod.updated_at).toLocaleString("es-CL")}
-                  </div>
-                  <small
-                    className="text-muted d-block text-truncate"
-                    style={{ maxWidth: "150px" }}
-                  >
-                    {prod.product_description}
-                  </small>
-                </td>
-                <td>
-                  <code className="text-primary">{prod.sku || "N/A"}</code>
-                </td>
-                <td>
-                  <span
-                    className={`fw-bold ${prod.stock < 5 ? "text-danger" : "text-success"}`}
-                  >
-                    {prod.stock} un.
-                  </span>
-                  <div style={{ fontSize: "10px", color: "#ccc" }}>
-                    Ref: {new Date().getSeconds()}
-                  </div>
-                </td>
-                <td>
-                  <span className="badge bg-light text-dark border">
-                    {prod.category}
-                  </span>
-                </td>
-                <td className="text-center fw-medium">
-                  ${Number(prod.price).toLocaleString("es-CL")}
-                </td>
-                <td
-                  className="text-center pe-4"
-                  style={{ whiteSpace: "nowrap" }}
-                >
-                  <Button
-                    variant="light"
-                    className="btn-action edit-btn me-2"
-                    onClick={() => handleEditProduct(prod)}
-                  >
-                    ✏️
-                  </Button>
-                  <Button
-                    variant="light"
-                    className="btn-action delete-btn"
-                    onClick={() => deleteProduct(prod.product_id)}
-                  >
-                    🗑️
-                  </Button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </Table>
-      </div>
       <hr className="my-5" />
     </Container>
   );
