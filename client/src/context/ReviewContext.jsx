@@ -81,7 +81,7 @@ export const ReviewProvider = ({ children }) => {
   }, []);
   // La misma solución del deleteReview
   const deleteReview = async (reviewId) => {
-    console.log("Intentando eliminar la reseña con ID:", reviewId);
+    //console.log("Intentando eliminar la reseña con ID:", reviewId);
      //En vez de colocarlo como arugmento se coloca directo (CAMBIO)
     const token = localStorage.getItem("token");
     try {

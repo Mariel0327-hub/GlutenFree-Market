@@ -11,69 +11,64 @@ export const CartProvider = ({ children }) => {
   const { products } = useContext(ProductContext);
   const [showToast, setShowToast] = useState(false);
   const [lastAdded, setLastAdded] = useState(null);
-  const [cart, setCart] = useState(() => {
-    const savedCart = localStorage.getItem("glutenfree_cart");
-    return savedCart ? JSON.parse(savedCart) : [];
-  });
+  const [cart, setCart] = useState([]);
 
-  useEffect(() => {
-    if (cart.length > 0) {
-      localStorage.setItem("glutenfree_cart", JSON.stringify(cart));
-    }
-  }, [cart]);
   // 1. CARGA INICIAL(Nombres/Precios)
   useEffect(() => {
     const fetchCartAndDetails = async () => {
-      // 1. Siempre intentamos recuperar lo que hay en localStorage primero
-      const localItems = JSON.parse(
-        localStorage.getItem("glutenfree_cart") || "[]",
-      );
-
       if (token && user?.customer_id && products.length > 0) {
         try {
           const config = { headers: { Authorization: `Bearer ${token}` } };
-          const resCart = await axios.get(
-            `${baseURL}/api/cart/customer/${user.customer_id}`,
-            config,
-          );
 
-          if (resCart.data) {
-            // 2. FUSIÓN: Unimos lo de la DB con lo que el usuario eligió como invitado
-            const dbItems = resCart.data;
+          // A. Obtener el carrito del usuario
+          let resCart;
+          try {
+            resCart = await axios.get(
+              `${baseURL}/api/cart/customer/${user.customer_id}`,
+              config,
+            );
+          } catch (err) {
+            // Si falla el GET, intentamos CREAR la instancia por si es usuario nuevo
+            await axios.post(`${baseURL}/api/cart/`, {}, config);
+            setCart([]);
+            return;
+          }
 
-            // Creamos un mapa para no duplicar productos
-            const mergedMap = {};
-
-            // Priorizamos o sumamos según tu lógica (aquí sumamos cantidades)
-            [
-              ...dbItems.map((d) => ({
-                product_id: d.id_product,
-                quantity: d.quantity,
-              })),
-              ...localItems,
-            ].forEach((item) => {
-              if (mergedMap[item.product_id]) {
-                mergedMap[item.product_id].quantity += item.quantity;
-              } else {
-                mergedMap[item.product_id] = item;
-              }
+          // B. Rellenar con info de ProductContext para evitar el "$0"
+          if (resCart.data && products.length > 0) {
+            const detailed = resCart.data.map((dbItem) => {
+              const info = products.find(
+                (p) =>
+                  String(p.product_id || p.id) === String(dbItem.id_product),
+              );
+              return {
+                product_id: dbItem.id_product,
+                quantity: Number(dbItem.quantity),
+                title: info?.title || "Producto",
+                price: Number(info?.price || 0),
+                image_url: info?.image_url || "",
+              };
             });
 
-            const finalCart = Object.values(mergedMap);
-            setCart(finalCart);
-
-            localStorage.removeItem("glutenfree_cart");
+            // Agrupar por ID para que no haya filas duplicadas en la UI
+            const grouped = detailed.reduce((acc, item) => {
+              if (acc[item.product_id]) {
+                acc[item.product_id].quantity += item.quantity;
+              } else {
+                acc[item.product_id] = item;
+              }
+              return acc;
+            }, {});
+            setCart(Object.values(grouped));
           }
-        } catch (err) {
-          setCart(localItems);
+        } catch (e) {
+          console.error("Error en carga de carrito:", e);
         }
-      } else {
-        setCart(localItems);
       }
     };
-
     fetchCartAndDetails();
   }, [token, user, products]);
+
   const addToCart = async (product) => {
     // 1. Definimos el ID
     const pId = String(product.product_id || product.id);
