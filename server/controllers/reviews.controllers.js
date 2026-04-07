@@ -79,6 +79,9 @@ const createNewReview = async (req, res) => {
     const { about_product, id_product, review_title, review_body, rating } =
       req.body;
 
+      console.log(email)
+      console.log(req.body)
+
       if(!email){
         return res.status(401).json({message: "Unauthorized"})
       }
@@ -101,6 +104,9 @@ const createNewReview = async (req, res) => {
     return res.status(201).json(result);
   } catch (error) {
     console.error(error);
+    if(error.code && error.code < 500){
+      return res.status(error.code).json({ message: error.message });
+    }
     return res.status(500).json({ message: "Internal Server Error" });
   }
 };

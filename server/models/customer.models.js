@@ -19,7 +19,7 @@ const findCustomerById = async (id) => {
 
 //Eliminar cliente  //ADMIN
 const deleteCustomer = async (id) => {
-  const query = "DELETE FROM customer WHERE customer_id = $1 ";
+  const query = "DELETE FROM customer WHERE customer_id = $1 RETURNING *";
   const { rows } = await pool.query(query, [id]);
   return rows[0];
 };

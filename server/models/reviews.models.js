@@ -57,6 +57,7 @@ const createReview = async (
     [email],
   );
 
+
   if (rowCount === 0) {
     throw { code: 404, message: "Customer not found" };
   }

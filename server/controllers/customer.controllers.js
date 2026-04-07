@@ -38,7 +38,11 @@ const deleteNewCustomer = async (req, res) => {
   try {
     const { id } = req.params;
 
-    await customerModel.deleteCustomer(id);
+    const result = await customerModel.deleteCustomer(id);
+
+    if(!result){
+      return res.status(404).json({message: `Cliente ${id} no encontrado`})
+    }
 
     console.log(`Cliente ${id}, eliminadx exitosamente`);
     return res
