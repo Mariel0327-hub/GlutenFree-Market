@@ -37,11 +37,9 @@ const AdminPanel = () => {
           </div>
         </nav>
 
-        {/* CONTENIDO PRINCIPAL: Aquí es donde "viven" los componentes */}
         <main className="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
           {view === "reviews" && (
             <>
-              {/* Le pasamos reviews o un array vacío para que no explote el .length */}
               <ReviewSummary reviews={reviews || []} />
               <div className="mt-4">
                 <ReviewAdminTable />

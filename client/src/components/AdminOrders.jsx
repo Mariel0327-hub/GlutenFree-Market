@@ -132,7 +132,7 @@ const AdminOrders = ({
             ))}
           </tbody>
         </Table>
-        {/* SECCIÓN DE CARRITOS EN VIVO (DEBAJO DE ÓRDENES) */}
+        <h2 className="p-3" style={{ color: "#6c5b4b" }}>Carritos Activos</h2>
         <div className="table-responsive">
           <table className="table table-sm table-hover border">
             <thead className="table-light text-secondary">

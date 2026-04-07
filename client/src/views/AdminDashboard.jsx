@@ -294,7 +294,7 @@ const AdminDashboard = () => {
                 onClick={() => setActiveTab("pedidos")}
                 style={{ borderRadius: "10px" }}
               >
-                📦 Pedidos
+                📦 Pedidos y Carrito
               </button>
               <button
                 className={`nav-link text-start mb-2 ${activeTab === "productos" ? "active shadow" : "text-dark border-0"}`}
