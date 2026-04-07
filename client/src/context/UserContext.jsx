@@ -48,6 +48,7 @@ export const UserProvider = ({ children }) => {
   const logout = () => {
     setToken(null);
     setUser(null);
+    
   };
 
   const updateUser = async (newData) => {
@@ -67,14 +68,14 @@ export const UserProvider = ({ children }) => {
       );
 
       if (response.status === 200) {
-        const updatedUser = { ...user, ...response.data };
+        const updatedUser = { ...user, ...response.data};
         setUser(updatedUser);
         localStorage.setItem("user", JSON.stringify(updatedUser));
-        return true;
+        return true ;
       }
     } catch (error) {
       console.error("Error en update:", error.response?.status);
-      return false;
+      return false ;
     }
   };
 
