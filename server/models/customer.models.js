@@ -122,11 +122,14 @@ const updateFavorites = async (id) => {
 };
 
 //Eliminar favorito
-const deleteFavorite = async (id) => {
-  const query = "DELETE FROM favorites WHERE favorites_id = $1";
-  const { rows } = await pool.query(query, [id]);
+const deleteFavorite = async (id, id_product) => {
+  const values = [id, id_product ]
+  const query = "DELETE FROM favorites WHERE id_customer = $1 AND id_product = $2 RETURNING *";
+  const { rows } = await pool.query(query, values);
   return rows[0];
 };
+
+
 const customerModel = {
   //view customers (rutas sobre clientes no relacionadas con clientes para uso de ADMIN)
   findCustomers,

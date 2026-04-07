@@ -130,16 +130,22 @@ const updateNewFavorite = async (req, res) => {
 //Eliminar una seleccion de favoritos
 const deleteNewFavorite = async (req, res) => {
   try {
-    const { id } = req.params;
+    const{id} = req.user
+    const { id_product } = req.params;
 
-    const result = await customerModel.deleteFavorite(id);
 
-    console.log(result);
+    const result = await customerModel.deleteFavorite(id, id_product);
+
+       console.log("result:", result);
+
+    if(!result){
+      return res.status(400).json({message: "Favorito no encontrado"})
+    }
 
     console.log(`Seleeción favorita ${id}, eliminada exitosamente`);
     return res
       .status(200)
-      .json({ message: `Seleeción favorita ${id}, eliminada exitosamente` });
+      .json({ message: `Selección favorita ${id_product}, eliminada exitosamente` });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "Internal Server Error" });

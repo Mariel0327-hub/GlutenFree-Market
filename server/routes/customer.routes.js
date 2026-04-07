@@ -9,6 +9,11 @@ const ADMIN_ROLE = process.env.ADMIN_ROLE;
 
 const customerRouter = Router();
 //FAVORITES
+customerRouter.delete(
+  "/favorites/:id_product",   //solución temporaria (usando llave cliente,producto)
+  tokenVerification,
+  customerController.deleteNewFavorite,
+);
 
 //Cliente (a implementar proximamente) -> para que el cliente vea sus favoritos
 customerRouter.get(
@@ -42,11 +47,7 @@ customerRouter.put(
   tokenVerification,
   customerController.updateNewFavorite,
 );
-customerRouter.delete(
-  "/favorites/:id",
-  tokenVerification,
-  customerController.deleteNewFavorite,
-);
+
 
 //ADMIN ONLY
 customerRouter.get(
