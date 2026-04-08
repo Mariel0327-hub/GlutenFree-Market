@@ -1,6 +1,8 @@
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@700&display=swap');
+
 :root {
   /* Paleta de Colores GlutenFree */
-  --color-bgButton: #4c3d33; /* Café miel (Botones) */
+  --color-bgButton: #3a5a40; /* Café miel (Botones) */
   --color-titulos: #4b3f2f; /* Café oscuro (Títulos) */
   --color-bgFooter: #faf8f0; /* Crema suave (Fondo Hero/footer) */
   --color-white: #ffffff;
@@ -26,11 +28,11 @@
 
 body,
 html {
-  width: 100%;
-  overflow-x: hidden;
-  padding-top: 0 !important;
-  scroll-behavior: smooth;
+ font-family: 'Quicksand', sans-serif;
+  font-weight: 700;
+  color: #2d5a27; /* Tu verde característico */
 }
+
 
 .btn {
   background-color: var(--color-bgButton);
@@ -61,3 +63,29 @@ html {
   transform: translateY(-2px); /* Sube ligeramente */
   filter: brightness(1.1);
 }
+
+.table .btn-action {
+  background-color: transparent !important; /* Quita el color de var(--color-bgButton) */
+  box-shadow: none !important;            /* Quita la sombra */
+  padding: 5px !important;                /* Reduce el tamaño */
+  width: 35px;                            /* Los hace cuadrados y simétricos */
+  height: 35px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.table .btn-action:hover {
+  transform: scale(1.1);                  /* Un pequeño efecto de aumento */
+  background-color: rgba(0,0,0,0.05) !important; /* Un gris muy tenue al pasar el mouse */
+}
+
+.btn-social {
+  background-color: transparent;
+  border: 1px solid var(--color-bgButton);
+  color: var(--color-bgButton);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+} 

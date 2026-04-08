@@ -1,34 +1,56 @@
-import {Router} from 'express'
-import productController from '../controllers/product.controllers.js'
+import { Router } from "express";
+import productController from "../controllers/product.controllers.js";
+import {
+  adminVerification,
+  tokenVerification,
+} from "../lib/middlewares/lib.middlewares.js";
 
-const productRouter = Router()
+const ADMIN_ROLE = process.env.ADMIN_ROLE;
 
-productRouter.get('/', productController.readAllProducts )
-productRouter.get('/:id', productController.readProductsById )
-productRouter.get('/products/user/:id', productController.readProductsByUserId )   ////////////revisar esta ruta, como implementar
-productRouter.post('/', productController.createNewProduct )
-productRouter.put('/:id', productController.updateNewProduct)
-productRouter.delete('/:id', productController.deleteNewProduct)
-
-export default productRouter
-
-//contract ROUTES:
-
-
-/*  
-    GET /products //////////LISTO
-    GET /products/:id //////////LISTO
-    POST /products //////////////LISTO (revisar columnas.... some are hardcoded)
-    PUT /products/:id //////////////LISTO (revisar columnas.... some are hardcoded)
-    DELETe /products/:id  ///////////LISTO (Soft Delete)
+const productRouter = Router();
 
 
 
-*/
 
-//CATEGORIES
-/*  
+//PRODUCTOS
+//Para todo público
 
-GET/ categories
+//Ruta para filtrar todos los productos por precio, categoría, relevancia**, stock, etc...
+productRouter.get("/filter", productController.readAllProductsFiltered);
+//Ruta específica para redirigir a categorías y ver sus productos.
+productRouter.get("/category/:id", productController.readProductsByCategory); 
 
-*/
+
+//ADMIN ONLY (BackOffice)
+productRouter.post(
+  "/",
+  tokenVerification,
+  adminVerification(ADMIN_ROLE),
+  productController.createNewProduct,
+);
+productRouter.put(
+  "/restore/:id",
+  tokenVerification,
+  adminVerification(ADMIN_ROLE),
+  productController.restoreOldProduct,
+); //recuperar producto eliminad (soft delete)
+productRouter.put(
+  "/:id",
+  tokenVerification,
+  adminVerification(ADMIN_ROLE),
+  productController.updateNewProduct,
+);
+productRouter.delete(
+  "/:id",
+  tokenVerification,
+  adminVerification(ADMIN_ROLE),
+  productController.deleteNewProduct,
+); //usa soft delete (is_active = true -> is_active = false)
+
+
+// Rutas generales para revisar productos (inventario) público?
+productRouter.get("/:id", productController.readProductsById);
+productRouter.get("/", productController.readAllProducts);
+
+
+export default productRouter;

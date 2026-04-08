@@ -14,6 +14,18 @@
   flex-direction: column;
   align-items: center;
 }
+.category-name {
+  color: #333;/* Un gris muy oscuro o negro */
+  text-decoration: none; /* Quita el subrayado */
+  font-weight: 600; /* Para que resalten un poco más como en la imagen image_62da5f.jpg */
+  text-transform: uppercase; /* Para mantener el estilo de tu captura */
+  font-size: 1.2rem;
+}
+
+/* Para que cuando pases el mouse no cambien a un azul feo */
+.category-name:hover {
+  color: #5cb85c; /* Puedes usar el verde de tu logo para un toque profesional */
+}
 
 .category-img-container {
   width: 140px;

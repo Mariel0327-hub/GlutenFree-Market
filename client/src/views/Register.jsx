@@ -5,19 +5,22 @@ import { FaApple, FaFacebook } from "react-icons/fa";
 import { UserContext } from "../context/UserContext";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
+import { registerUserDB } from "../data/connection";
+import { Link } from "react-router-dom";
+import ImageUploader from "../components/ImageUploader";
 
 export default function Register() {
-  const { login } = useContext(UserContext);
+  const { setUser, setToken } = useContext(UserContext);
   const navigate = useNavigate();
 
-  // 1. Centralizamos todo en formData para no tener estados sueltos
   const [formData, setFormData] = useState({
     name: "",
     email: "",
+    phone: "",
     shipping_address: "",
     billing_address: "",
     password: "",
-    confirmPassword: "", // validacion para confirmar password
+    confirmPassword: "",
     avatar_url: "",
   });
 
@@ -26,67 +29,87 @@ export default function Register() {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = (e) => {
+  // 2. URL del uploader
+  const handleAvatarSuccess = (url) => {
+    setFormData({ ...formData, avatar_url: url });
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // 1 Regex para validar datos
-    const passwordRegex = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
-
-    // 2. Validaciones usando formData
-    if (!formData.email || !formData.password || !formData.name) {
-      return Swal.fire(
-        "Campos vacíos",
-        "Por favor, completa los datos obligatorios.",
-        "warning",
-      );
-    }
 
     if (formData.password !== formData.confirmPassword) {
       return Swal.fire("Error", "Las contraseñas no coinciden", "error");
     }
 
-    if (!passwordRegex.test(formData.password)) {
-      return Swal.fire({
-        icon: "error",
-        title: "Contraseña poco segura",
-        html: `
-            <div class="text-start small">
-              <p>Requisitos de seguridad:</p>
-              <ul>
-                <li>Mínimo 8 caracteres</li>
-                <li>Al menos una letra mayúscula</li>
-                <li>Al menos un número</li>
-              </ul>
-            </div>
-          `,
-      });
-    }
-
-    // 3. Si todo está OK, creamos el usuario
-    const newUser = {
-      id: Date.now(),
-      name: formData.name,
+    const newUserForDB = {
+      customer_name: formData.name,
       email: formData.email,
-      shipping_address: formData.shipping_address,
-      billing_address: formData.billing_address,
-      avatar_url: formData.avatar_url || "https://via.placeholder.com/150", // Fallback
-      role: "user",
+      phone: formData.phone,
+      customer_password: formData.password,
+      shipping_address:
+        formData.shipping_address || "Dirección no especificada",
+      billing_address: formData.billing_address || "Dirección no especificada",
+      img_url_customer:
+        formData.avatar_url || "https://via.placeholder.com/150",
+      created_at: new Date(),
+      updated_at: new Date(),
     };
+    console.log(newUserForDB)
+    try {
+      // 3. Llamada REAL al Backend
+      const data = await registerUserDB(newUserForDB);
+      console.log("Respuesta completa del servidor:", data);
 
-    // 4. PERSISTENCIA: Mandamos al contexto
-    login(newUser);
+      if (
+        data &&
+        (data.token || data.message === "Usuario registrado exitosamente")
+      ) {
+        // Si el servidor mandara token, lo guardamos (por si acaso en el futuro cambia)
+        if (data.token) {
+          setUser(data.user);
+          setToken(data.token);
+          localStorage.setItem("user", JSON.stringify(data.user));
+          localStorage.setItem("token", data.token);
+        }
+        console.log(data.token)
 
-    Swal.fire({
-      icon: "success",
-      title: "¡Cuenta creada!",
-      text: `Bienvenido/a, ${formData.name}`,
-      showConfirmButton: false,
-      timer: 1500,
-    });
+        Swal.fire({
+          icon: "success",
+          title: "¡Registro Exitoso!",
+          text: data.message || "Ya puedes iniciar sesión",
+          timer: 1500,
+          showConfirmButton: false,
+        });
 
-    setTimeout(() => {
-      navigate("/perfil");
-    }, 1500);
+        //  COMO NO HAY TOKEN, LO MANDAMOS AL LOGIN SIEMPRE
+        setTimeout(() => navigate("/login"), 2000);
+      }
+    } catch (error) {
+      Swal.fire(
+        "Error",
+        error.response?.data?.message || "No se pudo crear la cuenta",
+        "error",
+      );
+      // Si el error es 500, pero el email ya se guardó
+      if (
+        error.response?.status === 500 ||
+        error.response?.data?.code === "23505"
+      ) {
+        Swal.fire({
+          icon: "info",
+          title: "Cuenta detectada",
+          text: "Tu cuenta se creó correctamente, pero hubo un pequeño error al iniciar sesión automáticamente. Por favor, ingresa manualmente.",
+        });
+
+        navigate("/login");
+      } else {
+        Swal.fire(
+          "Error",
+          error.response?.data?.message || "No se pudo completar el registro",
+          "error",
+        );
+      }
+    }
   };
   return (
     <Container className="my-5 pt-4">
@@ -104,13 +127,9 @@ export default function Register() {
           <Form className="text-start" onSubmit={handleSubmit}>
             <Form.Group className="mb-3">
               <Form.Label className="small fw-bold">Avatar URL</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="https://link-a-tu-foto.jpg"
-                value={formData.avatar_url}
-                onChange={(e) =>
-                  setFormData({ ...formData, avatar_url: e.target.value })
-                }
+              <ImageUploader
+                onUploadSuccess={handleAvatarSuccess}
+                currentImage={formData.avatar_url}
               />
             </Form.Group>
 
@@ -137,6 +156,18 @@ export default function Register() {
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
+                required
+              />
+            </Form.Group>
+
+            <Form.Group className="mb-3">
+              <Form.Label className="small fw-bold">Telefono</Form.Label>
+              <Form.Control
+                type="tel"
+                name="phone"
+                className="form-control"
+                onChange={handleChange}
+                value={formData.phone}
                 required
               />
             </Form.Group>
@@ -207,21 +238,31 @@ export default function Register() {
               Registrarse
             </Button>
           </Form>
+          <p className="small text-muted mt-3">
+            ¿No tienes cuenta?{" "}
+            <Link
+              to="/login"
+              className="text-decoration-none fw-bold"
+              style={{ color: "#7c5c4c" }}
+            >
+              Inicia sesión aquí
+            </Link>
+          </p>
 
           <div className="divider my-4">
             <span className="text-muted small">O regístrate con</span>
           </div>
 
           <div className="d-flex justify-content-center gap-3 mb-4">
-            <button className="btn-social">
+            <Button className="btn-social">
               <FcGoogle size={24} />
-            </button>
-            <button className="btn-social">
+            </Button>
+            <Button className="btn-social">
               <FaApple size={24} />
-            </button>
-            <button className="btn-social">
+            </Button>
+            <Button className="btn-social ">
               <FaFacebook size={24} color="#1877F2" />
-            </button>
+            </Button>
           </div>
         </Col>
       </Row>

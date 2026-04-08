@@ -1,17 +1,19 @@
 .product-card {
-    width: 300px;
-    border: none !important;
-    border-radius: 15px !important;
-    overflow: hidden;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    background-color: #fff;
-    box-shadow: var(--shadow-elegant);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  width: 300px;
+  border: 1px solid #eaeaea !important;
+  border-radius: 12px !important;
+  overflow: hidden;
+  background-color: #fff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+    margin: 10px;
 }
 
 .product-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+  transform: translateY(-5px);
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
 }
 .product-card .card-img-top {
   border-radius: 0; /* Ya no lo necesita la imagen, lo hace el padre */
@@ -19,40 +21,69 @@
   padding: 0; /* <--- Asegúrate de que no haya padding */
 }
 .card-title {
-    font-family: var( --font-titles);
-    letter-spacing: -0.5px;
-    color: var( --color-titulos);
+  font-family: var(--font-titles);
+  letter-spacing: -0.5px;
+  color: var(--color-titulos);
 }
 
 .product-card img {
-    height: 200px;
-    object-fit: cover;
-    padding: 15px; /* Espacio para que la imagen no toque el borde */
-    border-radius: 30px;
+  height: 200px;
+  object-fit: cover;
+  padding: 15px; /* Espacio para que la imagen no toque el borde */
+  border-radius: 30px;
 }
 
 .price-tag {
-    border: 1px solid #dee2e6;
-    border-radius: 10px;
-    padding: 5px 15px;
-    font-weight: bold;
-    color: #4B3F2F;
+  border: 1px solid #dee2e6;
+  border-radius: 10px;
+  padding: 5px 15px;
+  font-weight: bold;
+  color: #4b3f2f;
 }
 
 .heart-icon {
-    cursor: pointer;
-    color: #ced4da;
-    transition: color 0.3s;
+  cursor: pointer;
+  color: #ced4da;
+  transition: color 0.3s;
 }
 
 .heart-icon.active {
-    color: #dc3545;
+  color: #dc3545;
 }
 .card-image {
-    height: 220px;
-    object-fit: cover;
-    border-top-left-radius: 20px;
-    border-top-right-radius: 20px;
-
+  height: 220px;
+  object-fit: cover;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
 }
 
+/* 1. Estilo base de los items (números) */
+.pagination .page-link {
+  color: #2d5a27; /* Tu verde oscuro */
+  background-color: #ffffff;
+  border-color: #dee2e6;
+  border-radius: 8px; /* Para que sea más redondeado */
+  margin: 0 3px;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05); /* Sombrita suave */
+}
+
+/* 2. Estilo del item Activo (el número seleccionado) */
+.pagination .page-item.active .page-link {
+  background-color: #2d5a27 !important; /* Tu color principal */
+  border-color: #2d5a27 !important;
+  color: white !important;
+}
+
+/* 3. Estilo al pasar el mouse (Hover) */
+.pagination .page-link:hover {
+  background-color: #f8f9fa;
+  color: #1b3d17;
+  border-color: #2d5a27;
+}
+
+/* 4. Estilo del estado enfocado (quitar el borde azul de Bootstrap) */
+.pagination .page-link:focus {
+  box-shadow: 0 0 0 0.25rem rgba(45, 90, 39, 0.25); /* Glow verde */
+  outline: none;
+}

@@ -1,24 +1,24 @@
-import {Router} from 'express'
-import authController from '../controllers/auth.controllers.js'
+import { Router } from "express";
+import authController from "../controllers/auth.controllers.js";
+import {
+  adminVerification,
+  tokenVerification,
+} from "../lib/middlewares/lib.middlewares.js";
+import { authenticateAdmin } from "../controllers/admin.auth.controller.js";
 
-const authRouter = Router()
+const ADMIN_ROLE = process.env.ADMIN_ROLE;
 
-authRouter.post('/register', authController.registerUser )
-authRouter.post('/login', authController.authenticateUser )
-authRouter.get('/profile', authController.getUserProfile )
+const authRouter = Router();
 
-export default authRouter
+//CUSTOMER
+authRouter.post("/register", authController.registerUser);
+authRouter.post("/login", authController.authenticateUser);
+authRouter.put("/alter_profile/:id", tokenVerification, authController.modifyUser); //mdificar datos de usuario
+authRouter.get("/profile", tokenVerification, authController.getUserProfile);
+authRouter.delete("/profile", tokenVerification, authController.deleteNewUser); //usuarios pueden borrar su perfil si lo desean
 
+//ADMIN
+authRouter.post("/admin", authenticateAdmin);
+authRouter.get("/customers", adminVerification); //para ver a todos los clientes
 
-//contract ROUTES:
-
-
-/*  
-
-    POST/register 
-    POST/login
-    GET/profile
-
-
-
-*/
+export default authRouter;

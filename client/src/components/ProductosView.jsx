@@ -10,7 +10,8 @@ export default function ProductosView() {
   const location = useLocation();
   const { categoria } = useParams();
   // Traemos los productos ya filtrados por el componente ProductFilters desde el Context
-  const { filteredProducts, filters, setFilters } = useContext(ProductContext);
+  const { filteredProducts, filters, setFilters, getCategoryName } =
+    useContext(ProductContext);
 
   const queryParams = new URLSearchParams(location.search);
 
@@ -22,30 +23,18 @@ export default function ProductosView() {
 
   // Resetear a la página 1 cuando cambian los filtros o la categoría
   useEffect(() => {
-    // 1. Sincronizamos la Categoría (URL params)
-    if (categoria) {
-      setFilters((prev) => ({ ...prev, category: categoria.toLowerCase() }));
-    } else {
-      // Si entramos a /productos sin categoría, reseteamos a "all"
-      setFilters((prev) => ({ ...prev, category: "all" }));
-    }
+    setFilters((prev) => ({
+      ...prev,
+      // Si hay categoría en la URL la usa, si no, "all"
+      category: categoria || "all",
+      // Si hay búsqueda la usa, si no, limpia el campo
+      searchTerm: searchParam ? searchParam.toLowerCase() : "",
+    }));
 
-    // 2. Sincronizamos la Búsqueda (Query params del Navbar)
-    if (searchParam) {
-      setFilters((prev) => ({
-        ...prev,
-        searchTerm: searchParam.toLowerCase(),
-      }));
-    } else {
-      // Si no hay búsqueda en la URL, limpiamos el filtro de texto
-      setFilters((prev) => ({ ...prev, searchTerm: "" }));
-    }
-
-    // 3. Reset de paginación para evitar quedar en una página inexistente
+    // Reset de paginación
     setCurrentPage(1);
   }, [categoria, searchParam, setFilters]);
 
-  // --- LÓGICA DE PAGINACIÓN ---
   // Calculamos los índices necesarios para el slice (Esto corrige los errores rojos)
   const indexOfLastProduct = currentPage * productsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
@@ -59,36 +48,41 @@ export default function ProductosView() {
   const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
   const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
 
-  // 2. Agrege un título dinámico que REACCIONE al cambio de filtro
-  // Si la categoría es 'all', mostramos "Catálogo Completo", sino, el nombre de la categoría
   const displayTitle = searchParam
     ? `Resultados para: "${searchParam}"`
-    : filters.category === "all" || filters.category === "All"
-      ? "Nuestro Catálogo Completo"
-      : `Categoría: ${filters.category.charAt(0).toUpperCase() + filters.category.slice(1)}`;
-
+    : categoria
+      ? `Categoría: ${getCategoryName(categoria)}`
+      : "Nuestro Catálogo Completo";
   return (
     <>
       <div className="banner-divider-card"></div>
-      <Container className="my-5">
+      <Container className="my-5 ">
         <div className="text-center mb-5">
           <h2 className="titles-font fw-bold">{displayTitle}</h2>
         </div>
 
-        {/* FILTROS EN BARRA SUPERIOR */}
-        <Row className="mb-4 justify-content-center">
-          <Col lg={11}>
+        <Row
+          className="mb-4 justify-content-center g-4"
+          xs={1}
+          sm={1}
+          md={1}
+          lg={4}
+        >
+          <Col lg={12}>
             <ProductFilters />
           </Col>
         </Row>
 
-        {/* GRILLA DE PRODUCTOS ANCHO COMPLETO */}
-        <Row className="gy-4">
+        <Row
+          className="mb-4 justify-content-center g-4 "
+          xs={1}
+          sm={2}
+          md={2}
+          lg={3}
+        >
           {productsToShow.length > 0 ? (
             productsToShow.map((product) => (
               <Col key={product.product_id} sm={12} md={6} lg={3}>
-                {" "}
-                {/* 4 productos por fila */}
                 <ProductCard product={product} />
               </Col>
             ))
@@ -100,7 +94,7 @@ export default function ProductosView() {
             </Col>
           )}
         </Row>
-        {/* Menú de Paginación Reactivo  */}
+
         {totalPages > 1 && (
           <div className="d-flex justify-content-center mt-5">
             <Pagination>

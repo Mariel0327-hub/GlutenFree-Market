@@ -1,4 +1,3 @@
-import { categories } from "../data/categories";
 import iconPan from "../assets/imgs/pannaderia.png";
 import iconPasta from "../assets/imgs/pastas.png";
 import iconSnack from "../assets/imgs/snack.png";
@@ -16,33 +15,28 @@ import { useContext } from "react";
 import { ProductContext } from "../context/ProductContext";
 
 const categoryIcons = {
-  1: iconPan,
-  2: iconPasta,
-  3: iconSnack,
-  4: iconHarinas,
-  5: iconChocolate,
-  6: iconCafe,
-  7: iconReposteria,
-  8: iconBebidas,
-  9: iconGranos,
-  10: iconCereales,
+  "cat-panaderia": iconPan,
+  "cat-pastas": iconPasta,
+  "cat-snacks": iconSnack,
+  "cat-harinas": iconHarinas,
+  "cat-chocolate": iconChocolate,
+  "cat-cafe": iconCafe,
+  "cat-reposteria": iconReposteria,
+  "cat-bebidas": iconBebidas,
+  "cat-granos": iconGranos,
+  "cat-cereales": iconCereales,
 };
 
 const Categories = () => {
-  const { setFilters } = useContext(ProductContext); //lista actualizada
+  const { categories } = useContext(ProductContext);
   const navigate = useNavigate();
-
-  const handleCategoryClick = (categorySlug) => {
-    // 2. Actualizamos el estado global ANTES de navegar
-    setFilters((prev) => ({
-      ...prev,
-      category: categorySlug, // Ej: "harinas"
-      searchTerm: "", // Limpiamos búsquedas previas por UX
-    }));
-
-    // 3. Navegamos a la vista de productos
-    navigate("/productos");
+  const handleCategoryClick = (id) => {
+    // En lugar de actualizar el filtro aquí, dejamos que la URL lo haga
+    navigate(`/productos/${id}`);
   };
+  if (!categories || categories.length === 0) {
+    return <p className="text-center my-5">Cargando categorías populares...</p>;
+  }
   return (
     <section className="container my-5 text-center">
       <h2 className="mb-5 fw-bold titles-font">Categorías Populares</h2>
@@ -50,24 +44,28 @@ const Categories = () => {
       <div className="row g-4 justify-content-center category-grid">
         {categories.map((cat) => (
           <div key={cat.category_id} className="category-col">
-            <Link
-              to={`/productos/${cat.description.toLowerCase()}`}
-              className="text-decoration-none text-dark"
-              onClick={() => handleCategoryClick(cat.description.toLowerCase())}
+            <div
+              style={{ cursor: "pointer" }}
+              onClick={() => handleCategoryClick(cat.category_id)}
+              className="category-name text-decoration-none"
             >
               <div className="category-item">
                 <div className="category-img-container shadow-sm">
                   <img
-                    src={categoryIcons[cat.category_id]}
-                    alt={cat.description}
+                    src={
+                      categoryIcons[cat.category_id] ||
+                      "ruta/imagen/por/defecto.png"
+                    }
+                    alt={cat.category_description}
                     className="category-img"
                   />
                 </div>
-                <p className="mt-3 fw-bold small text-uppercase body-font text-truncate">
-                  {cat.description}
+                {/* Usamos el estilo que discutimos antes para que no se vea azul */}
+                <p className="mt-3 fw-bold small text-uppercase text-dark">
+                  {cat.category_description}
                 </p>
               </div>
-            </Link>
+            </div>
           </div>
         ))}
       </div>

@@ -1,8 +1,11 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { Container, Card, Button, Row, Col, Form } from "react-bootstrap";
 import { UserContext } from "../context/UserContext";
 import { useNavigate } from "react-router-dom";
 //import { getInitials } from "../utils/helpers";
+import { FaCamera, FaLock, FaPhone } from "react-icons/fa";
+import axios from "axios";
+import ImageUploader from "../components/ImageUploader";
 
 import {
   FaEnvelope,
@@ -11,21 +14,50 @@ import {
   FaCommentDots,
 } from "react-icons/fa";
 import Swal from "sweetalert2";
+import { baseURL } from "../utils/baseUrl";
 
 export default function Profile() {
-  const { user, logout, updateUser } = useContext(UserContext);
+  const { user, logout, updateUser, setUser } = useContext(UserContext);
   const navigate = useNavigate();
 
-  // Estado para controlar si estamos editando
   const [isEditing, setIsEditing] = useState(false);
-  // Estado local para los inputs del formulario
+
   const [formData, setFormData] = useState({ name: "", shipping_address: "" });
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        if (token) {
+          // Llamamos a la ruta de perfil que tienes en el Back
+          const response = await axios.get(`${baseURL}/api/auth/profile`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          setUser(response.data);
+        }
+      } catch (error) {
+        console.error("Error al cargar datos desde Neon:", error);
+      }
+    };
+
+    fetchUserData();
+  }, []);
+
   const handleEditClick = () => {
-    setFormData({
-      name: user?.name || "",
-      shipping_address: user?.shipping_address || "",
-    });
-    setIsEditing(true);
+    if (user) {
+      setFormData({
+        // Mapeamos los nombres de la BD (izquierda) a tus estados del Form (derecha)
+        name: user.customer_name || "",
+        email: user.email || "",
+        shipping_address: user.shipping_address || "",
+        billing_address: user.billing_address || "",
+        profile_image: user.img_url_customer || "",
+        phone: user.phone || "",
+        password: "",
+        customer_id: user.customer_id,
+      });
+      setIsEditing(true);
+    }
   };
 
   const handleLogout = () => {
@@ -35,21 +67,54 @@ export default function Profile() {
 
   const handleSave = async () => {
     try {
-      const result = await updateUser(formData);
+      const cleanData = {
+        customer_id: user.customer_id,
+        customer_name: formData.name,
+        email: formData.email,
+        phone: formData.phone || user.phone,
 
-      if (result.success) {
+        img_url_customer: formData.profile_image || user.img_url_customer,
+
+        shipping_address: formData.shipping_address,
+        billing_address: formData.billing_address,
+
+        customer_password:
+          formData.password && formData.password.trim() !== ""
+            ? formData.password
+            : undefined,
+      };
+      if (formData.password && formData.password.trim() !== "") {
+        cleanData.customer_password = formData.password;
+      }
+      const result = await updateUser(cleanData);
+      console.log("Enviando a BD:", cleanData);
+      if (result) {
+        setUser((prev) => ({
+          ...prev,
+          ...cleanData,
+        }));
+
+        //console.log(setUser);
         setIsEditing(false);
         Swal.fire({
           icon: "success",
-          title: "¡Actualizado!",
-          text: "Tus datos se han guardado con éxito.",
+          title: "¡Perfil Actualizado!",
+          text: "Los cambios se guardaron correctamente.",
+          timer: 2000,
           showConfirmButton: false,
-          timer: 1500,
         });
       }
     } catch (error) {
-      Swal.fire("Error", "No se pudieron actualizar los datos", error);
+      console.error("Error al guardar:", error);
+      Swal.fire("Error", "No se pudo actualizar el perfil", "error");
     }
+  };
+
+  const handleImageSuccess = (url) => {
+    setFormData((prev) => ({
+      ...prev,
+      profile_image: url, // Usamos el nombre que tienes en tu estado de edición
+    }));
   };
   return (
     <Container className="py-5 d-flex justify-content-center">
@@ -58,37 +123,41 @@ export default function Profile() {
         style={{ maxWidth: "550px", width: "100%" }}
       >
         <Card.Body>
-          <div
-            className="avatar-circle mx-auto mb-3 bg-dark text-white d-flex align-items-center justify-content-center overflow-hidden"
-            style={{
-              width: "100px",
-              height: "100px",
-              borderRadius: "50%",
-              fontSize: "32px",
-            }}
-          >
-            {user.avatar_url ? (
-              // ✅ Si hay URL, mostramos la imagen
-              <img
-                src={user.avatar_url}
-                alt={user.name}
-                className="w-100 h-100 object-fit-cover"
+          {isEditing ? (
+            <Form.Group className="mb-4 text-center">
+              <Form.Label className="fw-bold">Foto de Perfil</Form.Label>
+              <ImageUploader
+                onUploadSuccess={handleImageSuccess}
+                currentImage={
+                  formData.img_url_customer || user.img_url_customer
+                }
               />
-            ) : (
-              // Fallback: Si no hay URL, mostramos las iniciales
-              user.name
-                .split(" ")
-                .map((n) => n[0])
-                .join("")
-            )}
-          </div>
+              <Form.Text className="text-muted">
+                Haz clic para subir una nueva imagen a Cloudinary.
+              </Form.Text>
+            </Form.Group>
+          ) : (
+            <div className="text-center mb-4">
+              <img
+                src={
+                  formData.profile_image ||
+                  user?.img_url_customer ||
+                  "https://via.placeholder.com/150"
+                }
+                alt="Profile"
+                className="rounded-circle img-thumbnail"
+                style={{ width: "150px", height: "150px", objectFit: "cover" }}
+              />
+            </div>
+          )}
 
           <h2 className="fw-bold mt-3 text-center" style={{ color: "#3e2723" }}>
             {isEditing ? "Editar Perfil" : "Mi Perfil"}
           </h2>
+
           <Form>
             <Row className="g-4 mb-4">
-              {/* Campo Nombre (Editable) */}
+              {/* Campo Nombre */}
               <Col xs={12} className="d-flex align-items-start gap-3">
                 <FaUserEdit className="text-muted mt-2" />
                 <div className="flex-grow-1">
@@ -101,17 +170,37 @@ export default function Profile() {
                       onChange={(e) =>
                         setFormData({ ...formData, name: e.target.value })
                       }
-                      disabled={!isEditing}
                     />
                   ) : (
                     <span className="fw-medium">
-                      {user?.name || "No registrado"}
+                      {user?.customer_name || "No registrado"}
                     </span>
                   )}
                 </div>
               </Col>
-
-              {/* Campo Email (Solo lectura por seguridad) */}
+              <Col xs={12} className="d-flex align-items-start gap-3">
+                <FaPhone className="text-muted mt-2" />{" "}
+                <div className="flex-grow-1">
+                  <small className="d-block text-muted fw-bold text-uppercase">
+                    Teléfono
+                  </small>
+                  {isEditing ? (
+                    <Form.Control
+                      type="text"
+                      placeholder="+569..."
+                      value={formData.phone}
+                      onChange={(e) =>
+                        setFormData({ ...formData, phone: e.target.value })
+                      }
+                    />
+                  ) : (
+                    <span className="fw-medium">
+                      {user?.phone || "Sin teléfono registrado"}
+                    </span>
+                  )}
+                </div>
+              </Col>
+              {/* Campo Email */}
               <Col xs={12} className="d-flex align-items-start gap-3">
                 <FaEnvelope className="text-muted mt-2" />
                 <div className="flex-grow-1">
@@ -122,7 +211,7 @@ export default function Profile() {
                 </div>
               </Col>
 
-              {/* Campo Dirección (Editable) */}
+              {/* Campo Dirección */}
               <Col xs={12} className="d-flex align-items-start gap-3">
                 <FaMapMarkerAlt className="text-muted mt-2" />
                 <div className="flex-grow-1">
@@ -149,6 +238,30 @@ export default function Profile() {
                 </div>
               </Col>
             </Row>
+            {isEditing && (
+              <>
+                <hr className="my-4 text-muted" />
+                <Col xs={12} className="d-flex align-items-start gap-3">
+                  <FaLock className="text-muted mt-2" />
+                  <div className="flex-grow-1">
+                    <small className="d-block text-muted fw-bold text-uppercase">
+                      Cambiar Contraseña (Opcional)
+                    </small>
+                    <Form.Control
+                      type="password"
+                      placeholder="Nueva contraseña"
+                      value={formData.password || ""}
+                      onChange={(e) =>
+                        setFormData({ ...formData, password: e.target.value })
+                      }
+                    />
+                    <Form.Text className="text-muted">
+                      Déjalo en blanco si no deseas cambiarla.
+                    </Form.Text>
+                  </div>
+                </Col>
+              </>
+            )}
 
             <div className="d-grid gap-2">
               {isEditing ? (
@@ -180,7 +293,7 @@ export default function Profile() {
                   <Button
                     variant="outline-secondary"
                     className="rounded-pill py-2 d-flex align-items-center justify-content-center gap-2"
-                    onClick={() => navigate("/mis-testimonios")}
+                    onClick={() => navigate("/mis-reviews")}
                   >
                     <FaCommentDots /> Mis Testimonios
                   </Button>
