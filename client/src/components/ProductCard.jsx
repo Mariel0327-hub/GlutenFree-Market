@@ -1,20 +1,32 @@
 import { Card, CardBody, Button } from "react-bootstrap";
 import { FaStar, FaHeart, FaRegHeart } from "react-icons/fa";
 import "../assets/css/ProductCard.css";
-import { Link } from "react-router-dom";
-import { useContext, navigate } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useContext } from "react";
 import { ProductContext } from "../context/ProductContext";
 import { UserContext } from "../context/UserContext";
 import Swal from "sweetalert2";
 import { CartContext } from "../context/CartContext";
+import { calcularPromedio } from "../utils/reviewHelper";
+import { ReviewContext } from "../context/ReviewContext";
 
 const ProductCard = ({ product }) => {
   const { favorites, toggleFavorite } = useContext(ProductContext);
   const isFav = favorites.some((fav) => fav.product_id === product.product_id);
   const { token } = useContext(UserContext);
   const { addToCart } = useContext(CartContext);
+  const navigate = useNavigate();
+  const { getCategoryName } = useContext(ProductContext);
+  const { reviews } = useContext(ReviewContext);
+
+  //Buscamos el producto
 
   if (!product) return null;
+
+  const productReviews = reviews.filter(
+    (r) => String(r.id_product) === String(product.product_id), // Usamos el ID del prop
+  );
+  const promedio = calcularPromedio(productReviews);
 
   const handleFavoriteClick = () => {
     if (!token) {
@@ -42,21 +54,33 @@ const ProductCard = ({ product }) => {
         style={{ textDecoration: "none" }}
       >
         <Card.Img
-          src={product.image_url}
-          className="card-img-top"
+          variant="top"
+          src={
+            product.image_url && product.image_url.length > 10
+              ? product.image_url
+              : "https://images.unsplash.com/photo-1578985543062-bc3b01620c4d?w=400&h=300&fit=crop"
+          }
           alt={product.title}
-          style={{ height: "200px", objectFit: "cover", cursor: "pointer" }}
+          style={{ height: "200px", objectFit: "cover" }}
+          onError={(e) => {
+            e.currentTarget.onerror = null;
+            e.currentTarget.src =
+              "https://images.unsplash.com/photo-1551024601-bec78aea704b?w=400&h=300&fit=crop"; // Una imagen de postre distinta por si la otra falla
+          }}
         />
       </Link>
       <CardBody className="p-3 d-flex flex-column">
         <div className="d-flex justify-content-between align-items-center mb-2">
           <div className="d-flex align-items-center text-warning small">
-            {[...Array(5)].map((_, i) => (
-              <FaStar key={i} className="me-1" />
+            {[1, 2, 3, 4, 5].map((star) => (
+              <FaStar
+                key={star}
+                // Si el promedio es 3, las estrellas 4 y 5 serán grises (#e4e5e9)
+                style={{ color: star <= promedio ? "#ffc107" : "#e4e5e9" }}
+                size={16}
+              />
             ))}
-            <span className="text-muted ms-2" style={{ fontSize: "0.75rem" }}>
-              3 Opiniones
-            </span>
+            <small className="ms-2 text-muted">({productReviews.length})</small>
           </div>
           <FaHeart
             className="heart-icon fs-5"
@@ -69,11 +93,11 @@ const ProductCard = ({ product }) => {
           />
         </div>
         <div className="text-center flex-grow-1">
-          <p className="text-muted mb-3 text-start" style={{ fontSize: "0.8rem" }}>
-            {product.category
-              ? product.category.charAt(0).toUpperCase() +
-                product.category.slice(1)
-              : ""}
+          <p
+            className="text-muted small mb-1"
+            style={{ textTransform: "capitalize" }}
+          >
+            {getCategoryName(product.category)}
           </p>
           <Card.Title className="card-title fw-bold mb-1 fs-6">
             {product.title}
@@ -83,9 +107,15 @@ const ProductCard = ({ product }) => {
             className="text-muted small mb-3"
             style={{ fontSize: "0.8rem" }}
           >
-            {product.description.length > 60
-              ? product.description.substring(0, 57) + "..."
-              : product.description}
+            {(() => {
+              const description =
+                product.product_description ||
+                product.description ||
+                "Sin descripción disponible";
+              return description.length > 60
+                ? description.substring(0, 57) + "..."
+                : description;
+            })()}
           </Card.Text>
         </div>
 

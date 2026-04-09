@@ -1,32 +1,47 @@
-import dotenv from 'dotenv'
-import express from 'express'
-import cors from 'cors'
-import authRouter from './routes/auth.routes.js'
-import cartRouter from './routes/cart.routes.js'
-import orderRouter from './routes/order.routes.js'
-import productRouter from './routes/product.routes.js'
-import reviewRouter from './routes/reviews.routes.js'
-import { getDbConnection } from './db/db.js'
+import dotenv from "dotenv";
+import express from "express";
+import cors from "cors";
+import authRouter from "./routes/auth.routes.js";
+import cartRouter from "./routes/cart.routes.js";
+import orderRouter from "./routes/order.routes.js";
+import productRouter from "./routes/product.routes.js";
+import reviewRouter from "./routes/reviews.routes.js";
+import customerRouter from "./routes/customer.routes.js";
+//import { getDbConnection } from "./db/db.js";
+//import { getDbConnectionNeon } from './db/db_neon.js' //DB online
+import { getDbConnectionSwitch } from "./db/dbSwitch.js";
 
+const apiRouter = express.Router() //- -> para aplicar en la implementación de BD NEON.
+dotenv.config();
 
-dotenv.config()
+const app = express();
 
-const app = express()
+const PORT = process.env.PORT;
 
-const PORT = process.env.PORT
-
-app.use(express.json())
-app.use(cors())
+apiRouter.use(express.json());
+apiRouter.use(cors());
 
 //Routers
-app.use('/auth', authRouter)
-app.use('/cart', cartRouter)
-app.use('/order', orderRouter)
-app.use('/products', productRouter)
-app.use('/review', reviewRouter)
+apiRouter.use("/auth", authRouter);
+apiRouter.use("/cart", cartRouter);
+apiRouter.use("/order", orderRouter);
+apiRouter.use("/products", productRouter);
+apiRouter.use("/review", reviewRouter);
+apiRouter.use("/customer", customerRouter);
 
-app.listen(PORT, async ()=>{
-    console.log(`Server running on http://localhost:${PORT}`)
-    await getDbConnection()
-})
 
+//main Router
+app.use('/api', apiRouter)  //-> para aplicar en la implementación de BD NEON.
+
+app.listen(PORT, async () => {
+  console.log(`Server running on http://localhost:${PORT}`);
+
+  //Elegir base de datos
+  //await getDbConnection(); //Connect to localDB
+  //await getDbConnectionNeon();   //connect to CloudDB
+  await getDbConnectionSwitch()
+});
+
+export default app;
+
+//testeando push

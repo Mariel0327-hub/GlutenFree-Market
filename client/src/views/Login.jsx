@@ -5,6 +5,7 @@ import { FaApple, FaFacebook } from "react-icons/fa";
 import { UserContext } from "../context/UserContext";
 import { useNavigate, Link } from "react-router-dom";
 import Swal from "sweetalert2";
+import { loginUserDB } from "../data/connection";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -19,70 +20,43 @@ export default function Login() {
     }
   }, [user, navigate]);
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    
-    if (email === "test@test.com" && password === "Test123456") {
-      const loggedUser = {
-        email: "test@test.com",
-        name: "Usuario Demo",
-        orders: [
-          {
-            order_id: "ORD-001",
-            date: "2026-03-20",
-            total: 25000,
-            status: "Entregado",
-            items: [
-              {
-                product_id: 1,
-                title: "Pan Integral",
-                price: 5000,
-                quantity: 1,
-              },
-              { product_id: 2, title: "Muffin Gf", price: 3500, quantity: 2 },
-            ],
-          },
-          {
-            order_id: "ORD-002",
-            date: "2026-03-22",
-            total: 12500,
-            status: "Por retirar",
-            items: [
-              {
-                product_id: 3,
-                title: "Baguette Masa Madre",
-                price: 12500,
-                quantity: 1,
-              },
-            ],
-          },
-          {
-            order_id: "ORD-003",
-            date: "2026-03-22",
-            total: 18000,
-            status: "En proceso",
-            items: [
-              {
-                product_id: 4,
-                title: "Rollitos de Canela",
-                price: 4500,
-                quantity: 4,
-              },
-            ],
-          },
-        ],
-      };
-      // 1. Guardamos en el Estado Global
-      setUser(loggedUser);
-      setToken("token-demo-xyz-123");
+    try {
+      // 1. AJUSTE CRÍTICO: Renombramos la llave para que el Back la reconozca
+      const data = await loginUserDB({
+        email: email,
+        customer_password: password, // Aquí enviamos el estado 'password' con el nombre que pide el Back
+      });
 
-      // 2. Guardamos en LocalStorage para que no se borre al recargar
-      localStorage.setItem("user", JSON.stringify(loggedUser));
-      localStorage.setItem("token", "token-demo-xyz-123");
+      if (data.token) {
+        // 2. AJUSTE DE DATOS:
+        // Como tu Backend actual NO devuelve el objeto 'user' (solo el token),
+        // creamos un objeto con lo que tenemos para que la App no falle.
+        const loggedUser = data.user || {
+          email: email,
+          customer_name: "Usuario", // Valor temporal hasta que cargue el perfil
+        };
 
-      const params = new URLSearchParams(window.location.search);
-      const redirect = params.get("redirect") || "/perfil";
-      navigate(redirect);
+        setUser(loggedUser);
+        setToken(data.token);
+
+        // 3. Persistencia
+        localStorage.setItem("user", JSON.stringify(loggedUser));
+        localStorage.setItem("token", data.token);
+
+        // 4. Redirección
+        const params = new URLSearchParams(window.location.search);
+        const redirect = params.get("redirect") || "/perfil";
+        navigate(redirect);
+      }
+    } catch (error) {
+      // Si el error persiste, revisa la consola para ver qué dice el servidor
+      console.error("Error detallado:", error.response?.data);
+      alert(
+        "Error al iniciar sesión: " +
+          (error.response?.data?.message || "Credenciales inválidas"),
+      );
     }
   };
 
@@ -126,7 +100,6 @@ export default function Login() {
               type="submit"
               variant="primary"
               className="w-100 rounded-pill py-2 mb-3"
-              style={{ backgroundColor: "#7c5c4c", border: "none" }}
             >
               Entrar
             </Button>

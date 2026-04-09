@@ -1,31 +1,29 @@
-import {Router} from 'express'
-import reviewController from '../controllers/reviews.controllers.js'
+import { Router } from "express";
+import reviewController from "../controllers/reviews.controllers.js";
+import {
+  adminVerification,
+  tokenVerification,
+} from "../lib/middlewares/lib.middlewares.js";
 
-const reviewRouter = Router()
+const reviewRouter = Router();
 
-reviewRouter.get('/', reviewController.readAllReviews )
-reviewRouter.get('/reviews/users/:id', reviewController.readReviewsByUser )
-reviewRouter.get('/reviews/product/:id', reviewController.readReviewsByProduct )
-reviewRouter.get('/reviews/:id', reviewController.readReviewsById )
-reviewRouter.post('/reviews', reviewController.createNewReview)
-reviewRouter.put('/reviews/:id', reviewController.updateRegisteredReview)
-reviewRouter.delete('/reviews/:id', reviewController.deleteRegisteredReview)
+//Para todo público
+reviewRouter.get("/product/:id", reviewController.readReviewsByProduct); //para ver reviews sobre un producto
+reviewRouter.get("/customer/:id", reviewController.readReviewsByUser); //ver reviews de usuarios (usuarios populares, influencers, etc...)
+reviewRouter.get("/", reviewController.readAllReviews); // -> filtrar por producto, relevancia, fecha?
+reviewRouter.get("/:id", reviewController.readReviewsById);
 
+//User or ADMIN (token required for both)
+reviewRouter.post("/", tokenVerification, reviewController.createNewReview);
+reviewRouter.put(
+  "/:id",
+  tokenVerification,
+  reviewController.updateRegisteredReview,
+);
+reviewRouter.delete(
+  "/:id",
+  tokenVerification,
+  reviewController.deleteRegisteredReview,
+);
 
-export default reviewRouter
-
-
-//contract ORDERS:
-
-
-/*  
-    GET /reviews
-    GET /customer/:id/reviews  --revisar orden y si aplica aquí
-    GET /product/:id/reviews --revisar orden y si aplica aquí
-    POST /reviews
-    PUT /reviws/:id
-    DELETE /reviews/:id  
-
-
-
-*/
+export default reviewRouter;

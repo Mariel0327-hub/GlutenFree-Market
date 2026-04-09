@@ -1,34 +1,48 @@
-import {Router} from 'express'
-import productController from '../controllers/product.controllers.js'
+import { Router } from "express";
+import productController from "../controllers/product.controllers.js";
+import {
+  adminVerification,
+  tokenVerification,
+} from "../lib/middlewares/lib.middlewares.js";
 
-const productRouter = Router()
+const ADMIN_ROLE = process.env.ADMIN_ROLE;
 
-productRouter.get('/', productController.readAllProducts )
-productRouter.get('/:id', productController.readProductsById )
-productRouter.get('/products/user/:id', productController.readProductsByUserId )   ////////////revisar esta ruta, como implementar
-productRouter.post('/', productController.createNewProduct )
-productRouter.put('/:id', productController.updateNewProduct)
-productRouter.delete('/:id', productController.deleteNewProduct)
+const productRouter = Router();
 
-export default productRouter
+//Para tood público
+//Ruta específica para redirigir a categorías
+productRouter.get("/category/:id", productController.readProductsByCategory); //implementar para ver productos por categoría
+//Ruta para filtrar todos los productos por precio, categoría, relevancia**, stock, etc...
+productRouter.get("/filter", productController.readAllProductsFiltered);
+// Rutas generales para revisar productos (inventario) público?
+productRouter.get("/:id", productController.readProductsById);
+productRouter.get("/", productController.readAllProducts);
 
-//contract ROUTES:
+//ADMIN ONLY (BackOffice)
+productRouter.post(
+  "/",
+  tokenVerification,
+  adminVerification(ADMIN_ROLE),
+  productController.createNewProduct,
+);
+productRouter.put(
+  "/:id",
+  tokenVerification,
+  adminVerification(ADMIN_ROLE),
+  productController.updateNewProduct,
+);
+productRouter.put(
+  "/restore/:id",
+  tokenVerification,
+  adminVerification(ADMIN_ROLE),
+  productController.restoreOldProduct,
+); //recuperar producto eliminad (soft delete)
+productRouter.delete(
+  "/:id",
+  tokenVerification,
+  adminVerification(ADMIN_ROLE),
+  productController.deleteNewProduct,
+); //usa soft delete (is_active = true -> is_active = false)
 
 
-/*  
-    GET /products //////////LISTO
-    GET /products/:id //////////LISTO
-    POST /products //////////////LISTO (revisar columnas.... some are hardcoded)
-    PUT /products/:id //////////////LISTO (revisar columnas.... some are hardcoded)
-    DELETe /products/:id  ///////////LISTO (Soft Delete)
-
-
-
-*/
-
-//CATEGORIES
-/*  
-
-GET/ categories
-
-*/
+export default productRouter;

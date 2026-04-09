@@ -1,75 +1,157 @@
 import reviewModel from "../models/reviews.models.js";
-import jwt from "jsonwebtoken"
-import bycrpt from 'bcryptjs'
 
-const readAllReviews = async (req,res) =>{
+// incorporar filtro
+const readAllReviews = async (req, res) => {
   try {
     const result = await reviewModel.findAllReviews();
+
+    if (!result) {
+      return res.status(404).json({ message: "No hay Review disponibles" });
+    }
+
     return res.status(200).json(result);
   } catch (error) {
-    console.error();
+    console.error(error);
     return res.status(500).json({ message: "Internal Server Error" });
   }
-}
+};
 
+//Para revisar reviews por id específico (a trocar por filtro en búsqueda general)
+const readReviewsByUser = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const result = await reviewModel.findReviewsByUSer(id);
 
-const readReviewsByUser = async () =>{
- try {
-    await reviewModel.findReviewsByUSer()
- } catch (error) {
-   return res.status(500).json({message: "Internal Server Error"}) 
- }   
-}
+    if (!result) {
+      return res
+        .status(404)
+        .json({ message: "Review no encontrado o Id inválido" });
+    }
 
-const readReviewsByProduct = async () =>{
- try {
-    await reviewModel.findReviewsByProduct()
- } catch (error) {
-   return res.status(500).json({message: "Internal Server Error"}) 
- }   
-}
+    return res.status(200).json(result);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+//Para revisar reviews por id específico (a trocar por filtro en búsqueda general)
+const readReviewsByProduct = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const result = await reviewModel.findReviewsByProduct(id);
 
-// for inner purposes
-const readReviewsById = async () =>{
- try {
-    await reviewModel.findReviewsById()
- } catch (error) {
-   return res.status(500).json({message: "Internal Server Error"}) 
- }   
-}
+    if (!result) {
+      return res
+        .status(404)
+        .json({ message: "Review no encontrado o Id inválido" });
+    }
 
-const createNewReview = async () =>{
- try {
-    await reviewModel.createReview()
- } catch (error) {
-   return res.status(500).json({message: "Internal Server Error"}) 
- }   
-}
+    return res.status(200).json(result);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+};
 
-const updateRegisteredReview = async () =>{
- try {
-    await reviewModel.updateReview()
- } catch (error) {
-   return res.status(500).json({message: "Internal Server Error"}) 
- }   
-}
+//Para revisar reviews por id específico
+const readReviewsById = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const result = await reviewModel.findReviewsById(id);
 
-const deleteRegisteredReview = async () =>{
- try {
-    await reviewModel.deleteReview()
- } catch (error) {
-   return res.status(500).json({message: "Internal Server Error"}) 
- }   
-}
+    if (!result) {
+      return res
+        .status(404)
+        .json({ message: "Review no encontrado o Id inválido" });
+    }
+
+    return res.status(200).json(result);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+//cambiar email para id
+const createNewReview = async (req, res) => {
+  const { email } = req.user;
+  const { about_product, id_product, review_title, review_body, rating } = req.body;
+  try {
+    const result = await reviewModel.createReview(
+      email,
+      about_product,
+      id_product,
+      review_title,
+      review_body,
+      rating,
+    );
+
+    if (!result) {
+      return res
+        .status(404)
+        .json({ message: "Review no encontrado o Id inválido" });
+    }
+
+    return res.status(201).json(result);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+const updateRegisteredReview = async (req, res) => {
+  //id del review (que ya fue creado)
+  const { id } = req.params;
+  const { about_product, id_product, review_title, review_body, rating } = req.body;
+  try {
+    const result = await reviewModel.updateReview(
+      id,
+      about_product,
+      id_product,
+      review_title,
+      review_body,
+      rating,
+    );
+
+    if (!result) {
+      return res
+        .status(404)
+        .json({ message: "Review no encontrado o Id inválido" });
+    }
+
+    return res.status(200).json(result);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+const deleteRegisteredReview = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const result = await reviewModel.deleteReview(id);
+
+    if (!result) {
+      return res
+        .status(404)
+        .json({ message: "Review no encontrado o Id inválido" });
+    }
+
+    return res.status(200).json({ message: "Reseña eliminada con éxito" });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+};
 
 const reviewController = {
-    readAllReviews,
-    readReviewsById,
-    readReviewsByProduct,
-    readReviewsByUser,
-    createNewReview,
-    updateRegisteredReview,
-    deleteRegisteredReview,
-}
+  readAllReviews,
+  readReviewsById,
+  readReviewsByProduct,
+  readReviewsByUser,
+  createNewReview,
+  updateRegisteredReview,
+  deleteRegisteredReview,
+};
 
-export default reviewController
+export default reviewController;
